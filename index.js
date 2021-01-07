@@ -1,7 +1,7 @@
 import express from 'express';
 import mongoose from 'mongoose';
 import bodyParser from 'body-parser';
-
+import route from './src/routes/STroutes';
 const app = express();
 
 //connexion  avec notre base de donnée
@@ -20,6 +20,7 @@ mongoose.connect(`mongodb+srv://jiji:jiji1234@zmz.djfzj.mongodb.net/ZmZ?retryWri
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 //declaration de notre router ici apres creatoin 
+route(app);
 //notre lien initiale
 app.get('/', (req, res) =>
     res.send(`notre serveur a été demarer sur le port : ${process.env.PORT || 3000}`)
