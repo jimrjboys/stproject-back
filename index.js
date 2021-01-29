@@ -6,7 +6,8 @@ const app = express();
 
 //connexion  avec notre base de donnée
 mongoose.Promise = global.Promise;
-mongoose.connect(`mongodb+srv://jiji:jiji1234@zmz.djfzj.mongodb.net/ZmZ?retryWrites=true&w=majority`, {
+//mongodb+srv://jiji:jiji1234@zmz.djfzj.mongodb.net/ZmZ?retryWrites=true&w=majority 
+mongoose.connect(`mongodb://127.0.0.1:27017/stProject`, {
     useNewUrlParser: true,
     useCreateIndex: true,
     useUnifiedTopology: true,
