@@ -70,7 +70,7 @@ export const updateAnnonce = (req, res) => {
 } 
 
 // softdelete annonce
-export const softdeleteAnnonce = (req, res) => {
+export const softDeleteAnnonce = (req, res) => {
     Annonce.findByIdAndUpdate(req.params.annonceId, {
         etatSuppr: req.body.etatSuppr
     }, {new: true})

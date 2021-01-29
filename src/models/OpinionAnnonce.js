@@ -18,7 +18,8 @@ export const opinionAnnonceSchema = new Schema({
     annonceId: {
         type: String,
         required: 'id annonce obligatoire'
-    }
+    },
+    etatSuppr: Boolean
 },{
     timestamps: true
 })

@@ -1,5 +1,24 @@
-import {createAnnonce, findAllAnnonce, findOneAnnonce, updateAnnonce, softdeleteAnnonce, editStateAnnonce} from '../controllers/AnnonceController'
-import { createRequete, editStateRequete, findAllRequeteByAnnonce } from '../controllers/RequeteController'
+import {
+    createAnnonce,
+    findAllAnnonce, 
+    findOneAnnonce, 
+    updateAnnonce, 
+    softDeleteAnnonce, 
+    editStateAnnonce
+} from '../controllers/AnnonceController'
+
+import { 
+    createRequete, 
+    editStateRequete, 
+    findAllRequeteByAnnonce 
+} from '../controllers/RequeteController'
+
+import { 
+    createOpinionAnnonce,
+    findAllOpinionAnnonce,
+    updateOpinionAnnonce,
+    softDeleteOpinionAnnonce
+} from '../controllers/OpinionAnnonceController'
 
 import {
     listUtilisateur,
@@ -14,6 +33,7 @@ import {
      modificationNotification 
 } from '../controllers/NotificationControllers'
 import {ajoutOpinionUsers,modificationOpinionUsers,softDeleteOpinions} from './../controllers/OpinionUsersControllers'
+
 const route = (app) => {
     // Utilisateur
     app.route('/utilisateur')
@@ -34,19 +54,24 @@ const route = (app) => {
         .get(findOneAnnonce)
         .put(updateAnnonce)
     // advanced functionality
-    app.put('/annonce/softDeleteAnnonce/:annonceId', softdeleteAnnonce)
+    app.put('/annonce/softDeleteAnnonce/:annonceId', softDeleteAnnonce)
     app.put('/annonce/editStateAnnonce/:annonceId', editStateAnnonce)
 
     // Requete
     app.route('/requete')
-        .post(createRequete)
+        .post(createRequete) // create requete
     // Requete use requeteId
     app.route('/requete/:requeteId')
-        .put(editStateRequete)
+        .put(editStateRequete) // editStateRequete (accepter ou non)
     // Requete use annonceId
     app.route('/requete/allRequete/:annonceId')
-        .get(findAllRequeteByAnnonce)
-        
+        .get(findAllRequeteByAnnonce) // get all requete by annonceId
+    
+    // Route OpinionAnnonce
+    app.post('/opinionAnnonce', createOpinionAnnonce) // add opinion annonce
+    app.put('/opinionAnnonce/:OpinionAId',updateOpinionAnnonce) // update opinion annonce
+    app.get('/opinionAnnonce/:annonceId', findAllOpinionAnnonce) // get all opionion annonce by annnonceId
+    app.put('/opinionAnnonce/softDelete/:OpinionAId', softDeleteOpinionAnnonce) // softDelete opinion annonce
 
     //sauvegrade du derniere position  de l'utilisateur
     app.route('/localisationActuelle')
