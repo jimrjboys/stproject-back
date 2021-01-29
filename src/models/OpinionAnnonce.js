@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 
 const Schema = mongoose.Schema;
 
-export const opinionAnnonce = new Schema({
+export const opinionAnnonceSchema = new Schema({
     note: {
         type: Number,
         required: 'note obligatoire'

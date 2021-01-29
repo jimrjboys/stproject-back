@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 
 const Schema = mongoose.Schema;
 
-export const annonce = new Schema({
+export const annonceSchema = new Schema({
     titre: { 
         type: String,
         required: 'titre obligatoire',

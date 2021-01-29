@@ -1,6 +1,6 @@
 
-import { UtilisateurSchema } from '../models/Utilisateur'
-
+import mongoose from 'mongoose';
+import { UtilisateurSchema } from '../models/Utilisateur';
 const Utilisateur = mongoose.model('Utilisateur', UtilisateurSchema)
 
 export const listUtilisateur = (req, res) => {

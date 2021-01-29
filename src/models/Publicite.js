@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 
 const Schema = mongoose.Schema;
 
-export const publicite = new Schema({
+export const publiciteSchema = new Schema({
     photo: {
         type: String,
         required: 'photo obligatoire'
