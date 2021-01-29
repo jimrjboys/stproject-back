@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 
 const Schema = mongoose.Schema;
 
-export const Notification = new Schema ({
+export const NotificationSchema = new Schema ({
  //ato ny  schema anle basentsika 
     title : {
         type : String  , 

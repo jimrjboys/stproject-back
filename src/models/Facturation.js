@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 
 const Schema = mongoose.Schema;
 
-export const Facturation = new Schema ({
+export const FacturationSchema = new Schema ({
  //ato ny  schema anle basentsika 
 
     prix : {
