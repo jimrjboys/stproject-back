@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 
 const Schema = mongoose.Schema;
 
-export const Utilisateur = new Schema ({
+export const UtilisateurSchema = new Schema ({
     
     nom : {
         type:String ,
@@ -30,7 +30,7 @@ export const Utilisateur = new Schema ({
     },
     type : {
         type : String ,
-        
+
     },
     localisation : {
         type : String ,

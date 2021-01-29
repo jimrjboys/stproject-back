@@ -1,5 +1,8 @@
-const route = () => {
+import { listUtilisateur } from '../controllers/UtilisateurController'
 
-    console.log('les routes sont operationnelles');
+const route = (app) => {
+    // Utilisateur
+    app.route ('/utilisateur')
+    .get(listUtilisateur) 
 }
 export default route;
