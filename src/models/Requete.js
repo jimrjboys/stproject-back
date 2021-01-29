@@ -8,6 +8,7 @@ export const requeteSchema = new Schema ({
         required: 'id touriste obligatoire'
     },
     guideId: String,
+    annonceId: String,
     etatRequete: Boolean,
 },
 {

@@ -1,5 +1,6 @@
 import { listUtilisateur,ajouterUtilisateur,utilisateurId, modifierUtilisateur} from '../controllers/UtilisateurController'
 import {createAnnonce, findAllAnnonce, findOneAnnonce, updateAnnonce, softdeleteAnnonce, editStateAnnonce} from '../controllers/AnnonceController'
+import { createRequete, editStateRequete, findAllRequeteByAnnonce } from '../controllers/RequeteController'
 
 const route = (app) => {
     // Utilisateur
@@ -23,5 +24,15 @@ const route = (app) => {
     // advanced functionality
     app.put('/annonce/softDeleteAnnonce/:annonceId', softdeleteAnnonce)
     app.put('/annonce/editStateAnnonce/:annonceId', editStateAnnonce)
+
+    // Requete
+    app.route('/requete')
+        .post(createRequete)
+    // Requete use requeteId
+    app.route('/requete/:requeteId')
+        .put(editStateRequete)
+    // Requete use annonceId
+    app.route('/requete/allRequete/:annonceId')
+        .get(findAllRequeteByAnnonce)
 }
 export default route;

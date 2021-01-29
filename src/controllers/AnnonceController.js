@@ -39,6 +39,7 @@ export const findOneAnnonce = (req, res) => {
                     message: "Annonce not found"
                 })
             }
+            res.send(annonce)
         })
         .catch(err => {
             if(err.kind === "ObjectId"){
