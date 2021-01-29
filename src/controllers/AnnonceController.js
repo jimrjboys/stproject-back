@@ -1,4 +1,4 @@
-import mongoose, { mongo } from 'mongoose';
+import mongoose from 'mongoose';
 import { AnnonceSchema } from '../models/Annonce';
 
 const Annonce = mongoose.model('Annonce', AnnonceSchema)
@@ -8,7 +8,9 @@ export const createAnnonce = (req, res) => {
     let AnnonceCreate = new Annonce(req.body);
     AnnonceCreate.save((err, annonce) => {
         if(err){
-            res.send(err)
+            res.status(500).send({
+                message: err.message || "Some error occurred while creating the Annonce"
+            });
         }
 
         res.json(annonce)
