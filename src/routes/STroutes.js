@@ -1,5 +1,16 @@
-import {createAnnonce, findAllAnnonce, findOneAnnonce, updateAnnonce, softdeleteAnnonce, editStateAnnonce} from '../controllers/AnnonceController'
-import { createRequete, editStateRequete, findAllRequeteByAnnonce } from '../controllers/RequeteController'
+import {
+    createAnnonce,
+    findAllAnnonce,
+    findOneAnnonce,
+    updateAnnonce,
+    softdeleteAnnonce,
+    editStateAnnonce
+} from '../controllers/AnnonceController'
+import {
+    createRequete,
+    editStateRequete,
+    findAllRequeteByAnnonce
+} from '../controllers/RequeteController'
 
 import {
     listUtilisateur,
@@ -10,10 +21,14 @@ import {
     softDelete
 } from '../controllers/UtilisateurController'
 import {
-     ajoutNotification,
-     modificationNotification 
+    ajoutNotification,
+    modificationNotification
 } from '../controllers/NotificationControllers'
-import {ajoutOpinionUsers,modificationOpinionUsers,softDeleteOpinions} from './../controllers/OpinionUsersControllers'
+import {
+    ajoutOpinionUsers,
+    modificationOpinionUsers,
+    softDeleteOpinions
+} from './../controllers/OpinionUsersControllers'
 const route = (app) => {
     // Utilisateur
     app.route('/utilisateur')
@@ -24,7 +39,7 @@ const route = (app) => {
     app.route('/utilisateur/:utilisateurId')
         .get(utilisateurId)
         .put(modifierUtilisateur)
-    
+
     // Annonce
     app.route('/annonce')
         .get(findAllAnnonce)
@@ -46,7 +61,6 @@ const route = (app) => {
     // Requete use annonceId
     app.route('/requete/allRequete/:annonceId')
         .get(findAllRequeteByAnnonce)
-        
 
     //sauvegrade du derniere position  de l'utilisateur
     app.route('/localisationActuelle')
@@ -58,7 +72,7 @@ const route = (app) => {
 
     //supprimier opinions softDElete
     app.route('/supprime/opinions/:opinionId')
-    .put(softDeleteOpinions)
+        .put(softDeleteOpinions)
 
     //Notification ajout et modification
     app.route('/notification/')

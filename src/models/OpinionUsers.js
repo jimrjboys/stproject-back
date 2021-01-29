@@ -13,6 +13,6 @@ export const OpionionUsersSchema = new Schema({
     etatSuppr: {
         type: Boolean,
     },
-    
 
-},{timestamps: true})
+
+}, { timestamps: true })
