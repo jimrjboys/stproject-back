@@ -1,7 +1,7 @@
 import mongoose from 'mongoose'
-import { RequeteSchema } from '../models/Requete'
+import { requeteSchema } from '../models/Requete'
 
-const Requete = mongoose.model('Requete', RequeteSchema)
+const Requete = mongoose.model('Requete', requeteSchema)
 
 // create and save requete
 export const createRequete = (req, res) => {

@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
-import { AnnonceSchema } from '../models/Annonce';
+import { annonceSchema } from '../models/Annonce';
 
-const Annonce = mongoose.model('Annonce', AnnonceSchema)
+const Annonce = mongoose.model('Annonce', annonceSchema)
 
 // create and save annonce
 export const createAnnonce = (req, res) => {
