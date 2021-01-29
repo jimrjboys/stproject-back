@@ -1,4 +1,3 @@
-import { listUtilisateur,ajouterUtilisateur,utilisateurId, modifierUtilisateur} from '../controllers/UtilisateurController'
 import {createAnnonce, findAllAnnonce, findOneAnnonce, updateAnnonce, softdeleteAnnonce, editStateAnnonce} from '../controllers/AnnonceController'
 import { createRequete, editStateRequete, findAllRequeteByAnnonce } from '../controllers/RequeteController'
 
