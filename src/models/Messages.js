@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 
 const Schema = mongoose.Schema;
 
-export const Messages = new Schema ({
+export const MessagesShema = new Schema ({
  //ato ny  schema anle basentsika 
     emetteurId : {
         type : String , 

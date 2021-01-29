@@ -5,9 +5,11 @@ import route from './src/routes/STroutes';
 const app = express();
 
 //connexion  avec notre base de donnée
+//mongodb+srv://jiji:jiji1234@zmz.djfzj.mongodb.net/ZmZ?retryWrites=true&w=majority
+mongodb://127.0.0.1:27017/
+
 mongoose.Promise = global.Promise;
-//mongodb+srv://jiji:jiji1234@zmz.djfzj.mongodb.net/ZmZ?retryWrites=true&w=majority 
-mongoose.connect(`mongodb://127.0.0.1:27017/stProject`, {
+mongoose.connect(`mongodb://127.0.0.1:27017/StProject`, {
     useNewUrlParser: true,
     useCreateIndex: true,
     useUnifiedTopology: true,
