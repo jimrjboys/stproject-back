@@ -5,7 +5,7 @@ import { UtilisateurSchema } from '../models/Utilisateur';
 const Utilisateur = mongoose.model('Utilisateur', UtilisateurSchema)
 const Localisation = mongoose.model('Localisation', LocalisationSchema)
 
-export const listUtilisateur = (res) => {
+export const listUtilisateur = (req,res) => {
 
     Utilisateur.find({}, (err, utilisateur) => {
 
@@ -42,6 +42,16 @@ export const modifierUtilisateur = (req ,res ) => {
             res.send(err)
         }
         res.json(modifUtilisateurId)
+
+    });
+}
+export const softDelete = (res  ,req ) => {
+    
+    Utilisateur.findOneAndUpdate({ _id: req.params.utilisateurId }, req.body.etatSuppr, { new: true }, (err, modifSoftDelete) => {
+        if (err) {
+            res.send(err)
+        }
+        res.json(modifSoftDelete)
 
     });
 }
