@@ -2,47 +2,47 @@ import mongoose from 'mongoose';
 
 const Schema = mongoose.Schema;
 
-export const UtilisateurSchema = new Schema ({
-    
-    nom : {
-        type:String ,
-        required : 'Vous avez oublier de mettre votre nom',
-    },
-    prenom  : {
-        type:String , 
+export const UtilisateurSchema = new Schema({
 
-    }, 
-    tel : {
-        type: String , 
-         required : 'Veuillez entrer un numero telephone'
+    nom: {
+        type: String,
+        required: 'Vous avez oublier de mettre votre nom',
     },
-    email : {
-        type : String ,
-        required : 'Veullez entrer votre email',
-    },
-    username : {
-        type: String ,
-        required : 'Veullez entrer un nom  utilisateur ' ,
-    },
-    password : {
-        type : String ,
-        required : 'Veuillez entre votre mot de passe'
-    },
-    type : {
-        type : String ,
+    prenom: {
+        type: String,
 
     },
-    localisation : {
-        type : String ,
+    tel: {
+        type: String,
+        required: 'Veuillez entrer un numero telephone'
     },
-    etatConnexion : {
-        type : Boolean , 
+    email: {
+        type: String,
+        required: 'Veullez entrer votre email',
     },
-    etatSuppr : {
-        type : Boolean,
+    username: {
+        type: String,
+        required: 'Veullez entrer un nom  utilisateur ',
     },
-    pdp : {
-        type : String , 
+    password: {
+        type: String,
+        required: 'Veuillez entre votre mot de passe'
+    },
+    type: {
+        type: String,
+
+    },
+    localisation: {
+        type: String,
+    },
+    etatConnexion: {
+        type: Boolean,
+    },
+    etatSuppr: {
+        type: Boolean,
+    },
+    pdp: {
+        type: String,
     },
 
 

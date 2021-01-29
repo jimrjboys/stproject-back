@@ -5,7 +5,7 @@ import { UtilisateurSchema } from '../models/Utilisateur';
 const Utilisateur = mongoose.model('Utilisateur', UtilisateurSchema)
 const Localisation = mongoose.model('Localisation', LocalisationSchema)
 
-export const listUtilisateur = (req,res) => {
+export const listUtilisateur = (req, res) => {
 
     Utilisateur.find({}, (err, utilisateur) => {
 
@@ -16,7 +16,7 @@ export const listUtilisateur = (req,res) => {
 
     });
 }
-export const ajouterUtilisateur = (req , res) => {
+export const ajouterUtilisateur = (req, res) => {
     let nouveauxUtilisateur = new Utilisateur(req.body);
     nouveauxUtilisateur.save((err, newUtilisateur) => {
         if (err) {
@@ -26,7 +26,7 @@ export const ajouterUtilisateur = (req , res) => {
         res.json(newUtilisateur)
     });
 }
-export const utilisateurId = (req, res ) => {
+export const utilisateurId = (req, res) => {
     Utilisateur.findById({ _id: req.params.utilisateurId }, (err, searchUtilisateurId) => {
         if (err) {
             res.send(err)
@@ -35,7 +35,7 @@ export const utilisateurId = (req, res ) => {
 
     });
 }
-export const modifierUtilisateur = (req ,res ) => {
+export const modifierUtilisateur = (req, res) => {
 
     Utilisateur.findOneAndUpdate({ _id: req.params.utilisateurId }, req.body, { new: true }, (err, modifUtilisateurId) => {
         if (err) {
@@ -45,8 +45,8 @@ export const modifierUtilisateur = (req ,res ) => {
 
     });
 }
-export const softDelete = (res  ,req ) => {
-    
+export const softDelete = (res, req) => {
+
     Utilisateur.findOneAndUpdate({ _id: req.params.utilisateurId }, req.body.etatSuppr, { new: true }, (err, modifSoftDelete) => {
         if (err) {
             res.send(err)
@@ -55,7 +55,7 @@ export const softDelete = (res  ,req ) => {
 
     });
 }
-export const SaveLastLocalisation = (req , res) => {
+export const SaveLastLocalisation = (req, res) => {
     let nouvelleLocalisation = new Localisation(req.body);
     nouvelleLocalisation.save((err, newLocalisation) => {
         if (err) {
