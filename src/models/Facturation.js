@@ -2,21 +2,21 @@ import mongoose from 'mongoose';
 
 const Schema = mongoose.Schema;
 
-export const FacturationSchema = new Schema ({
- //ato ny  schema anle basentsika 
+export const FacturationSchema = new Schema({
+    //ato ny  schema anle basentsika 
 
-    prix : {
-        type : Number , 
+    prix: {
+        type: Number,
     },
-    itineraireToursime : {
-        type : String , 
+    itineraireToursime: {
+        type: String,
     },
-    duree : {
-        type : Number,
+    duree: {
+        type: Number,
     },
-    heureRDV : {
-        type : String , 
+    heureRDV: {
+        type: String,
     },
-    timestamps: true , 
+    timestamps: true,
 
 })
