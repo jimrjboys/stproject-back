@@ -1,4 +1,4 @@
-import { 
+import {
     createOpinionAnnonce,
     findAllOpinionAnnonce,
     updateOpinionAnnonce,
@@ -27,9 +27,9 @@ import {
     utilisateurId,
     modifierUtilisateur,
     SaveLastLocalisation,
-    softDelete ,
-    Authentification ,
-    VerificationAuthentification ,
+    softDelete,
+    Authentification,
+    VerificationAuthentification,
     VerificationToken,
 
 } from '../controllers/UtilisateurController'
@@ -44,6 +44,11 @@ import {
     modificationOpinionUsers,
     softDeleteOpinions
 } from './../controllers/OpinionUsersControllers'
+
+import {
+    newMessages,
+    getMesssages
+} from '../controllers/MessagesController'
 
 const route = (app) => {
     // Utilisateur
@@ -77,10 +82,10 @@ const route = (app) => {
     // Requete use annonceId
     app.route('/requete/allRequete/:annonceId')
         .get(findAllRequeteByAnnonce) // get all requete by annonceId
-    
+
     // Route OpinionAnnonce
     app.post('/opinionAnnonce', createOpinionAnnonce) // add opinion annonce
-    app.put('/opinionAnnonce/:OpinionAId',updateOpinionAnnonce) // update opinion annonce
+    app.put('/opinionAnnonce/:OpinionAId', updateOpinionAnnonce) // update opinion annonce
     app.get('/opinionAnnonce/:annonceId', findAllOpinionAnnonce) // get all opionion annonce by annnonceId
     app.put('/opinionAnnonce/softDelete/:OpinionAId', softDeleteOpinionAnnonce) // softDelete opinion annonce
         .get(findAllRequeteByAnnonce)
@@ -118,5 +123,12 @@ const route = (app) => {
     //Authentification
     app.route('/auth/signIn')
         .post(Authentification)
+
+    // Systeme de messsages 
+
+    app.route('messages/:emetteurId/:recepteurID')
+        .post(newMessages)
+    app.route('messages/:_id')
+        .post(getMesssages)
 }
 export default route;
