@@ -1,3 +1,5 @@
+'use strict';
+
 import {
     createAnnonce,
     findAllAnnonce,
@@ -18,7 +20,11 @@ import {
     utilisateurId,
     modifierUtilisateur,
     SaveLastLocalisation,
-    softDelete
+    softDelete ,
+    Authentification ,
+    VerificationAuthentification ,
+    VerificationToken,
+
 } from '../controllers/UtilisateurController'
 import {
     ajoutNotification,
@@ -85,5 +91,15 @@ const route = (app) => {
         .post(ajoutOpinionUsers)
     app.route('/opinions/:opinionId')
         .put(modificationOpinionUsers)
+    // Authentificatoin et verification du token de connexion  
+    //verification de l'etat 
+    app.route('/test/verifiEtat')
+        .post(VerificationAuthentification)
+    //controle du token
+    app.route('/test/verifToken')
+        .post(VerificationToken)
+    //Authentification
+    app.route('/auth/signIn')
+        .post(Authentification)
 }
 export default route;
