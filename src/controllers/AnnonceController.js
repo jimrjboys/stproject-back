@@ -1,7 +1,6 @@
-import mongoose from 'mongoose';
 import { annonceSchema } from '../models/Annonce';
 
-const Annonce = mongoose.model('Annonce', annonceSchema)
+const Annonce = annonceSchema
 
 // create and save annonce
 export const createAnnonce = (req, res) => {
