@@ -1,6 +1,6 @@
 
 import mongoose from 'mongoose';
-import jwt  from 'jsonwebtoken';
+import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import { LocalisationSchema } from '../models/Localisation';
 import { UtilisateurSchema } from '../models/Utilisateur';
@@ -18,19 +18,18 @@ export const listUtilisateur = (req, res) => {
 
     });
 }
-export const ajouterUtilisateur = async (req, res) => {
+export const ajouterUtilisateur = (req, res) => {
     let nouveauxUtilisateur = new Utilisateur(req.body);
-    try {
-        nouveauxUtilisateur.password = await bcrypt.hashSync(req.body.password)   
-    } catch (error) {
-      console.log(error)  
-    }
+    const saltRounds = 10
+
+    nouveauxUtilisateur.password = bcrypt.hashSync(req.body.password, saltRounds)
+
     nouveauxUtilisateur.save((err, newUtilisateur) => {
         if (err) {
             res.send(err)
         }
-        newUtilisateur.password = undefined 
-        res.json(newUtilisateur) 
+        newUtilisateur.password = undefined
+        res.json(newUtilisateur)
     });
 }
 export const utilisateurId = (req, res) => {
@@ -72,32 +71,32 @@ export const SaveLastLocalisation = (req, res) => {
         res.json(newLocalisation)
     });
 }
-export const Authentification = (req , res )  => {
+export const Authentification = (req, res) => {
 
-    Utilisateur.findOne({email: req.body.email}, (err, utilisateur) =>  {
+    Utilisateur.findOne({ email: req.body.email }, (err, utilisateur) => {
         if (err) throw err;
         if (!utilisateur || !utilisateur.comparePassword(req.body.password)) {
-          return res.status(401).json({ message: 'Authentication failed. Invalid user or password.' });
+            return res.status(401).json({ message: 'Authentication failed. Invalid user or password.' });
         }
         return res.json({ token: jwt.sign({ email: utilisateur.email, username: utilisateur.username, _id: utilisateur._id }, 'RESTFULAPIs') });
-      });
+    });
 };
-export const VerificationAuthentification = ( req , res , next ) => {
+export const VerificationAuthentification = (req, res, next) => {
     if (req.utilisateur) {
         next();
-      } else {
-    
+    } else {
+
         return res.status(401).json({ message: 'Unauthorized user!!' });
-      }
+    }
 
 };
-export const VerificationToken = ( req , res , next ) => {
+export const VerificationToken = (req, res, next) => {
     if (req.utilisateur) {
         res.send(req.utilisateur);
         next();
-      } 
-      else {
-       return res.status(401).json({ message: 'Invalid token' });
-      }
+    }
+    else {
+        return res.status(401).json({ message: 'Invalid token' });
+    }
 
 };
