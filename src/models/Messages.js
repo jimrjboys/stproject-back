@@ -3,7 +3,10 @@ import mongoose from 'mongoose';
 const Schema = mongoose.Schema;
 
 export const MessagesShema = new Schema({
-    //ato ny  schema anle basentsika 
+    
+    _id : {
+        type  : String  
+    },
     emetteurId: {
         type: String,
     },
@@ -11,8 +14,15 @@ export const MessagesShema = new Schema({
         type: String,
     },
     messages: {
-        type: String,
-        required: 'Votre messages est vide ',
+        
+        contenue : {
+            type: String,
+            required: 'Votre messages est vide ',
+        },
+        heure : {
+            type : Date ,
+            default:Date.now
+        },
     },
-    timestamps: true,
-})
+   
+},{ timestamps: true })

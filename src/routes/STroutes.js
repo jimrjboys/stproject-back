@@ -35,6 +35,11 @@ import {
     modificationOpinionUsers,
     softDeleteOpinions
 } from './../controllers/OpinionUsersControllers'
+import {
+    newMessages,
+    getMesssages
+} from '../controllers/MessagesController'
+
 const route = (app) => {
     // Utilisateur
     app.route('/utilisateur')
@@ -101,5 +106,13 @@ const route = (app) => {
     //Authentification
     app.route('/auth/signIn')
         .post(Authentification)
+
+    // Systeme de messsages 
+
+    app.route ('messages/:emetteurId/:recepteurID')
+        .post(newMessages)
+    app.route ('messages/:_id')
+        .post(getMesssages)
+
 }
 export default route;

@@ -12,7 +12,7 @@ const app = express();
 
 
 mongoose.Promise = global.Promise;
-mongoose.connect(`mongodb://127.0.0.1:27017/StProject`, {
+mongoose.connect(`mongodb+srv://jiji:jiji1234@zmz.djfzj.mongodb.net/ZmZ?retryWrites=true&w=majority`, {
     useNewUrlParser: true,
     useCreateIndex: true,
     useUnifiedTopology: true,
