@@ -11,7 +11,7 @@ import {
     findAllAnnonce,
     findOneAnnonce,
     updateAnnonce,
-    softdeleteAnnonce,
+    softDeleteAnnonce,
     editStateAnnonce
 } from '../controllers/AnnonceController'
 
