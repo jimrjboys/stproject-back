@@ -2,11 +2,14 @@ import express from 'express';
 import mongoose from 'mongoose';
 import bodyParser from 'body-parser';
 import route from './src/routes/STroutes';
+import jsonwebtoken from 'jsonwebtoken';
+import Utilisateur from './src/models/Utilisateur'
 const app = express();
 
 //connexion  avec notre base de donnée
 //mongodb+srv://jiji:jiji1234@zmz.djfzj.mongodb.net/ZmZ?retryWrites=true&w=majority
-mongodb://127.0.0.1:27017/
+//mongodb://127.0.0.1:27017/
+
 
 mongoose.Promise = global.Promise;
 mongoose.connect(`mongodb://127.0.0.1:27017/StProject`, {
@@ -22,6 +25,19 @@ mongoose.connect(`mongodb://127.0.0.1:27017/StProject`, {
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+
+app.use((req , res, next) => {
+    if (req.headers && req.headers.authorization && req.headers.authorization.split(' ')[0] === 'JWT') {
+        jsonwebtoken.verify(req.headers.authorization.split(' ')[1], 'RESTFULAPIs', (err, decode) =>{
+          if (err) req.Utilisateur = undefined;
+          req.Utilisateur = decode;
+          next();
+        });
+      } else {
+        req.Utilisateur = undefined;
+        next();
+      }
+})
 //declaration de notre router ici apres creatoin 
 route(app);
 //notre lien initiale

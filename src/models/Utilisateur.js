@@ -1,4 +1,7 @@
+'use strict';
+
 import mongoose from 'mongoose';
+import bcrypt from  'bcrypt';
 
 const Schema = mongoose.Schema;
 
@@ -23,6 +26,8 @@ export const UtilisateurSchema = new Schema({
     username: {
         type: String,
         required: 'Veullez entrer un nom  utilisateur ',
+        lowercase :true , 
+        trim: true , 
     },
     password: {
         type: String,
@@ -44,8 +49,7 @@ export const UtilisateurSchema = new Schema({
     pdp: {
         type: String,
     },
-
-
-
-
-})
+});
+UtilisateurSchema.methods.comparePassword = function(password) {
+    return bcrypt.compareSync(password, this.password);
+  };

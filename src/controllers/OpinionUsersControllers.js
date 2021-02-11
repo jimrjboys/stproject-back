@@ -1,12 +1,12 @@
 import mongoose from 'mongoose'
-import { OpionionUsersSchema  } from './../models/OpinionUsers'
+import { OpionionUsersSchema } from './../models/OpinionUsers'
 
-const OpinionUsers = mongoose.model('OpinionUsers',OpionionUsersSchema)  ; 
+const OpinionUsers = mongoose.model('OpinionUsers', OpionionUsersSchema);
 
-export const  ajoutOpinionUsers = (req , res) => {
+export const ajoutOpinionUsers = (req, res) => {
 
-    let nouvelleOpinionsUers = new OpinionUsers (req.body);
-    nouvelleOpinionsUers.save((err,nouvelleOpinions ) => {
+    let nouvelleOpinionsUers = new OpinionUsers(req.body);
+    nouvelleOpinionsUers.save((err, nouvelleOpinions) => {
 
         if (err) {
             res.send(err)
@@ -16,7 +16,7 @@ export const  ajoutOpinionUsers = (req , res) => {
     });
 
 }
-export const modificationOpinionUsers = (req , res) =>{
+export const modificationOpinionUsers = (req, res) => {
     OpinionUsers.findOneAndUpdate({ _id: req.params.opinionId }, req.body, { new: true }, (err, modifOpnionsId) => {
         if (err) {
             res.send(err)
@@ -25,7 +25,7 @@ export const modificationOpinionUsers = (req , res) =>{
 
     });
 }
-export const softDeleteOpinions = (req,res ) => {
+export const softDeleteOpinions = (req, res) => {
     OpinionUsers.findOneAndUpdate({ _id: req.params.opinionId }, req.body.etatSuppr, { new: true }, (err, softDeleteOpnionsId) => {
         if (err) {
             res.send(err)
