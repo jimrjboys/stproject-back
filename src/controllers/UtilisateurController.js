@@ -39,9 +39,9 @@ export const ajouterUtilisateur = (req, res) => {
         res.json(newUtilisateur)
         
         if(!fs.existsSync(dir)){
-                fs.mkdirSync(dir, err => console.log(err))
-                fs.mkdirSync(dir+'/annonce', err => console.log(err))
-                fs.mkdirSync(dir+'/pdp', err => console.log(err))
+                fs.mkdirSync(dir, { recursive: true }, err => console.log(err))
+                fs.mkdirSync(dir+'/annonce/thumbnail', { recursive: true }, err => console.log(err))
+                fs.mkdirSync(dir+'/pdp/thumbnail', { recursive: true }, err => console.log(err))
         }
     });
 }
