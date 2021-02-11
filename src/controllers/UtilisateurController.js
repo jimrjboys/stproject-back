@@ -4,6 +4,9 @@ import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import { LocalisationSchema } from '../models/Localisation';
 import { UtilisateurSchema } from '../models/Utilisateur';
+
+import fs from "fs"
+
 const Utilisateur = mongoose.model('Utilisateur', UtilisateurSchema)
 const Localisation = mongoose.model('Localisation', LocalisationSchema)
 
@@ -25,11 +28,21 @@ export const ajouterUtilisateur = (req, res) => {
     nouveauxUtilisateur.password = bcrypt.hashSync(req.body.password, saltRounds)
 
     nouveauxUtilisateur.save((err, newUtilisateur) => {
+        const dir = `./upload/${newUtilisateur._id}`
+
         if (err) {
             res.send(err)
         }
+
         newUtilisateur.password = undefined
+
         res.json(newUtilisateur)
+        
+        if(!fs.existsSync(dir)){
+                fs.mkdirSync(dir, err => console.log(err))
+                fs.mkdirSync(dir+'/annonce', err => console.log(err))
+                fs.mkdirSync(dir+'/pdp', err => console.log(err))
+        }
     });
 }
 export const utilisateurId = (req, res) => {
