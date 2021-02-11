@@ -1,18 +1,3 @@
-import {
-    createAnnonce,
-    findAllAnnonce, 
-    findOneAnnonce, 
-    updateAnnonce, 
-    softDeleteAnnonce, 
-    editStateAnnonce
-} from '../controllers/AnnonceController'
-
-import { 
-    createRequete, 
-    editStateRequete, 
-    findAllRequeteByAnnonce 
-} from '../controllers/RequeteController'
-
 import { 
     createOpinionAnnonce,
     findAllOpinionAnnonce,
@@ -29,6 +14,7 @@ import {
     softdeleteAnnonce,
     editStateAnnonce
 } from '../controllers/AnnonceController'
+
 import {
     createRequete,
     editStateRequete,
@@ -47,17 +33,18 @@ import {
     VerificationToken,
 
 } from '../controllers/UtilisateurController'
+
 import {
     ajoutNotification,
     modificationNotification
 } from '../controllers/NotificationControllers'
-import {ajoutOpinionUsers,modificationOpinionUsers,softDeleteOpinions} from './../controllers/OpinionUsersControllers'
 
 import {
     ajoutOpinionUsers,
     modificationOpinionUsers,
     softDeleteOpinions
 } from './../controllers/OpinionUsersControllers'
+
 const route = (app) => {
     // Utilisateur
     app.route('/utilisateur')

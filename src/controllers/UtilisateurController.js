@@ -18,9 +18,13 @@ export const listUtilisateur = (req, res) => {
 
     });
 }
-export const ajouterUtilisateur = (req, res) => {
+export const ajouterUtilisateur = async (req, res) => {
     let nouveauxUtilisateur = new Utilisateur(req.body);
-    nouveauxUtilisateur.password = bcrypt.hashSync(req.body.password)
+    try {
+        nouveauxUtilisateur.password = await bcrypt.hashSync(req.body.password)   
+    } catch (error) {
+      console.log(error)  
+    }
     nouveauxUtilisateur.save((err, newUtilisateur) => {
         if (err) {
             res.send(err)
