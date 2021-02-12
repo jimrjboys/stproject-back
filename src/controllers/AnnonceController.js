@@ -1,19 +1,34 @@
-import { annonceSchema } from '../models/Annonce';
+import { annonceSchema } from '../models/Annonce'
+import sharp from 'sharp'
 
 const Annonce = annonceSchema
 
 // create and save annonce
-export const createAnnonce = (req, res) => {
+export const createAnnonce = async (req, res) => {
     let AnnonceCreate = new Annonce(req.body);
-    AnnonceCreate.save((err, annonce) => {
-        if (err) {
+    console.log("create annonce")
+    // AnnonceCreate.photoAnnonce = `${req.protocol}://${req.get('host')}/upload/${req.params.userId}/annonce/${req.file.filename}`
+    
+    // try{
+    //     let makeThumb = await sharp(`./upload/${req.params.userId}/annonce/${req.file.filename}`).resize(200, 300).jpeg({quality:80}).toFile(`./upload/${req.params.userId}/annonce/thumbnail/${req.file.filename}_thumb.jpg`)
+        
+    //     if(makeThumb){
+    //         AnnonceCreate.thumbAnnonce = `${req.protocol}://${req.get('host')}/upload/${req.params.userId}/annonce/thumbnail/${req.file.filename}_thumb.jpg`
+    //     }
+
+    // }catch(err){
+    //     console.log(err)
+    // }
+
+    Annonce.save()
+        .then(data => {
+            res.send(data)
+        })
+        .catch(err => {
             res.status(500).send({
                 message: err.message || "Some error occurred while creating the Annonce"
             });
-        }
-
-        res.json(annonce)
-    })
+        })
 };
 
 // retrieve and return all annonces
