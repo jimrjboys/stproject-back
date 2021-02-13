@@ -50,6 +50,9 @@ import {
     getMesssages
 } from '../controllers/MessagesController'
 
+// import multer from '../middleware/multer-config'
+import multer from 'multer'
+
 const route = (app) => {
     // Utilisateur
     app.route('/utilisateur')
@@ -57,14 +60,46 @@ const route = (app) => {
         .post(ajouterUtilisateur)
 
     //Utilisateur avec Recheche par ID 
-    app.route('/utilisateur/:utilisateurId')
+    app.route('/utilisateur/:utilisateurId?')
         .get(utilisateurId)
         .put(modifierUtilisateur)
 
     // Annonce
-    app.route('/annonce')
+    app.route('/annonce/:userId')
         .get(findAllAnnonce)
-        .post(createAnnonce)
+        .post((req, res , next) => {
+            console.log("upload sary", req.params.userId)
+            // multer(req, res, `${req.params.userId}/annonce`)
+            const MIME_TYPES = {
+                'image/jpg': 'jpg',
+                'image/jpeg': 'jpg',
+                'image/png': 'png'
+            }
+            
+            const dir = `./upload/${req.params.userId}/annonce`;
+
+            const storage = multer.diskStorage({
+                destination: (req, file, callback) => {
+                    callback(null, dir)
+                },
+                filename: (req, file, callback) => {
+                    const name = file.originalname.split(' ').join('_')
+                    const extension = MIME_TYPES[file.mimetype]
+                    callback(null, name + Date.now() + '.' + extension)
+                }
+            })
+
+            let uploadD = multer({
+                storage: storage
+            }).single('image')
+            next(),
+            uploadD(req, res, (err) => {
+                if(err){
+                    console.log(err)
+                }
+            })
+
+        }, createAnnonce)
     // Annonce use ID
     app.route('/annonce/:annonceId')
         .get(findOneAnnonce)

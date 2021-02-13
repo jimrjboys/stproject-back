@@ -17,12 +17,19 @@ export const annonceSchema = mongoose.Schema({
         type: String,
         required: 'donnée logitude et latitude du lieu est obligatoire',
     },
-    etatSuppr: Boolean,
-    etatReaparaitre: Boolean,
+    etatSuppr: {
+        type: Boolean,
+        default: false,
+    },
+    etatReaparaitre: {
+        type: Boolean,
+        default: false,
+    },
     photoAnnonce: {
         type: String,
         required: 'photo obligatoire',
     },
+    thumbAnnonce: String,
     utilisateurId: {
         type: String,
         required: 'auteur obligatoire'
