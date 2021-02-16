@@ -1,6 +1,8 @@
 import mongoose from 'mongoose';
 
-export const annonceSchema = mongoose.Schema({
+const Schema = mongoose.Schema
+
+export const annonceSchema = new Schema({
     titre: { 
         type: String,
         required: 'titre obligatoire',
@@ -29,7 +31,9 @@ export const annonceSchema = mongoose.Schema({
         type: String,
         required: 'photo obligatoire',
     },
-    thumbAnnonce: String,
+    thumbAnnonce: {
+        type: String
+    },
     utilisateurId: {
         type: String,
         required: 'auteur obligatoire'

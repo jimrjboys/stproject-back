@@ -50,7 +50,7 @@ import {
     getMesssages
 } from '../controllers/MessagesController'
 
-// import multer from '../middleware/multer-config'
+// import media from '../middleware/multer-config'
 import multer from 'multer'
 
 const route = (app) => {
@@ -65,9 +65,9 @@ const route = (app) => {
         .put(modifierUtilisateur)
 
     // Annonce
-    app.route('/annonce/:userId')
+    app.route('/annonce/:userId?')
         .get(findAllAnnonce)
-        .post((req, res) => {
+        .post((req, res, next) => {
             console.log("upload sary", req.params.userId)
             // multer(req, res, `${req.params.userId}/annonce`)
             const MIME_TYPES = {
@@ -91,15 +91,23 @@ const route = (app) => {
 
             let uploadD = multer({
                 storage: storage
-            }).single('image')
+            }).single("photoAnnonce")
 
             uploadD(req, res, (err) => {
                 if(err){
                     console.log(err)
-                }
+                }else{
+                    // console.log(res.req.file.filename)
+                    // res.send(res.req.file.filename);
+                    createAnnonce(req, res, res.req.file.filename)
+                }   
             })
 
-        }, createAnnonce)
+            // console.log(uploadD)
+            // createAnnonce(req, res, uploadD)
+            // next()
+        })
+
     // Annonce use ID
     app.route('/annonce/:annonceId')
         .get(findOneAnnonce)
