@@ -2,6 +2,7 @@ import express from 'express';
 import mongoose from 'mongoose';
 import bodyParser from 'body-parser';
 import route from './src/routes/STroutes';
+import path from 'path'
 import jsonwebtoken from 'jsonwebtoken';
 import Utilisateur from './src/models/Utilisateur'
 const app = express();
@@ -25,6 +26,8 @@ mongoose.connect(`mongodb://127.0.0.1:27017/StProject`, {
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+
+app.use('/upload', express.static(path.join(__dirname, 'upload')))
 
 app.use((req , res, next) => {
     if (req.headers && req.headers.authorization && req.headers.authorization.split(' ')[0] === 'JWT') {
