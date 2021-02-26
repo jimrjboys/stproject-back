@@ -38,7 +38,7 @@ app.use((req , res, next) => {
         next();
       }
 })
-//declaration de notre router ici apres creatoin 
+//declaration de notre router ici apres creation 
 route(app);
 //notre lien initiale
 app.get('/', (req, res) =>

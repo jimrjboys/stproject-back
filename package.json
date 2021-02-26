@@ -18,17 +18,18 @@
     "api",
     "rest"
   ],
-  "author": "RASOANAIVO ANdry Jimmy || Eric Shiore",
+  "author": "RASOANAIVO Andry Jimmy || Eric Shiore",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/jimrjboys/stproject-back/issues"
   },
-  "homepage": "https://github.com/jimrjboys/stproject-back#readme",
+  "homepage": "https://www.speedtourism.fr",
   "devDependencies": {
     "@babel/core": "^7.12.10",
     "babel-cli": "^6.26.0",
     "babel-node": "0.0.1-security",
-    "babel-preset-env": "^1.7.0"
+    "babel-preset-env": "^1.7.0",
+    "sharp": "^0.27.2"
   },
   "dependencies": {
     "bcrypt": "^5.0.0",
