@@ -12,13 +12,16 @@ import {
     findOneAnnonce,
     updateAnnonce,
     softDeleteAnnonce,
-    editStateAnnonce
+    editStateAnnonce,
+    findAnnonceByGuideId
 } from '../controllers/AnnonceController'
 
 import {
     createRequete,
     editStateRequete,
-    findAllRequeteByAnnonce
+    findAllRequeteByAnnonce,
+    findReqByIdTouriste,
+    cancelRequest
 } from '../controllers/RequeteController'
 
 import {
@@ -50,7 +53,7 @@ import {
     getMesssages
 } from '../controllers/MessagesController'
 
-// import multer from '../middleware/multer-config'
+// import media from '../middleware/multer-config'
 import multer from 'multer'
 
 const route = (app) => {
@@ -65,9 +68,9 @@ const route = (app) => {
         .put(modifierUtilisateur)
 
     // Annonce
-    app.route('/annonce/:userId')
+    app.route('/annonce/:userId?')
         .get(findAllAnnonce)
-        .post((req, res , next) => {
+        .post((req, res, next) => {
             console.log("upload sary", req.params.userId)
             // multer(req, res, `${req.params.userId}/annonce`)
             const MIME_TYPES = {
@@ -91,39 +94,46 @@ const route = (app) => {
 
             let uploadD = multer({
                 storage: storage
-            }).single('image')
-            next(),
+            }).single("photoAnnonce")
+
             uploadD(req, res, (err) => {
                 if(err){
                     console.log(err)
-                }
+                }else{
+                    console.log(res.req.file.filename)
+                    // res.send(res.req.file.filename);
+                    createAnnonce(req, res, res.req.file.filename)
+                }   
             })
 
-        }, createAnnonce)
+            // console.log(uploadD)
+            // createAnnonce(req, res, uploadD)
+            // next()
+        })
+
     // Annonce use ID
-    app.route('/annonce/:annonceId')
+    app.route('/annonce/oneId/:annonceId')
         .get(findOneAnnonce)
         .put(updateAnnonce)
     // advanced functionality
     app.put('/annonce/softDeleteAnnonce/:annonceId', softDeleteAnnonce)
     app.put('/annonce/editStateAnnonce/:annonceId', editStateAnnonce)
+    app.get('/annonce/annonceGuide/:userId', findAnnonceByGuideId)
 
     // Requete
-    app.route('/requete')
-        .post(createRequete) // create requete
+    app.post('/request', createRequete) // create requete
     // Requete use requeteId
-    app.route('/requete/:requeteId')
-        .put(editStateRequete) // editStateRequete (accepter ou non)
+    app.put('/request/:requeteId', editStateRequete) // editStateRequete (accepter ou non)
+    app.put('/request/cancelRequest/:requeteId', cancelRequest) // annuller requete
     // Requete use annonceId
-    app.route('/requete/allRequete/:annonceId')
-        .get(findAllRequeteByAnnonce) // get all requete by annonceId
+    app.get('/request/allRequest/:annonceId', findAllRequeteByAnnonce) // get all requete by annonceId
+    app.get('/request/allRequestTouriste/:userId', findReqByIdTouriste)
 
     // Route OpinionAnnonce
     app.post('/opinionAnnonce', createOpinionAnnonce) // add opinion annonce
     app.put('/opinionAnnonce/:OpinionAId', updateOpinionAnnonce) // update opinion annonce
     app.get('/opinionAnnonce/:annonceId', findAllOpinionAnnonce) // get all opionion annonce by annnonceId
     app.put('/opinionAnnonce/softDelete/:OpinionAId', softDeleteOpinionAnnonce) // softDelete opinion annonce
-        .get(findAllRequeteByAnnonce)
 
     //sauvegrade du derniere position  de l'utilisateur
     app.route('/localisationActuelle')

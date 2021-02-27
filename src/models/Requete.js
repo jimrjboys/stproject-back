@@ -7,9 +7,22 @@ export const requeteSchema = new Schema({
         type: String,
         required: 'id touriste obligatoire'
     },
-    guideId: String,
-    annonceId: String,
-    etatRequete: Boolean,
+    guideId: {
+        type: String,
+        required: 'id du guide obligatoire'
+    },
+    annonceId: {
+        type: String,
+        required: 'id annonce obligatoire'
+    },
+    etatRequete: {
+        type: Boolean,
+        default: false
+    },
+    etatAnnulation: {
+        type: Boolean,
+        default: false
+    }
 },
     {
         timestamps: true

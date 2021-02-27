@@ -21,7 +21,7 @@ export const createRequete = (req, res) => {
 // editStateRequete
 export const editStateRequete = (req, res) => {
     Requete.findByIdAndUpdate(req.params.requeteId, {
-        etatRequete: req.body.etatSuppr
+        etatRequete: req.body.etatRequete
     }, { new: true })
         .then(requete => {
             res.send(requete)
@@ -38,9 +38,9 @@ export const editStateRequete = (req, res) => {
         })
 }
 
-// retrieve all requete By AnnonceId
+// retrieve all requete By AnnonceId (utilisé plus par le guide)
 export const findAllRequeteByAnnonce = (req, res) => {
-    Requete.findById(req.params.annonceId)
+    Requete.find({"annonceId": req.params.annonceId, "etatAnnulation": false})
         .then(requete => {
             if (!requete) {
                 return res.status(404).send({
@@ -55,5 +55,41 @@ export const findAllRequeteByAnnonce = (req, res) => {
                     message: "Requete not found with id"
                 })
             }
+        })
+}
+
+// get all request make by touriste
+export const findReqByIdTouriste = (req, res) => {
+    Requete.find({"touristeId": req.params.userId})
+        .then(requete => {
+            res.send(requete)
+        })
+        .catch(err => {
+            if (err.kind === "ObjectId") {
+                return res.status(404).send({
+                    message: "Requete not found with id"
+                })
+            }
+            res.send(err)
+        })
+}
+
+// cancel request (make by touriste)
+export const cancelRequest = (req, res) => {
+    Requete.findByIdAndUpdate(req.params.requeteId, {
+        etatAnnulation: req.body.etatAnnulation
+    }, { new: true })
+        .then(requete => {
+            res.send(requete)
+        })
+        .catch(err => {
+            if (err.kind == "ObjectId") {
+                return res.status(404).send({
+                    message: "Requete not found with id " + req.params.requeteId
+                })
+            }
+            return res.status(500).send({
+                message: "Error updating requete with id " + req.params.requeteId
+            })
         })
 }
