@@ -29,7 +29,7 @@ export const findAllOpinionAnnonce = (req, res) => {
                     message: "No data about opinion"
                 })
             }
-            res.send(opinionA)
+            res.json(opinionA)
         })
         .catch(err => {
             if(err.kind === "ObjectId"){
@@ -44,7 +44,7 @@ export const findAllOpinionAnnonce = (req, res) => {
 export const updateOpinionAnnonce = (req, res) => {
     OpinionAnnonce.findByIdAndUpdate(req.params.OpinionAId, req.body, {new: true})
         .then(opinionA => {
-            res.send(opinionA)
+            res.json(opinionA)
         })
         .catch(err => {
             if(err.kind === "ObjectId"){
@@ -65,7 +65,7 @@ export const softDeleteOpinionAnnonce = (req, res) => {
         etatSuppr: req.body.etatSuppr
     }, {new: true})
     .then(opinionA => {
-        res.send(opinionA)
+        res.json(opinionA)
     })
     .catch(err => {
         if(err.kind === "ObjectId"){
