@@ -1,0 +1,47 @@
+{
+  "name": "stproject-back",
+  "version": "1.0.0",
+  "description": "Speed tourism Project by EJN",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "babel-node ./index.js",
+    "dev": "nodemon ./index.js --exec babel-node -e js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jimrjboys/stproject-back.git"
+  },
+  "keywords": [
+    "nodejs",
+    "mongodb",
+    "api",
+    "rest"
+  ],
+  "author": "RASOANAIVO Andry Jimmy || Eric Shiore",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jimrjboys/stproject-back/issues"
+  },
+  "homepage": "https://www.speedtourism.fr",
+  "devDependencies": {
+    "@babel/core": "^7.12.10",
+    "babel-cli": "^6.26.0",
+    "babel-node": "0.0.1-security",
+    "babel-preset-env": "^1.7.0",
+    "sharp": "^0.27.2"
+  },
+  "dependencies": {
+    "bcrypt": "^5.0.0",
+    "body-parser": "^1.19.0",
+    "express": "^4.17.1",
+    "jest": "^26.6.3",
+    "jsonwebtoken": "^8.5.1",
+    "mongodb": "^3.6.3",
+    "mongoose": "^5.11.14",
+    "multer": "^1.4.2",
+    "nodemon": "^2.0.6",
+    "save": "^2.4.0",
+    "supertest": "^6.1.3"
+  }
+}
