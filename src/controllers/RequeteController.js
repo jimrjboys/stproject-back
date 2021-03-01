@@ -24,7 +24,7 @@ export const editStateRequete = (req, res) => {
         etatRequete: req.body.etatRequete
     }, { new: true })
         .then(requete => {
-            res.send(requete)
+            res.json(requete)
         })
         .catch(err => {
             if (err.kind == "ObjectId") {
@@ -47,7 +47,7 @@ export const findAllRequeteByAnnonce = (req, res) => {
                     message: "Requete not found"
                 })
             }
-            res.send(requete)
+            res.json(requete)
         })
         .catch(err => {
             if (err.kind === "ObjectId") {
@@ -62,7 +62,7 @@ export const findAllRequeteByAnnonce = (req, res) => {
 export const findReqByIdTouriste = (req, res) => {
     Requete.find({"touristeId": req.params.userId})
         .then(requete => {
-            res.send(requete)
+            res.json(requete)
         })
         .catch(err => {
             if (err.kind === "ObjectId") {
@@ -80,7 +80,7 @@ export const cancelRequest = (req, res) => {
         etatAnnulation: req.body.etatAnnulation
     }, { new: true })
         .then(requete => {
-            res.send(requete)
+            res.json(requete)
         })
         .catch(err => {
             if (err.kind == "ObjectId") {

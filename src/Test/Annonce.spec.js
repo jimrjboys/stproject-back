@@ -1,8 +1,16 @@
 import supertest from 'supertest'
+<<<<<<< HEAD
 import app from '../../server.js'
 import userData from '../../userData.json'
 
 const annonceId = "60326e5fd7a0d9195cb9c51e"
+=======
+// import app from '../../index.js'
+import app from '../src/express'
+import userData from '../../userData.json'
+
+const annonceId = "602d065a636be506bccd686d"
+>>>>>>> 1c77ecc504dea03b17a837c738ba0ef186f10d1f
 
 // post annonce
 // describe(`POST /annonce/${userData.userId}`, () => {
@@ -133,7 +141,11 @@ describe(`GET /annonce/annonceGuide/${userData.userId}`, () => {
 })
 
 // findOneAnnonce annonce
+<<<<<<< HEAD
 describe(`GET /annonce/oneId/${annonceId}`, () => {
+=======
+describe(`GET /annonce/${annonceId}`, () => {
+>>>>>>> 1c77ecc504dea03b17a837c738ba0ef186f10d1f
     try {
         afterEach(() => {
             console.log("Annonce retrieve successfully")

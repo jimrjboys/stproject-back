@@ -37,7 +37,7 @@ export const createAnnonce = async (req, res, file) => {
 export const findAllAnnonce = (req, res) => {
     Annonce.find()
         .then(annonces => {
-            res.send(annonces)
+            res.json(annonces)
         })
         .catch(err => {
             res.status(500).send({
@@ -55,7 +55,7 @@ export const findOneAnnonce = (req, res) => {
                     message: "Annonce not found"
                 })
             }
-            res.send(annonce)
+            res.json(annonce)
         })
         .catch(err => {
             if (err.kind === "ObjectId") {
@@ -70,7 +70,7 @@ export const findOneAnnonce = (req, res) => {
 export const updateAnnonce = (req, res) => {
     Annonce.findByIdAndUpdate(req.params.annonceId, req.body, { new: true })
         .then(annonce => {
-            res.send(annonce)
+            res.json(annonce)
         })
         .catch(err => {
             if (err.kind === "ObjectId") {
@@ -91,7 +91,7 @@ export const softDeleteAnnonce = (req, res) => {
         etatSuppr: req.body.etatSuppr
     }, { new: true })
         .then(annonce => {
-            res.send(annonce)
+            res.json(annonce)
         })
         .catch(err => {
             if (err.kind === "ObjectId") {
@@ -111,7 +111,7 @@ export const editStateAnnonce = (req, res) => {
         etatReaparaitre: req.body.etatReaparaitre
     }, { new: true })
         .then(annonce => {
-            res.send(annonce)
+            res.json(annonce)
         })
         .catch(err => {
             if (err.kind === "ObjectId") {
@@ -129,7 +129,7 @@ export const editStateAnnonce = (req, res) => {
 export const findAnnonceByGuideId = (req, res) => {
     Annonce.find({ utilisateurId: req.params.userId })
         .then(annonces => {
-            res.send(annonces)
+            res.json(annonces)
         })
         .catch(err => {
             res.send(err)
