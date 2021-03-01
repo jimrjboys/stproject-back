@@ -3,7 +3,7 @@ import app from '../../index.js'
 import userData from '../../userData.json'
 
 let OAId
-
+const annonceId = "602b9adbb75f4a0d00bf4385"
 // create new opinionAnnonce
 describe("POST opinionAnnonce", () => {
     try {
@@ -15,7 +15,7 @@ describe("POST opinionAnnonce", () => {
                 "note": 5,
                 "avis": "Super itinéraire",
                 "auteurId": userData.userId,
-                "annonceId": "60326e5fd7a0d9195cb9c51e",
+                "annonceId": annonceId,
             }
         })
 
@@ -67,7 +67,7 @@ describe("get all opinion Annonce details", () => {
 
         test("GET opinion output", async done => {
             await supertest(app)
-                .get('/opinionAnnonce/60326e5fd7a0d9195cb9c51e')
+                .get(`/opinionAnnonce/${annonceId}`)
                 .expect(200)
                 .then(res => {
                     console.log('GET RESPONSE : ', res.body.length)
@@ -95,7 +95,7 @@ describe("PUT modification opinion annonce", () => {
                 "note": 5,
                 "avis": "très bien modifier",
                 "auteurId": userData.userId,
-                "annonceId": "602b9adbb75f4a0d00bf4385",
+                "annonceId": annonceId,
             }
         })
 
