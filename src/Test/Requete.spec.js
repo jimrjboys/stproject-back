@@ -1,5 +1,5 @@
 import supertest from 'supertest'
-import app from '../../server.js'
+import app from '../../index.js'
 // import app from '../src/express'
 import userData from '../../userData.json'
 

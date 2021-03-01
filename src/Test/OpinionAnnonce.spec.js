@@ -1,5 +1,5 @@
 import supertest from 'supertest'
-import app from '../../server.js'
+import app from '../../index.js'
 import userData from '../../userData.json'
 
 let OAId
@@ -67,11 +67,7 @@ describe("get all opinion Annonce details", () => {
 
         test("GET opinion output", async done => {
             await supertest(app)
-<<<<<<< HEAD
                 .get('/opinionAnnonce/60326e5fd7a0d9195cb9c51e')
-=======
-                .get('/opinionAnnonce/602b9adbb75f4a0d00bf4385')
->>>>>>> 1c77ecc504dea03b17a837c738ba0ef186f10d1f
                 .expect(200)
                 .then(res => {
                     console.log('GET RESPONSE : ', res.body.length)
