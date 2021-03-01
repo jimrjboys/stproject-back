@@ -1,8 +1,9 @@
+'use strict'
 import mongoose from 'mongoose';
 
 const Schema = mongoose.Schema
 
-export const annonceSchema = new Schema({
+export const AnnonceSchema = new Schema({
     titre: { 
         type: String,
         required: 'titre obligatoire',

@@ -1,5 +1,7 @@
 import mongoose from 'mongoose'
 import { opinionAnnonceSchema } from '../models/OpinionAnnonce'
+// import 'core-js/stable'
+import "regenerator-runtime/runtime";
 
 const OpinionAnnonce = mongoose.model('OpinionAnnonce', opinionAnnonceSchema)
 
@@ -20,7 +22,7 @@ export const createOpinionAnnonce = (req, res) => {
 
 // retrieve and return all opinion by annonceId
 export const findAllOpinionAnnonce = (req, res) => {
-    OpinionAnnonce.findById(req.params.annonceId)
+    OpinionAnnonce.find({annonceId: req.params.annonceId})
         .then(opinionA => {
             if(!opinionA){
                 return res.status(404).send({

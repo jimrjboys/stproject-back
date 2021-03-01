@@ -50,9 +50,8 @@ app.get('/', (req, res) =>
 // app.listen(PORT, () =>
 //         console.log(`Notre serveur est en marche dans le port ${PORT}`)
 // );
-app.listen(process.env.PORT || 3000, () =>
-    console.log(`Notre serveur est en marche dans le port ${process.env.PORT || 3000}`)
-);
+
+export default app
 
 
 

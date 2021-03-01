@@ -1,30 +1,30 @@
 import mongoose from 'mongoose'
-import { annonceSchema } from '../models/Annonce'
+import { AnnonceSchema } from '../models/Annonce'
 import sharp from 'sharp'
 
-const Annonce = mongoose.model('Annonce', annonceSchema)
+const Annonce = mongoose.model('Annonce', AnnonceSchema)
 
 // create and save annonce
 export const createAnnonce = async (req, res, file) => {
     console.log("create annonce", file)
-    
+
     let AnnonceCreate = new Annonce(req.body);
-    
+
     AnnonceCreate.photoAnnonce = `${req.protocol}://${req.get('host')}/upload/${req.params.userId}/annonce/${file}`
-    
-    try{
-        let makeThumb = await sharp(`./upload/${req.params.userId}/annonce/${file}`).resize(200, 300).jpeg({quality:80}).toFile(`./upload/${req.params.userId}/annonce/thumbnail/${file}_thumb.jpg`)
-        
-        if(makeThumb){
+
+    try {
+        let makeThumb = await sharp(`./upload/${req.params.userId}/annonce/${file}`).resize(200, 300).jpeg({ quality: 80 }).toFile(`./upload/${req.params.userId}/annonce/thumbnail/${file}_thumb.jpg`)
+
+        if (makeThumb) {
             AnnonceCreate.thumbAnnonce = `${req.protocol}://${req.get('host')}/upload/${req.params.userId}/annonce/thumbnail/${file}_thumb.jpg`
         }
 
-    }catch(err){
+    } catch (err) {
         console.log(err)
     }
 
     AnnonceCreate.save((err, data) => {
-        if(err){
+        if (err) {
             res.status(500).send({
                 message: err.message || "Some error occurred while creating the Annonce"
             });
@@ -122,5 +122,16 @@ export const editStateAnnonce = (req, res) => {
             return res.status(500).send({
                 message: "Error updating annonce with id " + req.params.annonceId
             })
+        })
+}
+
+// trouvé les annonces poster par un guide
+export const findAnnonceByGuideId = (req, res) => {
+    Annonce.find({ utilisateurId: req.params.userId })
+        .then(annonces => {
+            res.send(annonces)
+        })
+        .catch(err => {
+            res.send(err)
         })
 }
