@@ -1,5 +1,7 @@
 import mongoose from 'mongoose'
 import { opinionAnnonceSchema } from '../models/OpinionAnnonce'
+// import 'core-js/stable'
+// import "regenerator-runtime/runtime";
 
 const OpinionAnnonce = mongoose.model('OpinionAnnonce', opinionAnnonceSchema)
 
@@ -20,14 +22,14 @@ export const createOpinionAnnonce = (req, res) => {
 
 // retrieve and return all opinion by annonceId
 export const findAllOpinionAnnonce = (req, res) => {
-    OpinionAnnonce.findById(req.params.annonceId)
+    OpinionAnnonce.find({annonceId: req.params.annonceId})
         .then(opinionA => {
             if(!opinionA){
                 return res.status(404).send({
                     message: "No data about opinion"
                 })
             }
-            res.send(opinionA)
+            res.json(opinionA)
         })
         .catch(err => {
             if(err.kind === "ObjectId"){
@@ -42,7 +44,7 @@ export const findAllOpinionAnnonce = (req, res) => {
 export const updateOpinionAnnonce = (req, res) => {
     OpinionAnnonce.findByIdAndUpdate(req.params.OpinionAId, req.body, {new: true})
         .then(opinionA => {
-            res.send(opinionA)
+            res.json(opinionA)
         })
         .catch(err => {
             if(err.kind === "ObjectId"){
@@ -63,7 +65,7 @@ export const softDeleteOpinionAnnonce = (req, res) => {
         etatSuppr: req.body.etatSuppr
     }, {new: true})
     .then(opinionA => {
-        res.send(opinionA)
+        res.json(opinionA)
     })
     .catch(err => {
         if(err.kind === "ObjectId"){
