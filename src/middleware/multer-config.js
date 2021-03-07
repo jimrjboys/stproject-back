@@ -7,16 +7,26 @@ const MIME_TYPES = {
 }
 
 const storage = (namefile) => {
-    // const dir = `./upload/${namefile}`;
-    // try {
-            
-    // } catch (error) {
-    //     console.log(error)
-    // }
+    const dir = `./upload/${namefile}`;
+    
+    // const dir = `./upload/${req.params.userId}/annonce`;
+
+    multer.diskStorage({
+        destination: (req, file, callback) => {
+            callback(null, dir)
+        },
+        filename: (req, file, callback) => {
+            const name = file.originalname.split(' ').join('_')
+            const extension = MIME_TYPES[file.mimetype]
+            callback(null, name + Date.now() + '.' + extension)
+        }
+    })
 }
 
-export default function (req, res, namefile){
-    multer({
+export const media = (namefile) => {
+    return multer({
         storage: storage(namefile)
-    }).single('image')
+    }).any()
+
+    // next()
 }

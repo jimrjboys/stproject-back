@@ -2,11 +2,11 @@
   "name": "stproject-back",
   "version": "1.0.0",
   "description": "Speed tourism Project by EJN",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
     "test": "jest",
-    "start": "babel-node ./index.js",
-    "dev": "nodemon ./index.js --exec babel-node -e js"
+    "start": "babel-node ./server.js",
+    "dev": "nodemon ./server.js --exec babel-node -e js"
   },
   "repository": {
     "type": "git",
@@ -25,8 +25,11 @@
   },
   "homepage": "https://www.speedtourism.fr",
   "devDependencies": {
-    "@babel/core": "^7.12.10",
-    "babel-cli": "^6.26.0",
+    "@babel/cli": "^7.0.0",
+    "@babel/core": "^7.13.8",
+    "@babel/node": "^7.13.0",
+    "@babel/polyfill": "^7.12.1",
+    "@babel/preset-env": "^7.13.8",
     "babel-node": "0.0.1-security",
     "babel-preset-env": "^1.7.0",
     "sharp": "^0.27.2",

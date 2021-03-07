@@ -1,9 +1,14 @@
 import supertest from 'supertest'
+<<<<<<< HEAD
 // import app from '../../index.js'
 import app from '../../src/index.js'
+=======
+import app from '../../index.js'
+// import app from '../src/express'
+>>>>>>> 49815c741b24e47e8a7a4c0f1259c1abeb1005dd
 import userData from '../../userData.json'
 
-const annonceId = "602d065a636be506bccd686d"
+const annonceId = "60326e40d7a0d9195cb9c51d"
 
 // post annonce
 // describe(`POST /annonce/${userData.userId}`, () => {
@@ -51,7 +56,7 @@ const annonceId = "602d065a636be506bccd686d"
 // })
 
 // edit annonce
-describe(`PUT /annonce/${annonceId}`, () => {
+describe(`PUT /annonce/oneId/${annonceId}`, () => {
     try {
         let newAnnonce
 
@@ -72,7 +77,7 @@ describe(`PUT /annonce/${annonceId}`, () => {
 
         test("Edit annonce now", async done => {
             const response = await supertest(app)
-                .put(`/annonce/${annonceId}`)
+                .put(`/annonce/oneId/${annonceId}`)
                 .send(newAnnonce)
                 .expect(200)
             
@@ -134,7 +139,7 @@ describe(`GET /annonce/annonceGuide/${userData.userId}`, () => {
 })
 
 // findOneAnnonce annonce
-describe(`GET /annonce/${annonceId}`, () => {
+describe(`GET /annonce/oneId/${annonceId}`, () => {
     try {
         afterEach(() => {
             console.log("Annonce retrieve successfully")

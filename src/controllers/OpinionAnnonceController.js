@@ -1,7 +1,6 @@
 import mongoose from 'mongoose'
 import { opinionAnnonceSchema } from '../models/OpinionAnnonce'
 // import 'core-js/stable'
-// import "regenerator-runtime/runtime";
 
 const OpinionAnnonce = mongoose.model('OpinionAnnonce', opinionAnnonceSchema)
 

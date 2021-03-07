@@ -1,6 +1,7 @@
 import mongoose from 'mongoose'
 import { AnnonceSchema } from '../models/Annonce'
 import sharp from 'sharp'
+import "regenerator-runtime/runtime";
 
 const Annonce = mongoose.model('Annonce', AnnonceSchema)
 

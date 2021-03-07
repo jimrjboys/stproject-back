@@ -1,10 +1,18 @@
 import express from 'express';
 import mongoose from 'mongoose';
 import bodyParser from 'body-parser';
+<<<<<<< HEAD
 import route from './src/routes/STroutesutes';
 import jsonwebtoken from 'jsonwebtoken';
 import Utilisateur from './src/models/Utilisateur' ; 
 import http from 'http'
+=======
+import route from './src/routes/STroutes';
+import path from 'path'
+import jsonwebtoken from 'jsonwebtoken';
+import Utilisateur from './src/models/Utilisateur'
+
+>>>>>>> 49815c741b24e47e8a7a4c0f1259c1abeb1005dd
 const app = express();
 
 //connexion  avec notre base de donnée
@@ -27,6 +35,8 @@ mongoose.connect(`mongodb://127.0.0.1:27017/`, {
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
+app.use('/upload', express.static(path.join(__dirname, 'upload')))
+
 app.use((req , res, next) => {
     if (req.headers && req.headers.authorization && req.headers.authorization.split(' ')[0] === 'JWT') {
         jsonwebtoken.verify(req.headers.authorization.split(' ')[1], 'RESTFULAPIs', (err, decode) =>{
@@ -48,9 +58,14 @@ app.get('/', (req, res) =>
 // app.listen(PORT, () =>
 //         console.log(`Notre serveur est en marche dans le port ${PORT}`)
 // );
+<<<<<<< HEAD
 server = app.listen(process.env.PORT || 3000, () =>
     console.log(`Notre serveur est en marche dans le port ${process.env.PORT || 3000}`)
 );
+=======
+
+export default app
+>>>>>>> 49815c741b24e47e8a7a4c0f1259c1abeb1005dd
 
 // instatiation du socket
 const io =   require ('socket.io') (server);
