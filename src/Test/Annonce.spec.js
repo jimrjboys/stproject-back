@@ -1,6 +1,6 @@
 import supertest from 'supertest'
 // import app from '../../index.js'
-import app from '../src/express'
+import app from '../../src/index.js'
 import userData from '../../userData.json'
 
 const annonceId = "602d065a636be506bccd686d"

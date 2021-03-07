@@ -1,9 +1,10 @@
 import express from 'express';
 import mongoose from 'mongoose';
 import bodyParser from 'body-parser';
-import route from './src/routes/STroutes';
+import route from './src/routes/STroutesutes';
 import jsonwebtoken from 'jsonwebtoken';
-import Utilisateur from './src/models/Utilisateur'
+import Utilisateur from './src/models/Utilisateur' ; 
+import http from 'http'
 const app = express();
 
 //connexion  avec notre base de donnée
@@ -12,7 +13,7 @@ const app = express();
 
 
 mongoose.Promise = global.Promise;
-mongoose.connect(`mongodb://127.0.0.1:27017/StProject`, {
+mongoose.connect(`mongodb://127.0.0.1:27017/`, {
     useNewUrlParser: true,
     useCreateIndex: true,
     useUnifiedTopology: true,
@@ -47,9 +48,16 @@ app.get('/', (req, res) =>
 // app.listen(PORT, () =>
 //         console.log(`Notre serveur est en marche dans le port ${PORT}`)
 // );
-app.listen(process.env.PORT || 3000, () =>
+server = app.listen(process.env.PORT || 3000, () =>
     console.log(`Notre serveur est en marche dans le port ${process.env.PORT || 3000}`)
 );
 
+// instatiation du socket
+const io =   require ('socket.io') (server);
 
+//ecoute des connexion entrante  
+io.on('connection' , (socket) => {
 
+  console.log ('declanchement du soket ')
+})
+export default app ; 
