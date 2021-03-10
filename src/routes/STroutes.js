@@ -10,6 +10,7 @@ import {
     createAnnonce,
     findAllAnnonce,
     findOneAnnonce,
+    searchByLieu,
     updateAnnonce,
     softDeleteAnnonce,
     editStateAnnonce,
@@ -119,6 +120,7 @@ const route = (app) => {
     app.put('/annonce/softDeleteAnnonce/:annonceId', softDeleteAnnonce)
     app.put('/annonce/editStateAnnonce/:annonceId', editStateAnnonce)
     app.get('/annonce/annonceGuide/:userId', findAnnonceByGuideId)
+    app.get('/annonce/searchByLieu/:search', searchByLieu)
 
     // Requete
     app.post('/request', createRequete) // create requete

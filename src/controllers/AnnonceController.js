@@ -67,6 +67,19 @@ export const findOneAnnonce = (req, res) => {
         })
 }
 
+// search annonce by lieu
+export const searchByLieu = (req, res) => {
+Annonce.find({lieu: {$regex: req.params.search}})
+        .then(annonces => {
+            res.json(annonces)
+        })
+        .catch(err => {
+            return res.status(404).send({
+                message: err
+            })
+        })
+}
+
 // update annonce by id
 export const updateAnnonce = (req, res) => {
     Annonce.findByIdAndUpdate(req.params.annonceId, req.body, { new: true })

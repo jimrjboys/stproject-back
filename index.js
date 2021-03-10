@@ -51,8 +51,4 @@ app.get('/', (req, res) =>
 // app.listen(PORT, () =>
 //         console.log(`Notre serveur est en marche dans le port ${PORT}`)
 // );
-
 export default app
-
-
-
