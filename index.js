@@ -12,7 +12,6 @@ const app = express();
 //mongodb+srv://jiji:jiji1234@zmz.djfzj.mongodb.net/ZmZ?retryWrites=true&w=majority
 //mongodb://127.0.0.1:27017/
 
-
 mongoose.Promise = global.Promise;
 mongoose.connect(`mongodb://127.0.0.1:27017/`, {
     useNewUrlParser: true,
@@ -51,16 +50,5 @@ app.get('/', (req, res) =>
 // app.listen(PORT, () =>
 //         console.log(`Notre serveur est en marche dans le port ${PORT}`)
 // );
-server = app.listen(process.env.PORT || 3000, () =>
-    console.log(`Notre serveur est en marche dans le port ${process.env.PORT || 3000}`)
-);
 
-// instatiation du socket
-const io =   require ('socket.io') (server);
-
-//ecoute des connexion entrante  
-io.on('connection' , (socket) => {
-
-  console.log ('declanchement du soket ')
-})
 export default app ; 
