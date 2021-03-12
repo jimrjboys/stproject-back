@@ -11,9 +11,9 @@ const app = express();
 //connexion  avec notre base de donnée
 //mongodb+srv://jiji:jiji1234@zmz.djfzj.mongodb.net/ZmZ?retryWrites=true&w=majority
 //mongodb://127.0.0.1:27017/
-
+// mongodb+srv://shiroe:blackflag@cluster0.4dqw7.mongodb.net/myFirstDatabase?retryWrites=true&w=majority
 mongoose.Promise = global.Promise;
-mongoose.connect(`mongodb://127.0.0.1:27017/`, {
+mongoose.connect(`mongodb+srv://shiroe:blackflag@cluster0.4dqw7.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`, {
     useNewUrlParser: true,
     useCreateIndex: true,
     useUnifiedTopology: true,
