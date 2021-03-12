@@ -24,10 +24,6 @@
     "url": "https://github.com/jimrjboys/stproject-back/issues"
   },
   "homepage": "https://www.speedtourism.fr",
-  "devDependencies": {
-    "sharp": "^0.27.2",
-    "socket.io": "^3.1.2"
-  },
   "dependencies": {
     "@babel/core": "^7.12.10",
     "babel-cli": "^6.26.0",
@@ -43,6 +39,8 @@
     "multer": "^1.4.2",
     "nodemon": "^2.0.6",
     "save": "^2.4.0",
+    "sharp": "^0.27.2",
+    "socket.io": "^3.1.2",
     "supertest": "^6.1.3"
   }
 }
