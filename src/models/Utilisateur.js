@@ -28,6 +28,7 @@ export const UtilisateurSchema = new Schema({
         required: 'Veullez entrer un nom  utilisateur ',
         lowercase :true , 
         trim: true , 
+        unique : true , 
     },
     password: {
         type: String,
