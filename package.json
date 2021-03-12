@@ -33,7 +33,6 @@
     "socket.io": "^3.1.2"
   },
   "dependencies": {
-    "babel-cli": "^6.26.0",
     "bcrypt": "^5.0.0",
     "body-parser": "^1.19.0",
     "express": "^4.17.1",
