@@ -47,8 +47,5 @@ route(app);
 app.get('/', (req, res) =>
     res.send(`notre serveur a été demarer sur le port : ${process.env.PORT || 3000}`)
 );
-// app.listen(PORT, () =>
-//         console.log(`Notre serveur est en marche dans le port ${PORT}`)
-// );
 
 export default app ; 
