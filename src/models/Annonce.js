@@ -28,13 +28,14 @@ export const AnnonceSchema = new Schema({
         type: Boolean,
         default: false,
     },
-    photoAnnonce: {
-        type: String,
-        required: 'photo obligatoire',
-    },
-    thumbAnnonce: {
-        type: String
-    },
+    images: [],
+    // photoAnnonce: {
+    //     type: String,
+    //     required: 'photo obligatoire',
+    // },
+    // thumbAnnonce: {
+    //     type: String
+    // },
     utilisateurId: {
         type: String,
         required: 'auteur obligatoire'

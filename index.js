@@ -13,7 +13,7 @@ const app = express();
 //mongodb://127.0.0.1:27017/
 // mongodb+srv://shiroe:blackflag@cluster0.4dqw7.mongodb.net/myFirstDatabase?retryWrites=true&w=majority
 mongoose.Promise = global.Promise;
-mongoose.connect(`mongodb+srv://shiroe:blackflag@cluster0.4dqw7.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`, {
+mongoose.connect(`mongodb://127.0.0.1:27017/StProject`, {
     useNewUrlParser: true,
     useCreateIndex: true,
     useUnifiedTopology: true,
@@ -44,9 +44,9 @@ app.use((req , res, next) => {
 //declaration de notre router ici apres creation 
 route(app);
 //notre lien initiale
-app.get('/', (req, res) =>
-    res.send(`notre serveur a été demarer sur le port : ${process.env.PORT || 3000}`)
-);
+// app.get('/', (req, res) =>
+//     res.send(`notre serveur a été demarer sur le port : ${process.env.PORT || 3000}`)
+// );
 // app.listen(PORT, () =>
 //         console.log(`Notre serveur est en marche dans le port ${PORT}`)
 // );

@@ -72,7 +72,7 @@ const route = (app) => {
     app.route('/annonce/:userId?')
         .get(findAllAnnonce)
         .post((req, res, next) => {
-            console.log("upload sary", req.params.userId)
+            // console.log("upload sary", req.params.userId)
             // multer(req, res, `${req.params.userId}/annonce`)
             const MIME_TYPES = {
                 'image/jpg': 'jpg',
@@ -95,15 +95,15 @@ const route = (app) => {
 
             let uploadD = multer({
                 storage: storage
-            }).single("photoAnnonce")
+            }).array("images")
 
             uploadD(req, res, (err) => {
                 if(err){
                     console.log(err)
                 }else{
-                    console.log(res.req.file.filename)
+                    // console.log(req.files)
                     // res.send(res.req.file.filename);
-                    createAnnonce(req, res, res.req.file.filename)
+                    createAnnonce(req, res, req.files)
                 }   
             })
 
