@@ -9,23 +9,19 @@ const Annonce = mongoose.model('Annonce', AnnonceSchema)
 export const createAnnonce = async (req, res, files) => {
     // console.log("create annonce", files)
 
-    let AnnonceCreate = new Annonce(req.body);
-
+    let AnnonceCreate = new Annonce(req.body)
+    let arrayImages = [], objectImages = {}
     try {
         await Promise.all(
             files.map(async file => {
                 try {
-                    // AnnonceCreate.photoAnnonce = `${req.protocol}://${req.get('host')}/upload/${req.params.userId}/annonce/${file}`
-                    let arrayImages = []
-                    let makeThumb = await sharp(`./upload/${req.params.userId}/annonce/${file}`).resize(200, 300).jpeg({ quality: 80 }).toFile(`./upload/${req.params.userId}/annonce/thumbnail/${file}_thumb.jpg`)
-                    let objectImages = {}
+                    let makeThumb = await sharp(`./upload/${req.params.userId}/annonce/${file.filename}`).resize(200, 300).jpeg({ quality: 80 }).toFile(`./upload/${req.params.userId}/annonce/thumbnail/${file.filename}_thumb.jpg`)
+                    
                     if (makeThumb) {
-                        objectImages["photoAnnonce"] = `${req.protocol}://${req.get('host')}/upload/${req.params.userId}/annonce/${file}`
-                        objectImages["thumbAnnonce"] = `${req.protocol}://${req.get('host')}/upload/${req.params.userId}/annonce/thumbnail/${file}_thumb.jpg` 
-                        // arrayImages.push(objectImages)
-                        AnnonceCreate.images = objectImages
-                        console.log(objectImages)
-                        // AnnonceCreate.thumbAnnonce = `${req.protocol}://${req.get('host')}/upload/${req.params.userId}/annonce/thumbnail/${file}_thumb.jpg`
+                        objectImages["photoAnnonce"] = `${req.protocol}://${req.get('host')}/upload/${req.params.userId}/annonce/${file.filename}`
+                        objectImages["thumbAnnonce"] = `${req.protocol}://${req.get('host')}/upload/${req.params.userId}/annonce/thumbnail/${file.filename}_thumb.jpg` 
+                        arrayImages.push(objectImages)
+                        AnnonceCreate.images = arrayImages
                     }
             
                 } catch (err) {
