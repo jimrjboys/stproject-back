@@ -2,11 +2,11 @@
   "name": "stproject-back",
   "version": "1.0.0",
   "description": "Speed tourism Project by EJN",
-  "main": "server.js",
+  "main": "index.js",
   "scripts": {
     "test": "jest",
-    "start": "babel-node ./server.js",
-    "dev": "nodemon ./server.js --exec babel-node -e js"
+    "start": "babel-node ./index.js",
+    "dev": "nodemon ./index.js --exec babel-node -e js"
   },
   "repository": {
     "type": "git",
