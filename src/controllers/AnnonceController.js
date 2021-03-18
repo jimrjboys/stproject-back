@@ -19,18 +19,18 @@ export const createAnnonce = async (req, res, files) => {
                     let objectImages = {}
                     if (makeThumb) {
                         objectImages["photoAnnonce"] = `${req.protocol}://${req.get('host')}/upload/${req.params.userId}/annonce/${file.filename}`
-                        objectImages["thumbAnnonce"] = `${req.protocol}://${req.get('host')}/upload/${req.params.userId}/annonce/thumbnail/${file.filename}_thumb.jpg` 
+                        objectImages["thumbAnnonce"] = `${req.protocol}://${req.get('host')}/upload/${req.params.userId}/annonce/thumbnail/${file.filename}_thumb.jpg`
                         arrayImages.push(objectImages)
                         AnnonceCreate.images = arrayImages
                     }
-            
+
                 } catch (err) {
                     console.log("error sharp", err)
                 }
             })
         )
     } catch (error) {
-       console.log(error) 
+        console.log(error)
     }
 
     AnnonceCreate.save((err, data) => {
@@ -43,17 +43,50 @@ export const createAnnonce = async (req, res, files) => {
     })
 };
 
-// retrieve and return all annonces
-export const findAllAnnonce = (req, res) => {
-    Annonce.find()
-        .then(annonces => {
-            res.json(annonces)
-        })
-        .catch(err => {
-            res.status(500).send({
-                message: err.message || "Une erreur s'est produit lors de la récuperation des annonces"
+/**
+ * retrieve and return all annonces
+ * accès à la pagination http://localhost:3000/annonce?page=2&limit=1. 
+*/
+export const findAllAnnonce = async (req, res) => {
+
+    const page = parseInt(req.query.page),
+        limit = parseInt(req.query.limit),
+        skipIndex = (page - 1) * limit,
+        results = {}
+
+    try {
+        let total = await Annonce.countDocuments({ lieu: { $regex: req.query.search ? req.query.search : '' } }),
+            totalPage = Math.ceil(total / limit)
+        Annonce.find({ lieu: { $regex: req.query.search ? req.query.search : '' } })
+            .limit(limit)
+            .skip(skipIndex)
+            .then(annonces => {
+                if(page < 0 || page === 0){
+                    results["error"] = true
+                    results["message"] = "invalid page number, should start with 1"
+                    res.json(results)
+                }else if(page > totalPage){
+                    results["error"] = true
+                    results["message"] = `invalid page number, last page is ${totalPage}`
+                    res.json(results)
+                }else{
+                    results["error"] = false
+                    results["page"] = page
+                    results["limit"] = limit
+                    results["message"] = annonces
+                    results["totalItem"] = total
+                    results["totalPage"] = totalPage
+                    res.json(results)
+                }
             })
-        })
+            .catch(err => {
+                res.status(500).send({
+                    message: err.message || "Une erreur s'est produit lors de la récuperation des annonces"
+                })
+            })
+    } catch (err) {
+        console.log("totalDocument", err)
+    }
 }
 
 // find single annonce with annonceId
@@ -77,17 +110,17 @@ export const findOneAnnonce = (req, res) => {
 }
 
 // search annonce by lieu
-export const searchByLieu = (req, res) => {
-Annonce.find({lieu: {$regex: req.params.search}})
-        .then(annonces => {
-            res.json(annonces)
-        })
-        .catch(err => {
-            return res.status(404).send({
-                message: err
-            })
-        })
-}
+// export const searchByLieu = (req, res) => {
+//     Annonce.find({ lieu: { $regex: req.params.search } })
+//         .then(annonces => {
+//             res.json(annonces)
+//         })
+//         .catch(err => {
+//             return res.status(404).send({
+//                 message: err
+//             })
+//         })
+// }
 
 // update annonce by id
 export const updateAnnonce = (req, res) => {
