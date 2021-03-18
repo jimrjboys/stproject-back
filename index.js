@@ -44,11 +44,8 @@ app.use((req , res, next) => {
 //declaration de notre router ici apres creation 
 route(app);
 //notre lien initiale
-// app.get('/', (req, res) =>
-//     res.send(`notre serveur a été demarer sur le port : ${process.env.PORT || 3000}`)
-// );
-// app.listen(PORT, () =>
-//         console.log(`Notre serveur est en marche dans le port ${PORT}`)
-// );
+app.get('/', (req, res) =>
+    res.send(`notre serveur a été demarer sur le port : ${process.env.PORT || 3000}`)
+);
 
 export default app ; 
