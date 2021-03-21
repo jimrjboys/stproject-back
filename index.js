@@ -4,6 +4,7 @@ import bodyParser from 'body-parser';
 import route from './src/routes/STroutes';
 import path from 'path'
 import jsonwebtoken from 'jsonwebtoken';
+import cors from 'cors';
 import Utilisateur from './src/models/Utilisateur'
 
 const app = express();
@@ -26,7 +27,7 @@ mongoose.connect(`mongodb://127.0.0.1:27017/StProject`, {
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-
+app.use(cors())
 app.use('/upload', express.static(path.join(__dirname, 'upload')))
 
 app.use((req , res, next) => {

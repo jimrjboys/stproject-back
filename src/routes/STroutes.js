@@ -34,7 +34,7 @@ import {
     Authentification,
     VerificationAuthentification,
     VerificationToken,
-
+    ActiveAccount,
 } from '../controllers/UtilisateurController'
 
 import {
@@ -66,6 +66,8 @@ const route = (app) => {
     app.route('/utilisateur/:utilisateurId?')
         .get(utilisateurId)
         .put(modifierUtilisateur)
+    //activation du compte après verification email user 
+    app.put('/utilisateur/activeAccount/:userId', ActiveAccount)
 
     // Annonce
     app.route('/annonce/:userId?')
