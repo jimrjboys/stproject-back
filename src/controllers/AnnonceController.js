@@ -18,8 +18,8 @@ export const createAnnonce = async (req, res, files) => {
                     let makeThumb = await sharp(`./upload/${req.params.userId}/annonce/${file.filename}`).resize(200, 300).jpeg({ quality: 80 }).toFile(`./upload/${req.params.userId}/annonce/thumbnail/${file.filename}_thumb.jpg`)
                     let objectImages = {}
                     if (makeThumb) {
-                        objectImages["photoAnnonce"] = `${req.protocol}://${req.get('host')}/upload/${req.params.userId}/annonce/${file.filename}`
-                        objectImages["thumbAnnonce"] = `${req.protocol}://${req.get('host')}/upload/${req.params.userId}/annonce/thumbnail/${file.filename}_thumb.jpg`
+                        objectImages["photoAnnonce"] = `upload/${req.params.userId}/annonce/${file.filename}`
+                        objectImages["thumbAnnonce"] = `upload/${req.params.userId}/annonce/thumbnail/${file.filename}_thumb.jpg`
                         arrayImages.push(objectImages)
                         AnnonceCreate.images = arrayImages
                     }
@@ -45,7 +45,7 @@ export const createAnnonce = async (req, res, files) => {
 
 /**
  * retrieve and return all annonces
- * accès à la pagination http://localhost:3000/annonce?page=2&limit=1. 
+ * accès à la pagination http://localhost:3000/annonce?page=2&limit=1 
 */
 export const findAllAnnonce = async (req, res) => {
 
@@ -61,6 +61,26 @@ export const findAllAnnonce = async (req, res) => {
             .limit(limit)
             .skip(skipIndex)
             .then(annonces => {
+                let newAnnonce = []
+                
+                annonces.forEach(annonce => {
+                    let data = {}, dataImages = {}, newImages = []
+
+                    data["titre"] = annonce.titre
+                    data["description"] = annonce.description
+                    data["lieu"] = annonce.lieu
+                    data["localisationAnnonce"] = annonce.localisationAnnonce
+                    
+                    annonce.images.forEach(item => {
+                        dataImages["photoAnnonce"] = `${req.protocol}://${req.get('host')}/${item.photoAnnonce}`
+                        dataImages["thumbAnnonce"] = `${req.protocol}://${req.get('host')}/${item.thumbAnnonce}`
+                        newImages.push(dataImages)
+                    })
+                    data["images"] = newImages
+
+                    newAnnonce.push(data);
+                });
+                // res.json(newAnnonce);
                 if(page < 0 || page === 0){
                     results["error"] = true
                     results["message"] = "invalid page number, should start with 1"
@@ -71,11 +91,11 @@ export const findAllAnnonce = async (req, res) => {
                     res.json(results)
                 }else{
                     results["error"] = false
-                    results["page"] = page
+                    results["currentPage"] = page
                     results["limit"] = limit
-                    results["message"] = annonces
                     results["totalItem"] = total
                     results["totalPage"] = totalPage
+                    results["message"] = newAnnonce
                     res.json(results)
                 }
             })
