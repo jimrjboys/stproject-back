@@ -26,7 +26,7 @@ export const AnnonceSchema = new Schema({
     },
     etatReaparaitre: {
         type: Boolean,
-        default: false,
+        default: true,
     },
     images: [],
     // photoAnnonce: {

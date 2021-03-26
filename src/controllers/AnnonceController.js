@@ -55,14 +55,14 @@ export const findAllAnnonce = async (req, res) => {
         results = {}
 
     try {
-        let total = await Annonce.countDocuments({ lieu: { $regex: req.query.search ? req.query.search : '' } }),
+        let total = await Annonce.countDocuments({ 'etatSuppr': false, 'etatReaparaitre': true, 'lieu': { $regex: req.query.search ? req.query.search : '' } }),
             totalPage = Math.ceil(total / limit)
-        Annonce.find({ lieu: { $regex: req.query.search ? req.query.search : '' } })
+        Annonce.find({ 'etatSuppr': false, 'etatReaparaitre': true, 'lieu': { $regex: req.query.search ? req.query.search : '' } })
             .limit(limit)
             .skip(skipIndex)
             .then(annonces => {
                 let newAnnonce = []
-                
+
                 annonces.forEach(annonce => {
                     let data = {}, dataImages = {}, newImages = []
 
@@ -70,7 +70,7 @@ export const findAllAnnonce = async (req, res) => {
                     data["description"] = annonce.description
                     data["lieu"] = annonce.lieu
                     data["localisationAnnonce"] = annonce.localisationAnnonce
-                    
+
                     annonce.images.forEach(item => {
                         dataImages["photoAnnonce"] = `${req.protocol}://${req.get('host')}/${item.photoAnnonce}`
                         dataImages["thumbAnnonce"] = `${req.protocol}://${req.get('host')}/${item.thumbAnnonce}`
@@ -80,16 +80,16 @@ export const findAllAnnonce = async (req, res) => {
 
                     newAnnonce.push(data);
                 });
-                // res.json(newAnnonce);
-                if(page < 0 || page === 0){
+
+                if (page < 0 || page === 0) {
                     results["error"] = true
                     results["message"] = "invalid page number, should start with 1"
                     res.json(results)
-                }else if(page > totalPage){
+                } else if (page > totalPage) {
                     results["error"] = true
                     results["message"] = `invalid page number, last page is ${totalPage}`
                     res.json(results)
-                }else{
+                } else {
                     results["error"] = false
                     results["currentPage"] = page
                     results["limit"] = limit
