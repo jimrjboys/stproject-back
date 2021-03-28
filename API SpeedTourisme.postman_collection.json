@@ -119,48 +119,83 @@
 					"response": []
 				},
 				{
-					"name": "fetch all user",
+					"name": "Save last locatlistaion user",
 					"request": {
-						"method": "GET",
+						"method": "POST",
 						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "longitude",
+									"value": "",
+									"description": "Number",
+									"type": "text"
+								},
+								{
+									"key": "latitude",
+									"value": "",
+									"description": "Number",
+									"type": "text"
+								},
+								{
+									"key": "idUtilisateur",
+									"value": "",
+									"description": "String, \"identifiant de l'utilisateur\"",
+									"type": "text"
+								}
+							]
+						},
 						"url": {
-							"raw": "http://localhost:3000/utilsateur",
+							"raw": "http://localhost:3000/localisationActuelle",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
 							"port": "3000",
 							"path": [
-								"utilsateur"
+								"localisationActuelle"
 							]
 						},
-						"description": "fetch all user, with \"etatSuppr\": false"
+						"description": "sauvegrade du derniere position  de l'utilisateur"
 					},
 					"response": []
 				},
 				{
-					"name": "fetch one user",
+					"name": "Authentification",
 					"request": {
-						"method": "GET",
+						"method": "POST",
 						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "email",
+									"value": "",
+									"description": "String",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "",
+									"description": "String",
+									"type": "text"
+								}
+							]
+						},
 						"url": {
-							"raw": "http://localhost:3000/:utilisateurId",
+							"raw": "http://localhost:3000/auth/signIn",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
 							"port": "3000",
 							"path": [
-								":utilisateurId"
-							],
-							"variable": [
-								{
-									"key": "utilisateurId",
-									"value": "",
-									"description": "Integer, \"identifiant de l'utilisateur\""
-								}
+								"auth",
+								"signIn"
 							]
-						}
+						},
+						"description": "get token user"
 					},
 					"response": []
 				},
@@ -267,9 +302,560 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "softDelete user",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "etatSuppr",
+									"value": "true",
+									"description": "Boolean",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:3000/supprime/utilisateur/:utilisateurId",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"supprime",
+								"utilisateur",
+								":utilisateurId"
+							],
+							"variable": [
+								{
+									"key": "utilisateurId",
+									"value": "",
+									"description": "Integer,  \"identifiant de l'utilisateur\""
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "fetch all user",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/utilsateur",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"utilsateur"
+							]
+						},
+						"description": "fetch all user, with \"etatSuppr\": false"
+					},
+					"response": []
+				},
+				{
+					"name": "fetch one user",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/:utilisateurId",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								":utilisateurId"
+							],
+							"variable": [
+								{
+									"key": "utilisateurId",
+									"value": "",
+									"description": "Integer, \"identifiant de l'utilisateur\""
+								}
+							]
+						}
+					},
+					"response": []
 				}
 			],
 			"description": "gestion utilisateur"
+		},
+		{
+			"name": "Annonces",
+			"item": [
+				{
+					"name": "Add annonce",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "titre",
+									"value": "",
+									"description": "Required, String",
+									"type": "text"
+								},
+								{
+									"key": "description",
+									"value": "",
+									"description": "Required, String",
+									"type": "text"
+								},
+								{
+									"key": "lieu",
+									"value": "",
+									"description": "Required, String, \"Nom du lieu\"",
+									"type": "text"
+								},
+								{
+									"key": "localisationAnnonce",
+									"value": "",
+									"description": "Required, String, \"Coordonnée GPS du lieu\"",
+									"type": "text"
+								},
+								{
+									"key": "etatSuppr",
+									"value": "",
+									"description": "false as default, Boolean",
+									"type": "text"
+								},
+								{
+									"key": "etatReaparaitre",
+									"value": "",
+									"description": "true as default, Boolean, \"Indique l'état de publication\"",
+									"type": "text"
+								},
+								{
+									"key": "images[]",
+									"description": "Required, Array, \"peut prendre en charge plusieurs photos\"",
+									"type": "file",
+									"src": []
+								},
+								{
+									"key": "utilisateurId",
+									"value": "",
+									"description": "Required, String, \"identification de l'utilisateur\"",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:3000/annonce/:userId",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"annonce",
+								":userId"
+							],
+							"variable": [
+								{
+									"key": "userId",
+									"value": "",
+									"description": "Integer, \"identifiant de l'utilisateur\""
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update annonce",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/annonce/oneId/:annonceId",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"annonce",
+								"oneId",
+								":annonceId"
+							],
+							"variable": [
+								{
+									"key": "annonceId",
+									"value": "",
+									"description": "Integer, \"identifiant annonce\""
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "softDelete annonce",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/annonce/softDeleteAnnonce/:annonceId",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"annonce",
+								"softDeleteAnnonce",
+								":annonceId"
+							],
+							"variable": [
+								{
+									"key": "annonceId",
+									"value": "",
+									"description": "Integer, identifiant de l'annonce"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "edit publish state annonce",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "etatReaparaitre",
+									"value": "",
+									"description": "Boolean",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http:/localhost:3000/annonce/editStateAnnonce/:annonceId",
+							"host": [
+								"http"
+							],
+							"port": "",
+							"path": [
+								"localhost:3000",
+								"annonce",
+								"editStateAnnonce",
+								":annonceId"
+							],
+							"variable": [
+								{
+									"key": "annonceId",
+									"value": "",
+									"description": "Integer, \"identifiant d'une annonce\""
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "fetch all annonces",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/annonce?page=1&limit=5&search=",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"annonce"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1",
+									"description": "page actuel"
+								},
+								{
+									"key": "limit",
+									"value": "5",
+									"description": "nombre d'Item à afficher par page"
+								},
+								{
+									"key": "search",
+									"value": "",
+									"description": "facultatif, utile pour la recherche par rapport au nom d'un lieu"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "fetch all Annonce made by particular user",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/annonce/annonceGuide/:userId",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"annonce",
+								"annonceGuide",
+								":userId"
+							],
+							"variable": [
+								{
+									"key": "userId",
+									"value": "",
+									"description": "Integer, \"identifiant de l'utilisateur\""
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "fetch one Annonce",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/annonce/oneId/:annonceId",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"annonce",
+								"oneId",
+								":annonceId"
+							],
+							"variable": [
+								{
+									"key": "annonceId",
+									"value": "",
+									"description": "Integer, \"identifiant d'une annonce\""
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Requete",
+			"item": [
+				{
+					"name": "Add request",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "touristeId",
+									"value": "",
+									"description": "Required, String, \"identifiant de l'utilisateur qui fait la requête\"",
+									"type": "text"
+								},
+								{
+									"key": "guideId",
+									"value": "",
+									"description": "Required, String, \"identifiant du guide qui a initier l'annonce\"",
+									"type": "text"
+								},
+								{
+									"key": "annonceId",
+									"value": "",
+									"description": "Required, String, \"identifiant de l'annonce\"",
+									"type": "text"
+								},
+								{
+									"key": "etatRequete",
+									"value": "",
+									"description": "false as default, Boolean, \"désigne si la requête a été choisi par le touriste ou a été annulé par ce dernier\"",
+									"type": "text"
+								},
+								{
+									"key": "etatAnnulation",
+									"value": "",
+									"description": "false as default, Boolean, \"désigne si le guide a accépté ou non la requête du touriste\"",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:3000/request",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"request"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "edit etatRequete",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "etatRequete",
+									"value": "",
+									"description": "Boolean",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:3000/request/:requestId",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"request",
+								":requestId"
+							],
+							"variable": [
+								{
+									"key": "requestId",
+									"value": "",
+									"description": "Integer, \"identifiant de la requête\""
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "edit etatAnnulation",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "etatAnnulation",
+									"value": "",
+									"description": "Boolean",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:3000/request/cancelRequest/:requestId",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"request",
+								"cancelRequest",
+								":requestId"
+							],
+							"variable": [
+								{
+									"key": "requestId",
+									"value": "",
+									"description": "Integer, \"identifiant de la requête\""
+								}
+							]
+						},
+						"description": "annulation de la requête du touriste par le guide"
+					},
+					"response": []
+				},
+				{
+					"name": "fetch all request according annonce",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/request/allRequest/:annonceId",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"request",
+								"allRequest",
+								":annonceId"
+							],
+							"variable": [
+								{
+									"key": "annonceId",
+									"value": "",
+									"description": "Integer, \"identifiant de l'annonce\""
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "fetch all request's touriste",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/request/allRequestTouriste/:userId",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"request",
+								"allRequestTouriste",
+								":userId"
+							],
+							"variable": [
+								{
+									"key": "userId",
+									"value": "",
+									"description": "Integer, \"identifiant du touriste connecter\""
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "API requête pour une annonce"
 		}
 	]
 }

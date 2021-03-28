@@ -164,7 +164,7 @@ export const updateAnnonce = (req, res) => {
 // softdelete annonce
 export const softDeleteAnnonce = (req, res) => {
     Annonce.findByIdAndUpdate(req.params.annonceId, {
-        etatSuppr: req.body.etatSuppr
+        etatSuppr: true
     }, { new: true })
         .then(annonce => {
             res.json(annonce)

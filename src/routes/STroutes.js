@@ -70,8 +70,8 @@ const route = (app) => {
     app.put('/utilisateur/activeAccount/:userId', ActiveAccount)
 
     // Annonce
-    app.route('/annonce/:userId?')
-        .get(findAllAnnonce)
+    app.route('/annonce/:userId')
+        .get('/annonce/annonceGuide/:userId', findAnnonceByGuideId)
         .post((req, res, next) => {
             // console.log("upload sary", req.params.userId)
             // multer(req, res, `${req.params.userId}/annonce`)
@@ -120,7 +120,7 @@ const route = (app) => {
     // advanced functionality
     app.put('/annonce/softDeleteAnnonce/:annonceId', softDeleteAnnonce)
     app.put('/annonce/editStateAnnonce/:annonceId', editStateAnnonce)
-    app.get('/annonce/annonceGuide/:userId', findAnnonceByGuideId)
+    app.get('/annonce', findAllAnnonce)
 
     // Requete
     app.post('/request', createRequete) // create requete
