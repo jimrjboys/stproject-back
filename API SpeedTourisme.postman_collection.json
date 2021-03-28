@@ -1,0 +1,275 @@
+{
+	"info": {
+		"_postman_id": "44ca7b95-f26d-4882-8eb5-f8dce15c1766",
+		"name": "API SpeedTourisme",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "utilisateur",
+			"item": [
+				{
+					"name": "Add user",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "nom",
+									"value": "",
+									"contentType": "",
+									"description": "Required, String",
+									"type": "text"
+								},
+								{
+									"key": "prenom",
+									"value": "",
+									"description": "String",
+									"type": "text"
+								},
+								{
+									"key": "tel",
+									"value": "",
+									"description": "Required, String",
+									"type": "text"
+								},
+								{
+									"key": "email",
+									"value": "",
+									"description": "Required, String",
+									"type": "text"
+								},
+								{
+									"key": "mailVerify",
+									"value": "",
+									"description": "Boolean, False as default",
+									"type": "text"
+								},
+								{
+									"key": "username",
+									"value": "",
+									"description": "Required, unique, String ",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "",
+									"description": "Required, String",
+									"type": "text"
+								},
+								{
+									"key": "type",
+									"value": "",
+									"description": "Required, String, \"Type d'utilisateur\"",
+									"type": "text"
+								},
+								{
+									"key": "pdp",
+									"description": "String, \"photo de profil\"",
+									"type": "file",
+									"src": []
+								},
+								{
+									"key": "localisation",
+									"value": "",
+									"description": "String, \"localisation de l'utilisateur\"",
+									"type": "text"
+								},
+								{
+									"key": "etatConnexion",
+									"value": "",
+									"description": "Boolean, \"utilisateur connecter ou pas\"",
+									"type": "text"
+								},
+								{
+									"key": "etatSuppr",
+									"value": "",
+									"description": "Boolean, \"supprimer ou pas\"",
+									"type": "text"
+								}
+							],
+							"options": {
+								"raw": {
+									"language": "javascript"
+								}
+							}
+						},
+						"url": {
+							"raw": "http:/localhost:3000/utilisateur",
+							"host": [
+								"http"
+							],
+							"port": "",
+							"path": [
+								"localhost:3000",
+								"utilisateur"
+							],
+							"query": [
+								{
+									"key": "",
+									"value": null,
+									"disabled": true
+								}
+							]
+						},
+						"description": "Ajouter utilisateur"
+					},
+					"response": []
+				},
+				{
+					"name": "fetch all user",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/utilsateur",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"utilsateur"
+							]
+						},
+						"description": "fetch all user, with \"etatSuppr\": false"
+					},
+					"response": []
+				},
+				{
+					"name": "fetch one user",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/:utilisateurId",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								":utilisateurId"
+							],
+							"variable": [
+								{
+									"key": "utilisateurId",
+									"value": "",
+									"description": "Integer, \"identifiant de l'utilisateur\""
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update user",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "nom",
+									"value": "",
+									"description": "Required, String",
+									"type": "text"
+								},
+								{
+									"key": "prenom",
+									"value": "",
+									"description": "String",
+									"type": "text"
+								},
+								{
+									"key": "tel",
+									"value": "",
+									"description": "Required, String",
+									"type": "text"
+								},
+								{
+									"key": "email",
+									"value": "",
+									"description": "Required, String",
+									"type": "text"
+								},
+								{
+									"key": "mailVerify",
+									"value": "",
+									"description": "false as default, Boolean",
+									"type": "text"
+								},
+								{
+									"key": "username",
+									"value": "",
+									"description": "Required, unique, String",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "",
+									"description": "Required, String",
+									"type": "text"
+								},
+								{
+									"key": "type",
+									"value": "",
+									"description": "Required, String, \"Type de l'utisateur\"",
+									"type": "text"
+								},
+								{
+									"key": "localisation",
+									"value": "",
+									"description": "String",
+									"type": "text"
+								},
+								{
+									"key": "etatConnexion",
+									"value": "",
+									"description": "Boolean",
+									"type": "text"
+								},
+								{
+									"key": "etatSuppr",
+									"value": "",
+									"description": "Boolean",
+									"type": "text"
+								},
+								{
+									"key": "pdp",
+									"description": "String",
+									"type": "file",
+									"src": []
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:3000/utilisateur/:utilisateurId",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"utilisateur",
+								":utilisateurId"
+							],
+							"variable": [
+								{
+									"key": "utilisateurId",
+									"value": "",
+									"description": "Integer, \"identifiant de l'utilisateur\""
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "gestion utilisateur"
+		}
+	]
+}

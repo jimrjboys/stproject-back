@@ -40,7 +40,7 @@ export const UtilisateurSchema = new Schema({
     },
     type: {
         type: String,
-
+        required: 'Type utilisateur obligatoire'
     },
     localisation: {
         type: String,

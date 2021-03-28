@@ -30,7 +30,7 @@ let mailOptions = (req, res, email, userId) => ({
 
 export const listUtilisateur = (req, res) => {
 
-    Utilisateur.find({}, (err, utilisateur) => {
+    Utilisateur.find({etatSuppr: false}, (err, utilisateur) => {
 
         if (err) {
             res.send(err)
