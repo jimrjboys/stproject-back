@@ -695,7 +695,7 @@
 								{
 									"key": "etatRequete",
 									"value": "",
-									"description": "false as default, Boolean, \"désigne si la requête a été choisi par le touriste ou a été annulé par ce dernier\"",
+									"description": "true as default, Boolean, \"désigne si la requête a été choisi par le touriste ou a été annulé par ce dernier\"",
 									"type": "text"
 								},
 								{
@@ -856,6 +856,177 @@
 				}
 			],
 			"description": "API requête pour une annonce"
+		},
+		{
+			"name": "Opinnion Annonce",
+			"item": [
+				{
+					"name": "add opinion Annonce",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "note",
+									"value": "",
+									"description": "Required, Number",
+									"type": "text"
+								},
+								{
+									"key": "avis",
+									"value": "",
+									"description": "Required, String",
+									"type": "text"
+								},
+								{
+									"key": "auteurId",
+									"value": "",
+									"description": "Required, String, \"identifiant du touriste\"",
+									"type": "text"
+								},
+								{
+									"key": "etatSuppr",
+									"value": "",
+									"description": "false as default, Boolean",
+									"type": "text"
+								},
+								{
+									"key": "annonceId",
+									"value": "",
+									"description": "Required, String",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:3000/opinionAnnonce",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"opinionAnnonce"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update opinion Annonce",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "note",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "avis",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "auteurId",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "etatSuppr",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "annonceId",
+									"value": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:3000/opinionAnnonce/:OpinionAId",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"opinionAnnonce",
+								":OpinionAId"
+							],
+							"variable": [
+								{
+									"key": "OpinionAId",
+									"value": "",
+									"description": "Integer, \"identifiant de l'opinion\""
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "softDelete opinion annonce",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/opinionAnnonce/softDelete/:OpinionAId",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"opinionAnnonce",
+								"softDelete",
+								":OpinionAId"
+							],
+							"variable": [
+								{
+									"key": "OpinionAId",
+									"value": "",
+									"description": "Integer, \"identifiant de l'opinion de l'annonce\""
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "find all opinion annonce",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/:annonceId",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								":annonceId"
+							],
+							"variable": [
+								{
+									"key": "annonceId",
+									"value": "",
+									"description": "Integer, \"identifiant de l'annonce\""
+								}
+							]
+						},
+						"description": "All opinion Annonce according to annonce"
+					},
+					"response": []
+				}
+			]
 		}
 	]
 }

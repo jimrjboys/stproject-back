@@ -17,7 +17,7 @@ export const requeteSchema = new Schema({
     },
     etatRequete: {
         type: Boolean,
-        default: false
+        default: true
     },
     etatAnnulation: {
         type: Boolean,

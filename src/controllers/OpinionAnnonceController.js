@@ -61,7 +61,7 @@ export const updateOpinionAnnonce = (req, res) => {
 // softDelete opinionAnnonce
 export const softDeleteOpinionAnnonce = (req, res) => {
     OpinionAnnonce.findByIdAndUpdate(req.params.OpinionAId, {
-        etatSuppr: req.body.etatSuppr
+        etatSuppr: true
     }, {new: true})
     .then(opinionA => {
         res.json(opinionA)
