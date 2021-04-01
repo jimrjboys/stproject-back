@@ -55,9 +55,9 @@ export const findAllAnnonce = async (req, res) => {
         results = {}
 
     try {
-        let total = await Annonce.countDocuments({ 'etatSuppr': false, 'etatReaparaitre': true, 'lieu': { $regex: req.query.search ? req.query.search : '' } }),
+        let total = await Annonce.countDocuments({ 'etatSuppr': false, 'etatReaparaitre': false, 'lieu': { $regex: req.query.search ? req.query.search : '' } }),
             totalPage = Math.ceil(total / limit)
-        Annonce.find({ 'etatSuppr': false, 'etatReaparaitre': true, 'lieu': { $regex: req.query.search ? req.query.search : '' } })
+        Annonce.find({ 'etatSuppr': false, 'etatReaparaitre': false, 'lieu': { $regex: req.query.search ? req.query.search : '' } })
             .limit(limit)
             .skip(skipIndex)
             .then(annonces => {
@@ -65,7 +65,7 @@ export const findAllAnnonce = async (req, res) => {
 
                 annonces.forEach(annonce => {
                     let data = {}, dataImages = {}, newImages = []
-
+                    data["id"] = annonce._id
                     data["titre"] = annonce.titre
                     data["description"] = annonce.description
                     data["lieu"] = annonce.lieu
@@ -83,11 +83,13 @@ export const findAllAnnonce = async (req, res) => {
 
                 if (page < 0 || page === 0) {
                     results["error"] = true
-                    results["message"] = "invalid page number, should start with 1"
+                    results["messageError"] = "invalid page number, should start with 1"
+                    results["message"] = []
                     res.json(results)
                 } else if (page > totalPage) {
                     results["error"] = true
-                    results["message"] = `invalid page number, last page is ${totalPage}`
+                    results["messageError"] = `invalid page number, last page is ${totalPage}`
+                    results["message"] = []
                     res.json(results)
                 } else {
                     results["error"] = false
