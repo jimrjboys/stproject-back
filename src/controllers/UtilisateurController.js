@@ -74,7 +74,7 @@ export const ajouterUtilisateur = (req, res) => {
 export const utilisateurId = (req, res) => {
     Utilisateur.findById({ _id: req.params.utilisateurId }, (err, searchUtilisateurId) => {
         if (err) {
-            res.send(err)
+            return res.send(err)
         }
         res.json(searchUtilisateurId)
 

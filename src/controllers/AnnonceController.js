@@ -35,7 +35,7 @@ export const createAnnonce = async (req, res, files) => {
 
     AnnonceCreate.save((err, data) => {
         if (err) {
-            res.status(500).send({
+            return res.status(500).send({
                 message: err.message || "Some error occurred while creating the Annonce"
             });
         }
@@ -125,7 +125,8 @@ export const findOneAnnonce = (req, res) => {
         .catch(err => {
             if (err.kind === "ObjectId") {
                 return res.status(404).send({
-                    message: "Annonce not found with id"
+                    messageError: "Annonce not found with id",
+                    message: ""
                 })
             }
         })

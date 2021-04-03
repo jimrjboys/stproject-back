@@ -12,7 +12,8 @@ export const OpionionUsersSchema = new Schema({
     },
     etatSuppr: {
         type: Boolean,
+        default: false,
     },
-
-
+    guideId: String,
+    touristeId: String
 }, { timestamps: true })
