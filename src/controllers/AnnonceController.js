@@ -1,9 +1,11 @@
 import mongoose from 'mongoose'
 import { AnnonceSchema } from '../models/Annonce'
+import { UtilisateurSchema } from '../models/Utilisateur';
 import sharp from 'sharp'
 import "regenerator-runtime/runtime";
 
 const Annonce = mongoose.model('Annonce', AnnonceSchema)
+const Utilisateur = mongoose.model('Utilisateur', UtilisateurSchema)
 
 // create and save annonce
 export const createAnnonce = async (req, res, files) => {
@@ -48,38 +50,119 @@ export const createAnnonce = async (req, res, files) => {
  * accès à la pagination http://localhost:3000/annonce?page=2&limit=1 
 */
 export const findAllAnnonce = async (req, res) => {
-
     const page = parseInt(req.query.page),
         limit = parseInt(req.query.limit),
         skipIndex = (page - 1) * limit,
         results = {}
 
     try {
-        let total = await Annonce.countDocuments({ 'etatSuppr': false, 'etatReaparaitre': false, 'lieu': { $regex: req.query.search ? req.query.search : '' } }),
-            totalPage = Math.ceil(total / limit)
-        Annonce.find({ 'etatSuppr': false, 'etatReaparaitre': false, 'lieu': { $regex: req.query.search ? req.query.search : '' } })
-            .limit(limit)
-            .skip(skipIndex)
+        const lieu = req.query.search
+        let condition = lieu ? { "lieu": { $regex: lieu, $options: 'i' }, "etatSuppr": false } : { "etatSuppr": false }
+        let total = await Annonce.aggregate([
+            {
+                $match: condition
+            },
+            {
+                $lookup:
+                {
+                    "from": "utilisateurs",
+                    "localField": "utilisateurId",
+                    "foreignField": "_id",
+                    "as": "user_info"
+                },
+
+            }, {
+                $unwind: "$user_info"
+            },
+            {
+                $lookup: {
+                    from: "opinionusers",
+                    localField: "utilisateurId",
+                    foreignField: "guideId",
+                    as: "opinion_users"
+                }
+            }])
+        // .sort({ _id: -1 })
+        total = total.length
+        let totalPage = Math.ceil(total / limit)
+        // var newAnnonce = []
+
+        Annonce.aggregate([
+            {
+                $match: condition
+            },
+            {
+                $lookup:
+                {
+                    "from": "utilisateurs",
+                    "localField": "utilisateurId",
+                    "foreignField": "_id",
+                    "as": "user_info"
+                },
+
+            }, {
+                $unwind: "$user_info"
+            },
+            {
+                $lookup: {
+                    from: "opinionusers",
+                    localField: "utilisateurId",
+                    foreignField: "guideId",
+                    as: "opinion_users"
+                }
+            }, {
+                $skip: skipIndex
+            }, {
+                $limit: limit
+            }, {
+                $sort: { _id: -1 }
+            },
+        ])
+            // .limit(limit)
+            // .skip(skipIndex)
             .then(annonces => {
+                let note = 0
                 let newAnnonce = []
-
+                // console.log('debut', annonces)
                 annonces.forEach(annonce => {
-                    let data = {}, dataImages = {}, newImages = []
-                    data["id"] = annonce._id
-                    data["titre"] = annonce.titre
-                    data["description"] = annonce.description
-                    data["lieu"] = annonce.lieu
-                    data["localisationAnnonce"] = annonce.localisationAnnonce
+                    let data = {
+                        annonces: {},
+                        guide: {}
+                    }
+                    let countOpinion = 0
 
+                    let dataImages = {}, newImages = []
+
+                    countOpinion = annonce.opinion_users.length
+                    annonce.opinion_users.forEach(opinion => {
+                        note += opinion.note
+                    })
+                    // console.log(`${note} / ${countOpinion}`,note / countOpinion, annonce)
+                    data["noteMoyenGuide"] = note / countOpinion
+
+                    data["guide"]["id"] = annonce.user_info._id
+                    data["guide"]["nom"] = annonce.user_info.nom
+                    data["guide"]["prenom"] = annonce.user_info.prenom
+                    data["guide"]["tel"] = annonce.user_info.tel
+                    data["guide"]["email"] = annonce.user_info.email
+                    data["guide"]["username"] = annonce.user_info.username
+
+                    data["annonces"]["id"] = annonce._id
+                    data["annonces"]["titre"] = annonce.titre
+                    data["annonces"]["description"] = annonce.description
+                    data["annonces"]["lieu"] = annonce.lieu
+                    data["annonces"]["localisationAnnonce"] = annonce.localisationAnnonce
                     annonce.images.forEach(item => {
                         dataImages["photoAnnonce"] = `${req.protocol}://${req.get('host')}/${item.photoAnnonce}`
                         dataImages["thumbAnnonce"] = `${req.protocol}://${req.get('host')}/${item.thumbAnnonce}`
                         newImages.push(dataImages)
-                    })
-                    data["images"] = newImages
+                    });
 
-                    newAnnonce.push(data);
-                });
+                    data["annonces"]["images"] = newImages
+
+                    newAnnonce.push(data)
+                    note = 0
+                })
 
                 if (page < 0 || page === 0) {
                     results["error"] = true
@@ -97,18 +180,86 @@ export const findAllAnnonce = async (req, res) => {
                     results["limit"] = limit
                     results["totalItem"] = total
                     results["totalPage"] = totalPage
-                    results["message"] = newAnnonce
+
+                    results["message"] = newAnnonce.sort((a, b) => {
+                        return b.noteMoyenGuide - a.noteMoyenGuide
+                    })
+                    // console.log(newAnnonce)
+                    // results["message"] = newAnnonce
                     res.json(results)
                 }
+
+                // res.json()
             })
-            .catch(err => {
-                res.status(500).send({
-                    message: err.message || "Une erreur s'est produit lors de la récuperation des annonces"
-                })
+            .catch(e => {
+                return res.json(e)
             })
-    } catch (err) {
-        console.log("totalDocument", err)
+    } catch (error) {
+        return res.json(error)
     }
+
+    //---------------------------------------------------
+
+    // const page = parseInt(req.query.page),
+    //     limit = parseInt(req.query.limit),
+    //     skipIndex = (page - 1) * limit,
+    //     results = {}
+
+    // try {
+    //     let total = await Annonce.countDocuments({ 'etatSuppr': false, 'etatReaparaitre': false, 'lieu': { $regex: req.query.search ? req.query.search : '' } }),
+    //         totalPage = Math.ceil(total / limit)
+    //     Annonce.find({ 'etatSuppr': false, 'etatReaparaitre': false, 'lieu': { $regex: req.query.search ? req.query.search : '' } })
+    //         .limit(limit)
+    //         .skip(skipIndex)
+    //         .then(annonces => {
+    //             let newAnnonce = []
+
+    //             annonces.forEach(annonce => {
+    //                 let data = {}, dataImages = {}, newImages = []
+    //                 data["id"] = annonce._id
+    //                 data["titre"] = annonce.titre
+    //                 data["description"] = annonce.description
+    //                 data["lieu"] = annonce.lieu
+    //                 data["localisationAnnonce"] = annonce.localisationAnnonce
+
+    //                 annonce.images.forEach(item => {
+    //                     dataImages["photoAnnonce"] = `${req.protocol}://${req.get('host')}/${item.photoAnnonce}`
+    //                     dataImages["thumbAnnonce"] = `${req.protocol}://${req.get('host')}/${item.thumbAnnonce}`
+    //                     newImages.push(dataImages)
+    //                 })
+    //                 data["images"] = newImages
+
+    //                 newAnnonce.push(data);
+    //             });
+
+    //             if (page < 0 || page === 0) {
+    //                 results["error"] = true
+    //                 results["messageError"] = "invalid page number, should start with 1"
+    //                 results["message"] = []
+    //                 res.json(results)
+    //             } else if (page > totalPage) {
+    //                 results["error"] = true
+    //                 results["messageError"] = `invalid page number, last page is ${totalPage}`
+    //                 results["message"] = []
+    //                 res.json(results)
+    //             } else {
+    //                 results["error"] = false
+    //                 results["currentPage"] = page
+    //                 results["limit"] = limit
+    //                 results["totalItem"] = total
+    //                 results["totalPage"] = totalPage
+    //                 results["message"] = newAnnonce
+    //                 res.json(results)
+    //             }
+    //         })
+    //         .catch(err => {
+    //             res.status(500).send({
+    //                 message: err.message || "Une erreur s'est produit lors de la récuperation des annonces"
+    //             })
+    //         })
+    // } catch (err) {
+    //     console.log("totalDocument", err)
+    // }
 }
 
 // find single annonce with annonceId

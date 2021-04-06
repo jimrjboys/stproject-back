@@ -14,6 +14,14 @@ export const OpionionUsersSchema = new Schema({
         type: Boolean,
         default: false,
     },
-    guideId: String,
-    touristeId: String
+    guideId: {
+        type: Schema.ObjectId, 
+        ref: 'utilisateurs',
+        required: true
+    },
+    touristeId:  {
+        type: Schema.ObjectId, 
+        ref: 'utilisateurs',
+        required: true
+    }
 }, { timestamps: true })
