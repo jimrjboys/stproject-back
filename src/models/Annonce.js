@@ -37,7 +37,8 @@ export const AnnonceSchema = new Schema({
     //     type: String
     // },
     utilisateurId: {
-        type: String,
+        type: Schema.ObjectId,
+        ref: 'utilisateurs',
         required: 'auteur obligatoire'
     }
 }, {

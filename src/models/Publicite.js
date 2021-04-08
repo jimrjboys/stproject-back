@@ -8,7 +8,8 @@ export const publiciteSchema = new Schema({
         required: 'photo obligatoire'
     },
     auteurId: {
-        type: String,
+        type: Schema.ObjectId,
+        ref: 'utilisateurs',
         required: 'id auteur obligatoire'
     }
 }, {

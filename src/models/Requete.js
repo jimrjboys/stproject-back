@@ -4,15 +4,18 @@ const Schema = mongoose.Schema;
 
 export const requeteSchema = new Schema({
     touristeId: {
-        type: String,
+        type: Schema.ObjectId,
+        ref: 'utilisateurs',
         required: 'id touriste obligatoire'
     },
     guideId: {
-        type: String,
+        type: Schema.ObjectId,
+        ref: 'utilisateurs',
         required: 'id du guide obligatoire'
     },
     annonceId: {
-        type: String,
+        type: Schema.ObjectId,
+        ref: 'annonces',
         required: 'id annonce obligatoire'
     },
     etatRequete: {
