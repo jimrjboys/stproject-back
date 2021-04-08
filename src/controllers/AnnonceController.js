@@ -57,7 +57,7 @@ export const findAllAnnonce = async (req, res) => {
 
     try {
         const lieu = req.query.search
-        let condition = lieu ? { "lieu": { $regex: lieu, $options: 'i' }, "etatSuppr": false } : { "etatSuppr": false }
+        let condition = lieu ? { "lieu": { $regex: lieu, $options: 'i' }, "etatSuppr": false, "etatReaparaitre": true } : { "etatSuppr": false, "etatReaparaitre": true }
         let total = await Annonce.aggregate([
             {
                 $match: condition
@@ -356,12 +356,146 @@ export const editStateAnnonce = (req, res) => {
 }
 
 // trouvé les annonces poster par un guide
-export const findAnnonceByGuideId = (req, res) => {
-    Annonce.find({ utilisateurId: req.params.userId })
-        .then(annonces => {
-            res.json(annonces)
+export const findAnnonceByGuideId = async (req, res) => {
+    const page = parseInt(req.query.page),
+        limit = parseInt(req.query.limit),
+        skipIndex = (page - 1) * limit,
+        results = {}
+
+    try {
+        let total = await Annonce.aggregate([
+            {
+                $lookup:
+                {
+                    "from": "opinionannonces",
+                    "as": "commentaire_annonce",
+                    "let": { "annonce": "$_id" },
+                    "pipeline": [
+                        {
+                            $match: { $expr: { $eq: ["$annonceId", '$$annonce'] } }
+                        },
+                        {
+                            $lookup: {
+                                "from": "utilisateurs",
+                                "localField": "auteurId",
+                                "foreignField": "_id",
+                                "as": "user"
+                            }
+                        },
+                        {
+                            $unwind: "$user"
+                        }
+                    ]
+                },
+            },
+        ])
+
+        total = total.length
+        let totalPage = Math.ceil(total / limit)
+
+        Annonce.aggregate([
+            {
+                $lookup:
+                {
+                    "from": "opinionannonces",
+                    "as": "commentaire_annonce",
+                    "let": { "annonce": "$_id" },
+                    "pipeline": [
+                        {
+                            $match: { $expr: { $eq: ["$annonceId", '$$annonce'] } }
+                        },
+                        {
+                            $lookup: {
+                                "from": "utilisateurs",
+                                "localField": "auteurId",
+                                "foreignField": "_id",
+                                "as": "user"
+                            }
+                        },
+                        {
+                            $unwind: "$user"
+                        }
+                    ]
+                },
+            },
+            {
+                $skip: skipIndex
+            }, {
+                $limit: limit
+            }, {
+                $sort: { _id: -1 }
+            },
+        ]).then(annonces => {
+            // res.json(annonces)
+            let noteAnnonce = 0
+            let newAnnonce = []
+
+            annonces.forEach(annonce => {
+                let data = {
+                    annonces: {},
+                }
+
+                let dataImages = {}, newImages = [], countComment = 0
+
+                countComment = annonce.commentaire_annonce.length
+                
+                annonce.commentaire_annonce.forEach(comment => {
+                    noteAnnonce += comment.note 
+                }) 
+
+                data["noteMoyenAnnonce"] = noteAnnonce / countComment || 0
+
+                data["annonces"]["_id"] = annonce._id
+                data["annonces"]["titre"] = annonce.titre
+                data["annonces"]["description"] = annonce.description
+                data["annonces"]["lieu"] = annonce.lieu
+                data["annonces"]["localisationAnnonce"] = annonce.localisationAnnonce
+
+                annonce.images.forEach(item => {
+                    dataImages["photoAnnonce"] = `${req.protocol}://${req.get('host')}/${item.photoAnnonce}`
+                    dataImages["thumbAnnonce"] = `${req.protocol}://${req.get('host')}/${item.thumbAnnonce}`
+                    newImages.push(dataImages)
+                });
+
+                data["annonces"]["images"] = newImages
+                data["annonces"]["commentaires"] = annonce.commentaire_annonce
+
+                newAnnonce.push(data)
+                noteAnnonce = 0
+            })
+
+            if (page < 0 || page === 0) {
+                results["error"] = true
+                results["messageError"] = "invalid page number, should start with 1"
+                results["message"] = []
+                res.json(results)
+            } else if (page > totalPage) {
+                results["error"] = true
+                results["messageError"] = `invalid page number, last page is ${totalPage}`
+                results["message"] = []
+                res.json(results)
+            } else {
+                results["error"] = false
+                results["currentPage"] = page
+                results["limit"] = limit
+                results["totalItem"] = total
+                results["totalPage"] = totalPage
+                results["message"] = newAnnonce
+                res.json(results)
+            }
         })
-        .catch(err => {
-            res.send(err)
+        .catch(e => {
+            return res.json(e)
         })
+
+    } catch (error) {
+        return res.json({ messageError: error })
+    }
+    // Annonce.find({ utilisateurId: req.params.userId })
+    //     .then(annonces => {
+    //         res.json(annonces)
+    //     })
+    //     .catch(err => {
+    //         res.send(err)
+    //     })
 }

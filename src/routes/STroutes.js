@@ -72,7 +72,6 @@ const route = (app) => {
 
     // Annonce
     app.route('/annonce/:userId')
-        .get('/annonce/annonceGuide/:userId', findAnnonceByGuideId)
         .post((req, res, next) => {
             // console.log("upload sary", req.params.userId)
             // multer(req, res, `${req.params.userId}/annonce`)
@@ -113,6 +112,7 @@ const route = (app) => {
             // createAnnonce(req, res, uploadD)
             // next()
         })
+    app.get('/annonce/annonceGuide/:userId', findAnnonceByGuideId)
 
     // Annonce use ID
     app.route('/annonce/oneId/:annonceId')
