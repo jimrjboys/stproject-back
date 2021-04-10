@@ -4,6 +4,7 @@ import { UtilisateurSchema } from '../models/Utilisateur';
 import sharp from 'sharp'
 import "regenerator-runtime/runtime";
 
+const ObjectId = mongoose.Types.ObjectId
 const Annonce = mongoose.model('Annonce', AnnonceSchema)
 const Utilisateur = mongoose.model('Utilisateur', UtilisateurSchema)
 
@@ -82,10 +83,9 @@ export const findAllAnnonce = async (req, res) => {
                     as: "opinion_users"
                 }
             }])
-        // .sort({ _id: -1 })
         total = total.length
         let totalPage = Math.ceil(total / limit)
-        // var newAnnonce = []
+
 
         Annonce.aggregate([
             {
@@ -118,12 +118,10 @@ export const findAllAnnonce = async (req, res) => {
                 $sort: { _id: -1 }
             },
         ])
-            // .limit(limit)
-            // .skip(skipIndex)
             .then(annonces => {
                 let note = 0
                 let newAnnonce = []
-                // console.log('debut', annonces)
+
                 annonces.forEach(annonce => {
                     let data = {
                         annonces: {},
@@ -137,7 +135,7 @@ export const findAllAnnonce = async (req, res) => {
                     annonce.opinion_users.forEach(opinion => {
                         note += opinion.note
                     })
-                    // console.log(`${note} / ${countOpinion}`,note / countOpinion, annonce)
+                   
                     data["noteMoyenGuide"] = note / countOpinion
 
                     data["guide"]["id"] = annonce.user_info._id
@@ -184,8 +182,6 @@ export const findAllAnnonce = async (req, res) => {
                     results["message"] = newAnnonce.sort((a, b) => {
                         return b.noteMoyenGuide - a.noteMoyenGuide
                     })
-                    // console.log(newAnnonce)
-                    // results["message"] = newAnnonce
                     res.json(results)
                 }
 
@@ -197,69 +193,6 @@ export const findAllAnnonce = async (req, res) => {
     } catch (error) {
         return res.json(error)
     }
-
-    //---------------------------------------------------
-
-    // const page = parseInt(req.query.page),
-    //     limit = parseInt(req.query.limit),
-    //     skipIndex = (page - 1) * limit,
-    //     results = {}
-
-    // try {
-    //     let total = await Annonce.countDocuments({ 'etatSuppr': false, 'etatReaparaitre': false, 'lieu': { $regex: req.query.search ? req.query.search : '' } }),
-    //         totalPage = Math.ceil(total / limit)
-    //     Annonce.find({ 'etatSuppr': false, 'etatReaparaitre': false, 'lieu': { $regex: req.query.search ? req.query.search : '' } })
-    //         .limit(limit)
-    //         .skip(skipIndex)
-    //         .then(annonces => {
-    //             let newAnnonce = []
-
-    //             annonces.forEach(annonce => {
-    //                 let data = {}, dataImages = {}, newImages = []
-    //                 data["id"] = annonce._id
-    //                 data["titre"] = annonce.titre
-    //                 data["description"] = annonce.description
-    //                 data["lieu"] = annonce.lieu
-    //                 data["localisationAnnonce"] = annonce.localisationAnnonce
-
-    //                 annonce.images.forEach(item => {
-    //                     dataImages["photoAnnonce"] = `${req.protocol}://${req.get('host')}/${item.photoAnnonce}`
-    //                     dataImages["thumbAnnonce"] = `${req.protocol}://${req.get('host')}/${item.thumbAnnonce}`
-    //                     newImages.push(dataImages)
-    //                 })
-    //                 data["images"] = newImages
-
-    //                 newAnnonce.push(data);
-    //             });
-
-    //             if (page < 0 || page === 0) {
-    //                 results["error"] = true
-    //                 results["messageError"] = "invalid page number, should start with 1"
-    //                 results["message"] = []
-    //                 res.json(results)
-    //             } else if (page > totalPage) {
-    //                 results["error"] = true
-    //                 results["messageError"] = `invalid page number, last page is ${totalPage}`
-    //                 results["message"] = []
-    //                 res.json(results)
-    //             } else {
-    //                 results["error"] = false
-    //                 results["currentPage"] = page
-    //                 results["limit"] = limit
-    //                 results["totalItem"] = total
-    //                 results["totalPage"] = totalPage
-    //                 results["message"] = newAnnonce
-    //                 res.json(results)
-    //             }
-    //         })
-    //         .catch(err => {
-    //             res.status(500).send({
-    //                 message: err.message || "Une erreur s'est produit lors de la récuperation des annonces"
-    //             })
-    //         })
-    // } catch (err) {
-    //     console.log("totalDocument", err)
-    // }
 }
 
 // find single annonce with annonceId
@@ -357,13 +290,22 @@ export const editStateAnnonce = (req, res) => {
 
 // trouvé les annonces poster par un guide
 export const findAnnonceByGuideId = async (req, res) => {
+
     const page = parseInt(req.query.page),
         limit = parseInt(req.query.limit),
         skipIndex = (page - 1) * limit,
         results = {}
 
     try {
+        const lieu = req.query.search
+        const stateAppear = (req.query.stateAppear == 'true') ? true : (req.query.stateAppear == 'false') ? false : null
+        // console.log(stateAppear)
+        let condition = (lieu && stateAppear == null)? { "lieu": { $regex: lieu, $options: 'i' }, "etatSuppr": false, 'utilisateurId': ObjectId(req.params.userId) } : (lieu && stateAppear != null) ? { "lieu": { $regex: lieu, $options: 'i' }, "etatSuppr": false, 'utilisateurId': ObjectId(req.params.userId),'etatReaparaitre': stateAppear } : (stateAppear != null) ? {'utilisateurId': ObjectId(req.params.userId), "etatSuppr": false, 'etatReaparaitre': stateAppear} : { 'utilisateurId': ObjectId(req.params.userId), "etatSuppr": false, }
+    
         let total = await Annonce.aggregate([
+            {
+                $match: condition
+            },
             {
                 $lookup:
                 {
@@ -394,6 +336,9 @@ export const findAnnonceByGuideId = async (req, res) => {
         let totalPage = Math.ceil(total / limit)
 
         Annonce.aggregate([
+            {
+                $match: condition
+            },
             {
                 $lookup:
                 {
@@ -438,10 +383,10 @@ export const findAnnonceByGuideId = async (req, res) => {
                 let dataImages = {}, newImages = [], countComment = 0
 
                 countComment = annonce.commentaire_annonce.length
-                
+
                 annonce.commentaire_annonce.forEach(comment => {
-                    noteAnnonce += comment.note 
-                }) 
+                    noteAnnonce += comment.note
+                })
 
                 data["noteMoyenAnnonce"] = noteAnnonce / countComment || 0
 
@@ -450,6 +395,7 @@ export const findAnnonceByGuideId = async (req, res) => {
                 data["annonces"]["description"] = annonce.description
                 data["annonces"]["lieu"] = annonce.lieu
                 data["annonces"]["localisationAnnonce"] = annonce.localisationAnnonce
+                data["annonces"]["etatReaparaitre"] = annonce.etatReaparaitre
 
                 annonce.images.forEach(item => {
                     dataImages["photoAnnonce"] = `${req.protocol}://${req.get('host')}/${item.photoAnnonce}`
@@ -484,18 +430,11 @@ export const findAnnonceByGuideId = async (req, res) => {
                 res.json(results)
             }
         })
-        .catch(e => {
-            return res.json(e)
-        })
+            .catch(e => {
+                return res.json(e)
+            })
 
     } catch (error) {
         return res.json({ messageError: error })
     }
-    // Annonce.find({ utilisateurId: req.params.userId })
-    //     .then(annonces => {
-    //         res.json(annonces)
-    //     })
-    //     .catch(err => {
-    //         res.send(err)
-    //     })
 }
