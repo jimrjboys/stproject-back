@@ -60,6 +60,9 @@ export const modifierUtilisateur = (req, res) => {
         if (err) {
             res.send(err)
         }
+        const saltRounds = 10
+
+        modifUtilisateurId.password = bcrypt.hashSync(req.body.password, saltRounds)
         res.json(modifUtilisateurId)
 
     });
