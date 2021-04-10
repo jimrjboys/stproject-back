@@ -2,6 +2,7 @@
 import mongoose from 'mongoose';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
+import nodemailer from 'nodemailer';
 import { LocalisationSchema } from '../models/Localisation';
 import { UtilisateurSchema } from '../models/Utilisateur';
 
@@ -10,9 +11,26 @@ import fs from "fs"
 const Utilisateur = mongoose.model('Utilisateur', UtilisateurSchema)
 const Localisation = mongoose.model('Localisation', LocalisationSchema)
 
+let transport = nodemailer.createTransport({
+    host:"smtp.mailtrap.io",
+    port: 2525,
+    auth: {
+        user: "c9541a961a07a6",
+        pass: "23ed3ae26f3162"
+    }
+})
+
+let mailOptions = (req, res, email, userId) => ({
+    from: '"SpeedTourisme" <speedTourisme@spt.com>',
+    to: email,
+    subject: 'Verification d\'email',
+    text: `Cliquer sur le lien suivant pour activer votre compte!! : ${req.protocol}://${req.get('host')}/utilisateur/activeAccount/${userId}`, 
+    html: `<a href="${req.protocol}://${req.get('host')}/utilisateur/activeAccount/${userId}?_method=PUT">Verification email</a>`
+})
+
 export const listUtilisateur = (req, res) => {
 
-    Utilisateur.find({}, (err, utilisateur) => {
+    Utilisateur.find({etatSuppr: false}, (err, utilisateur) => {
 
         if (err) {
             res.send(err)
@@ -25,6 +43,7 @@ export const ajouterUtilisateur = (req, res) => {
     let nouveauxUtilisateur = new Utilisateur(req.body);
     const saltRounds = 10
 
+
     nouveauxUtilisateur.password = bcrypt.hashSync(req.body.password, saltRounds)
 
     nouveauxUtilisateur.save((err, newUtilisateur) => {
@@ -35,20 +54,27 @@ export const ajouterUtilisateur = (req, res) => {
         }
 
         newUtilisateur.password = undefined
-
-        res.json(newUtilisateur)
         
         if(!fs.existsSync(dir)){
                 fs.mkdirSync(dir, { recursive: true }, err => console.log(err))
                 fs.mkdirSync(dir+'/annonce/thumbnail', { recursive: true }, err => console.log(err))
                 fs.mkdirSync(dir+'/pdp/thumbnail', { recursive: true }, err => console.log(err))
         }
+
+        transport.sendMail(mailOptions(req, res, newUtilisateur.email, newUtilisateur._id), (error, info) => {
+            if (error) {
+                return console.log(error);
+            }
+            console.log('Message sent: %s', info.messageId);
+        })
+
+        res.json(newUtilisateur)
     });
 }
 export const utilisateurId = (req, res) => {
     Utilisateur.findById({ _id: req.params.utilisateurId }, (err, searchUtilisateurId) => {
         if (err) {
-            res.send(err)
+            return res.send(err)
         }
         res.json(searchUtilisateurId)
 
@@ -116,3 +142,23 @@ export const VerificationToken = (req, res, next) => {
     }
 
 };
+
+export const ActiveAccount = (req, res) => {
+    console.log(req.params.userId)
+    Utilisateur.findByIdAndUpdate(req.params.userId, {
+        mailVerify: true
+    }, {new: true})
+        .then(() => {
+            res.json({message: "Compte activer"})
+        })
+        .catch(err => {
+            if (err.kind === "ObjectId") {
+                return res.status(404).send({
+                    message: "Annonce not found with id " + req.params.utilisateurId
+                })
+            }
+            return res.status(500).send({
+                message: "Erreur lors de l'activation du compte " + req.params.utilisateurId
+            })
+        })
+}

@@ -8,10 +8,14 @@ export const MessagesShema = new Schema({
         type  : String  
     },
     emetteurId: {
-        type: String,
+        type: Schema.ObjectId,
+        ref: 'utilisateurs',
+        required: true
     },
     recepteurID: {
-        type: String,
+        type: Schema.ObjectId,
+        ref: 'utilisateurs',
+        required: true
     },
     messages: {
         

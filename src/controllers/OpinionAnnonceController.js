@@ -21,7 +21,7 @@ export const createOpinionAnnonce = (req, res) => {
 
 // retrieve and return all opinion by annonceId
 export const findAllOpinionAnnonce = (req, res) => {
-    OpinionAnnonce.find({annonceId: req.params.annonceId})
+    OpinionAnnonce.find({annonceId: req.params.annonceId, etatSuppr: false})
         .then(opinionA => {
             if(!opinionA){
                 return res.status(404).send({
@@ -61,7 +61,7 @@ export const updateOpinionAnnonce = (req, res) => {
 // softDelete opinionAnnonce
 export const softDeleteOpinionAnnonce = (req, res) => {
     OpinionAnnonce.findByIdAndUpdate(req.params.OpinionAId, {
-        etatSuppr: req.body.etatSuppr
+        etatSuppr: true
     }, {new: true})
     .then(opinionA => {
         res.json(opinionA)

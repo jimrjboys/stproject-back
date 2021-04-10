@@ -10,7 +10,6 @@ import {
     createAnnonce,
     findAllAnnonce,
     findOneAnnonce,
-    searchByLieu,
     updateAnnonce,
     softDeleteAnnonce,
     editStateAnnonce,
@@ -35,7 +34,7 @@ import {
     Authentification,
     VerificationAuthentification,
     VerificationToken,
-
+    ActiveAccount,
 } from '../controllers/UtilisateurController'
 
 import {
@@ -46,7 +45,8 @@ import {
 import {
     ajoutOpinionUsers,
     modificationOpinionUsers,
-    softDeleteOpinions
+    softDeleteOpinions,
+    listOpinionUser
 } from './../controllers/OpinionUsersControllers'
 
 import {
@@ -67,12 +67,13 @@ const route = (app) => {
     app.route('/utilisateur/:utilisateurId?')
         .get(utilisateurId)
         .put(modifierUtilisateur)
+    //activation du compte après verification email user 
+    app.put('/utilisateur/activeAccount/:userId', ActiveAccount)
 
     // Annonce
-    app.route('/annonce/:userId?')
-        .get(findAllAnnonce)
+    app.route('/annonce/:userId')
         .post((req, res, next) => {
-            console.log("upload sary", req.params.userId)
+            // console.log("upload sary", req.params.userId)
             // multer(req, res, `${req.params.userId}/annonce`)
             const MIME_TYPES = {
                 'image/jpg': 'jpg',
@@ -95,15 +96,15 @@ const route = (app) => {
 
             let uploadD = multer({
                 storage: storage
-            }).single("photoAnnonce")
+            }).array("images")
 
             uploadD(req, res, (err) => {
                 if(err){
                     console.log(err)
                 }else{
-                    console.log(res.req.file.filename)
+                    // console.log(req.files)
                     // res.send(res.req.file.filename);
-                    createAnnonce(req, res, res.req.file.filename)
+                    createAnnonce(req, res, req.files)
                 }   
             })
 
@@ -111,6 +112,7 @@ const route = (app) => {
             // createAnnonce(req, res, uploadD)
             // next()
         })
+    app.get('/annonce/annonceGuide/:userId', findAnnonceByGuideId)
 
     // Annonce use ID
     app.route('/annonce/oneId/:annonceId')
@@ -119,8 +121,7 @@ const route = (app) => {
     // advanced functionality
     app.put('/annonce/softDeleteAnnonce/:annonceId', softDeleteAnnonce)
     app.put('/annonce/editStateAnnonce/:annonceId', editStateAnnonce)
-    app.get('/annonce/annonceGuide/:userId', findAnnonceByGuideId)
-    app.get('/annonce/searchByLieu/:search', searchByLieu)
+    app.get('/annonce', findAllAnnonce)
 
     // Requete
     app.post('/request', createRequete) // create requete
@@ -158,6 +159,7 @@ const route = (app) => {
     //Opinions Ajout et  modification avec softdelte
     app.route('/opinions')
         .post(ajoutOpinionUsers)
+    app.get('/opinions/guide/:guideId', listOpinionUser) // fetch opinion guide
     app.route('/opinions/:opinionId')
         .put(modificationOpinionUsers)
     // Authentificatoin et verification du token de connexion  

@@ -12,11 +12,13 @@ export const opinionAnnonceSchema = new Schema({
         required: 'avis commentaire obligatoire'
     },
     auteurId: {
-        type: String,
+        type: Schema.ObjectId,
+        ref: 'utilisateurs',
         required: 'id auteur obligatoire'
     },
     annonceId: {
-        type: String,
+        type: Schema.ObjectId,
+        ref: 'annonces',
         required: 'id annonce obligatoire'
     },
     etatSuppr: {

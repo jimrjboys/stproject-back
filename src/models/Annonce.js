@@ -26,17 +26,19 @@ export const AnnonceSchema = new Schema({
     },
     etatReaparaitre: {
         type: Boolean,
-        default: false,
+        default: true,
     },
-    photoAnnonce: {
-        type: String,
-        required: 'photo obligatoire',
-    },
-    thumbAnnonce: {
-        type: String
-    },
+    images: [],
+    // photoAnnonce: {
+    //     type: String,
+    //     required: 'photo obligatoire',
+    // },
+    // thumbAnnonce: {
+    //     type: String
+    // },
     utilisateurId: {
-        type: String,
+        type: Schema.ObjectId,
+        ref: 'utilisateurs',
         required: 'auteur obligatoire'
     }
 }, {

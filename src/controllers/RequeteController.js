@@ -40,7 +40,7 @@ export const editStateRequete = (req, res) => {
 
 // retrieve all requete By AnnonceId (utilisé plus par le guide)
 export const findAllRequeteByAnnonce = (req, res) => {
-    Requete.find({"annonceId": req.params.annonceId, "etatAnnulation": false})
+    Requete.find({"annonceId": req.params.annonceId, "etatAnnulation": false, "etatRequete": true})
         .then(requete => {
             if (!requete) {
                 return res.status(404).send({

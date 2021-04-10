@@ -4,13 +4,14 @@ import bodyParser from 'body-parser';
 import route from './src/routes/STroutes';
 import path from 'path'
 import jsonwebtoken from 'jsonwebtoken';
+import cors from 'cors';
 import Utilisateur from './src/models/Utilisateur'
 
 const app = express();
 
 //connexion  avec notre base de donnée
 //mongodb+srv://jiji:jiji1234@zmz.djfzj.mongodb.net/ZmZ?retryWrites=true&w=majority
-//mongodb://127.0.0.1:27017/
+//mongodb://127.0.0.1:27017/StProject
 // mongodb+srv://shiroe:blackflag@cluster0.4dqw7.mongodb.net/myFirstDatabase?retryWrites=true&w=majority
 mongoose.Promise = global.Promise;
 mongoose.connect(`mongodb+srv://shiroe:blackflag@cluster0.4dqw7.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`, {
@@ -26,7 +27,7 @@ mongoose.connect(`mongodb+srv://shiroe:blackflag@cluster0.4dqw7.mongodb.net/myFi
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-
+app.use(cors())
 app.use('/upload', express.static(path.join(__dirname, 'upload')))
 
 app.use((req , res, next) => {
@@ -45,10 +46,7 @@ app.use((req , res, next) => {
 route(app);
 //notre lien initiale
 app.get('/', (req, res) =>
-    res.send(`notre serveur a été demarer sur le port : ${process.env.PORT || 3000}`)
+    res.send(`notre serveur a été demarer sur le port : ${process.env.PORT || 8080}`)
 );
-// app.listen(PORT, () =>
-//         console.log(`Notre serveur est en marche dans le port ${PORT}`)
-// );
 
 export default app ; 

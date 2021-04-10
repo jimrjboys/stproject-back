@@ -23,6 +23,10 @@ export const UtilisateurSchema = new Schema({
         type: String,
         required: 'Veullez entrer votre email',
     },
+    mailVerify: {
+        type: Boolean,
+        default: false
+    },
     username: {
         type: String,
         required: 'Veullez entrer un nom  utilisateur ',
@@ -36,7 +40,7 @@ export const UtilisateurSchema = new Schema({
     },
     type: {
         type: String,
-
+        required: 'Type utilisateur obligatoire'
     },
     localisation: {
         type: String,
