@@ -32,7 +32,7 @@ export const createAnnonce = async (req, res, files) => {
         //     // })
 
         // )
-        let makeThumb = await sharp(`./upload/${req.params.userId}/annonce/${files.filename}`).resize(200, 300).jpeg({ quality: 80 }).toFile(`./upload/${req.params.userId}/annonce/thumbnail/${files.filename}_thumb.jpg`)
+        let makeThumb = await sharp(`./upload/${req.params.userId}/annonce/${files.filename}`).resize(800, 720).jpeg({ quality: 72 }).toFile(`./upload/${req.params.userId}/annonce/thumbnail/${files.filename}_thumb.jpg`)
         if (makeThumb) {
             AnnonceCreate.photoAnnonce = `upload/${req.params.userId}/annonce/${files.filename}`
             AnnonceCreate.thumbAnnonce = `upload/${req.params.userId}/annonce/thumbnail/${files.filename}_thumb.jpg`
@@ -208,12 +208,21 @@ export const findAllAnnonce = async (req, res) => {
 export const findOneAnnonce = (req, res) => {
     Annonce.findById(req.params.annonceId)
         .then(annonce => {
+            let oneAnnonce = {}
             if (!annonce) {
                 return res.status(404).send({
                     message: "Annonce not found"
                 })
             }
-            res.json(annonce)
+
+            oneAnnonce["id"] = annonce._id
+            oneAnnonce["titre"] = annonce.titre
+            oneAnnonce["description"] = annonce.description
+            oneAnnonce["lieu"] = annonce.lieu
+            oneAnnonce["localisationAnnonce"] = annonce.localisationAnnonce
+            oneAnnonce["photoAnnonce"] = `${req.protocol}://${req.get('host')}/${annonce.photoAnnonce}`
+            oneAnnonce["thumbAnnonce"] = `${req.protocol}://${req.get('host')}/${annonce.thumbAnnonce}`
+            res.json(oneAnnonce)
         })
         .catch(err => {
             if (err.kind === "ObjectId") {
@@ -267,13 +276,13 @@ export const updateAnnonce = async (req, res, files) => {
         } catch (e) {
             return console.log("images error",e)
         }
+        let makeThumb = await sharp(`./upload/${req.params.userId}/annonce/${files.filename}`).resize(800, 720).jpeg({ quality: 72 }).toFile(`./upload/${req.params.userId}/annonce/thumbnail/${files.filename}_thumb.jpg`)
+        if (makeThumb) {
+            dataAnnonce.photoAnnonce = `upload/${req.params.userId}/annonce/${files.filename}`
+            dataAnnonce.thumbAnnonce = `upload/${req.params.userId}/annonce/thumbnail/${files.filename}_thumb.jpg`
+        }
     }
 
-    let makeThumb = await sharp(`./upload/${req.params.userId}/annonce/${files.filename}`).resize(200, 300).jpeg({ quality: 80 }).toFile(`./upload/${req.params.userId}/annonce/thumbnail/${files.filename}_thumb.jpg`)
-    if (makeThumb) {
-        dataAnnonce.photoAnnonce = `upload/${req.params.userId}/annonce/${files.filename}`
-        dataAnnonce.thumbAnnonce = `upload/${req.params.userId}/annonce/thumbnail/${files.filename}_thumb.jpg`
-    }
 
     dataAnnonce["titre"] = req.body.titre
     dataAnnonce["description"] = req.body.description
@@ -499,7 +508,7 @@ export const findAnnonceByGuideId = async (req, res) => {
                 noteAnnonce = 0
             })
 
-            if (page < 0 || page === 0) {
+            if (page < 0) {
                 results["error"] = true
                 results["messageError"] = "invalid page number, should start with 1"
                 results["message"] = []

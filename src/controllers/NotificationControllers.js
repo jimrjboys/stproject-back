@@ -23,3 +23,14 @@ export const modificationNotification = (req, res) => {
 
     });
 }
+
+export const findAllNotification = (req, res) => {
+    Notification.find()
+        .sort({ _id: -1 })
+        .then(notifications => {
+            res.json(notifications)
+        })
+        .catch(err => {
+            return res.json(err)
+        })
+}

@@ -14,6 +14,7 @@ export const NotificationSchema = new Schema({
     },
     read: {
         type: Boolean,
+        default: false,
     },
     type: {
         type: String,

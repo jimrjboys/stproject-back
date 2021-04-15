@@ -39,7 +39,8 @@ import {
 
 import {
     ajoutNotification,
-    modificationNotification
+    modificationNotification,
+    findAllNotification,
 } from '../controllers/NotificationControllers'
 
 import {
@@ -188,8 +189,9 @@ const route = (app) => {
         .put(softDeleteOpinions)
 
     //Notification ajout et modification
-    app.route('/notification/')
+    app.route('/notification')
         .post(ajoutNotification)
+        .get(findAllNotification)
     app.route('/notification/:notificationId')
         .put(modificationNotification)
 
@@ -212,7 +214,7 @@ const route = (app) => {
 
     // Systeme de messsages 
 
-    app.route('messages/:emetteurId/:recepteurID')
+    app.route('/messages/:emetteurId/:recepteurId')
         .post(newMessages)
     app.route('messages/:_id')
         .post(getMesssages)
