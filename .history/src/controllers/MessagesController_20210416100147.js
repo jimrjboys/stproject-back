@@ -1,6 +1,5 @@
 import { MessagesShema }from './../models/Messages'
-import mongoose from 'mongoose' 
-import io from 'socket.io'
+import mongoose from 'mongoose'
 
 const Messages  = mongoose.model('Messages',MessagesShema)
 
@@ -28,7 +27,7 @@ export const getMesssages = (req , res ) => {
 }
 export const getMesssagesScrollUp = (req , res ) => {
     // Limite messages avec filtre du reponse
-    var n 
+    var n
     Messages.findById({ _id: req.params._id }, (err, getMesssagesScrollUp) => {
    
         if (err) {
