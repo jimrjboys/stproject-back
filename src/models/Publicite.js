@@ -11,6 +11,14 @@ export const publiciteSchema = new Schema({
         type: Schema.ObjectId,
         ref: 'utilisateurs',
         required: 'id auteur obligatoire'
+    },
+    description  :{
+        type : String ,
+        required :  'titre de votre pub'
+    },
+    titre :  {
+        type : String ,  
+        required :  'le titre de votre pub'
     }
 }, {
     timestamps: true
