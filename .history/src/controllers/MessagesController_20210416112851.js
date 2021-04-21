@@ -1,6 +1,5 @@
 import { MessagesShema }from './../models/Messages'
-import mongoose from 'mongoose' 
-import io from 'socket.io'
+import mongoose from 'mongoose'
 
 const Messages  = mongoose.model('Messages',MessagesShema)
 
