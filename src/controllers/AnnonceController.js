@@ -435,6 +435,9 @@ export const findAnnonceByGuideId = async (req, res) => {
                 $match: condition
             },
             {
+                $sort: { _id: -1 }
+            },
+            {
                 $lookup:
                 {
                     "from": "opinionannonces",
@@ -462,9 +465,7 @@ export const findAnnonceByGuideId = async (req, res) => {
                 $skip: skipIndex
             }, {
                 $limit: limit
-            }, {
-                $sort: { _id: -1 }
-            },
+            }
         ]).then(annonces => {
             // res.json(annonces)
             let noteAnnonce = 0
@@ -508,13 +509,15 @@ export const findAnnonceByGuideId = async (req, res) => {
                 noteAnnonce = 0
             })
 
-            if (page < 0) {
+            if (page < 0 || page === 0) {
                 results["error"] = true
                 results["messageError"] = "invalid page number, should start with 1"
                 results["message"] = []
+                results["currentPage"] = 0
                 res.json(results)
             } else if (page > totalPage) {
                 results["error"] = true
+                results["currentPage"] = 0
                 results["messageError"] = `invalid page number, last page is ${totalPage}`
                 results["message"] = []
                 res.json(results)
