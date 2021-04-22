@@ -175,9 +175,9 @@ const route = (app) => {
 
     // Systeme de messsages 
 
-    app.route('messages/:emetteurId/:recepteurID')
+    app.route('messages')
         .post(newMessages)
     app.route('messages/:_id')
         .post(getMesssages)
 }
-export default route;
+export default route;n

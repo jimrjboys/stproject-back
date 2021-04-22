@@ -14,7 +14,7 @@ const app = express();
 //mongodb://127.0.0.1:27017/StProject
 // mongodb+srv://shiroe:blackflag@cluster0.4dqw7.mongodb.net/myFirstDatabase?retryWrites=true&w=majority
 mongoose.Promise = global.Promise;
-mongoose.connect(`mongodb://127.0.0.1:27017/StProject`, {
+mongoose.connect(`mongodb+srv://shiroe:blackflag@cluster0.4dqw7.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`, {
     useNewUrlParser: true,
     useCreateIndex: true,
     useUnifiedTopology: true,
@@ -48,4 +48,5 @@ route(app);
 app.get('/', (req, res) =>
     res.send(`notre serveur a été demarer sur le port : ${process.env.PORT || 8080}`)
 );
+
 export default app ; 
