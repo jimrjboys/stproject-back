@@ -10,28 +10,33 @@ const Utilisateur = mongoose.model('Utilisateur', UtilisateurSchema)
 
 // create and save annonce
 export const createAnnonce = async (req, res, files) => {
-    // console.log("create annonce", files)
-
+    // console.log(files)
     let AnnonceCreate = new Annonce(req.body)
-    let arrayImages = []
+    // let arrayImages = []
     try {
-        await Promise.all(
-            files.map(async file => {
-                try {
-                    let makeThumb = await sharp(`./upload/${req.params.userId}/annonce/${file.filename}`).resize(200, 300).jpeg({ quality: 80 }).toFile(`./upload/${req.params.userId}/annonce/thumbnail/${file.filename}_thumb.jpg`)
-                    let objectImages = {}
-                    if (makeThumb) {
-                        objectImages["photoAnnonce"] = `upload/${req.params.userId}/annonce/${file.filename}`
-                        objectImages["thumbAnnonce"] = `upload/${req.params.userId}/annonce/thumbnail/${file.filename}_thumb.jpg`
-                        arrayImages.push(objectImages)
-                        AnnonceCreate.images = arrayImages
-                    }
+        // await Promise.all(
+        //     // files.map(async file => {
+        //     //     try {
+        //     //         let makeThumb = await sharp(`./upload/${req.params.userId}/annonce/${file.filename}`).resize(200, 300).jpeg({ quality: 80 }).toFile(`./upload/${req.params.userId}/annonce/thumbnail/${file.filename}_thumb.jpg`)
+        //     //         let objectImages = {}
+        //     //         if (makeThumb) {
+        //     //             objectImages["photoAnnonce"] = `upload/${req.params.userId}/annonce/${file.filename}`
+        //     //             objectImages["thumbAnnonce"] = `upload/${req.params.userId}/annonce/thumbnail/${file.filename}_thumb.jpg`
+        //     //             arrayImages.push(objectImages)
+        //     //             AnnonceCreate.images = arrayImages
+        //     //         }
 
-                } catch (err) {
-                    console.log("error sharp", err)
-                }
-            })
-        )
+        //     //     } catch (err) {
+        //     //         console.log("error sharp", err)
+        //     //     }
+        //     // })
+
+        // )
+        let makeThumb = await sharp(`./upload/${req.params.userId}/annonce/${files.filename}`).resize(800, 720).jpeg({ quality: 72 }).toFile(`./upload/${req.params.userId}/annonce/thumbnail/${files.filename}_thumb.jpg`)
+        if (makeThumb) {
+            AnnonceCreate.photoAnnonce = `upload/${req.params.userId}/annonce/${files.filename}`
+            AnnonceCreate.thumbAnnonce = `upload/${req.params.userId}/annonce/thumbnail/${files.filename}_thumb.jpg`
+        }
     } catch (error) {
         console.log(error)
     }
@@ -58,7 +63,7 @@ export const findAllAnnonce = async (req, res) => {
 
     try {
         const lieu = req.query.search
-        let condition = lieu ? { "lieu": { $regex: lieu, $options: 'i' }, "etatSuppr": false, "etatReaparaitre": true } : { "etatSuppr": false, "etatReaparaitre": true }
+        let condition = (lieu) ? { "lieu": { $regex: lieu, $options: 'i' }, "etatSuppr": false, "etatReaparaitre": true } : { "etatSuppr": false, "etatReaparaitre": true }
         let total = await Annonce.aggregate([
             {
                 $match: condition
@@ -150,13 +155,17 @@ export const findAllAnnonce = async (req, res) => {
                     data["annonces"]["description"] = annonce.description
                     data["annonces"]["lieu"] = annonce.lieu
                     data["annonces"]["localisationAnnonce"] = annonce.localisationAnnonce
-                    annonce.images.forEach(item => {
-                        dataImages["photoAnnonce"] = `${req.protocol}://${req.get('host')}/${item.photoAnnonce}`
-                        dataImages["thumbAnnonce"] = `${req.protocol}://${req.get('host')}/${item.thumbAnnonce}`
-                        newImages.push(dataImages)
-                    });
+                    data["annonces"]["etatReaparaitre"] = annonce.etatReaparaitre
+                    
+                    data["annonces"]["photoAnnonce"] = `${req.protocol}://${req.get('host')}/${annonce.photoAnnonce}`
+                    data["annonces"]["thumbAnnonce"] = `${req.protocol}://${req.get('host')}/${annonce.thumbAnnonce}`
+                    // annonce.images.forEach(item => {
+                    //     dataImages["photoAnnonce"] = `${req.protocol}://${req.get('host')}/${item.photoAnnonce}`
+                    //     dataImages["thumbAnnonce"] = `${req.protocol}://${req.get('host')}/${item.thumbAnnonce}`
+                    //     newImages.push(dataImages)
+                    // });
 
-                    data["annonces"]["images"] = newImages
+                    // data["annonces"]["images"] = newImages
 
                     newAnnonce.push(data)
                     note = 0
@@ -199,12 +208,21 @@ export const findAllAnnonce = async (req, res) => {
 export const findOneAnnonce = (req, res) => {
     Annonce.findById(req.params.annonceId)
         .then(annonce => {
+            let oneAnnonce = {}
             if (!annonce) {
                 return res.status(404).send({
                     message: "Annonce not found"
                 })
             }
-            res.json(annonce)
+
+            oneAnnonce["id"] = annonce._id
+            oneAnnonce["titre"] = annonce.titre
+            oneAnnonce["description"] = annonce.description
+            oneAnnonce["lieu"] = annonce.lieu
+            oneAnnonce["localisationAnnonce"] = annonce.localisationAnnonce
+            oneAnnonce["photoAnnonce"] = `${req.protocol}://${req.get('host')}/${annonce.photoAnnonce}`
+            oneAnnonce["thumbAnnonce"] = `${req.protocol}://${req.get('host')}/${annonce.thumbAnnonce}`
+            res.json(oneAnnonce)
         })
         .catch(err => {
             if (err.kind === "ObjectId") {
@@ -230,8 +248,52 @@ export const findOneAnnonce = (req, res) => {
 // }
 
 // update annonce by id
-export const updateAnnonce = (req, res) => {
-    Annonce.findByIdAndUpdate(req.params.annonceId, req.body, { new: true })
+export const updateAnnonce = async (req, res, files) => {
+    // console.log(files)
+    let arrayImages = []
+    let dataAnnonce = {}
+    if(files){
+        try {
+            // await Promise.all(
+            //     files.map(async file => {
+            //         try {
+            //             let makeThumb = await sharp(`./upload/${req.params.userId}/annonce/${file.filename}`).resize(200, 300).jpeg({ quality: 80 }).toFile(`./upload/${req.params.userId}/annonce/thumbnail/${file.filename}_thumb.jpg`)
+            //             let objectImages = {}
+            //             if (makeThumb) {
+            //                 objectImages["photoAnnonce"] = `upload/${req.params.userId}/annonce/${file.filename}`
+            //                 objectImages["thumbAnnonce"] = `upload/${req.params.userId}/annonce/thumbnail/${file.filename}_thumb.jpg`
+            //                 arrayImages.push(objectImages)
+            //                 // req.body.images = arrayImages
+            //             }
+    
+            //         } catch (err) {
+            //             console.log("error sharp", err)
+            //         }
+            //     })
+            // )
+
+
+        } catch (e) {
+            return console.log("images error",e)
+        }
+        let makeThumb = await sharp(`./upload/${req.params.userId}/annonce/${files.filename}`).resize(800, 720).jpeg({ quality: 72 }).toFile(`./upload/${req.params.userId}/annonce/thumbnail/${files.filename}_thumb.jpg`)
+        if (makeThumb) {
+            dataAnnonce.photoAnnonce = `upload/${req.params.userId}/annonce/${files.filename}`
+            dataAnnonce.thumbAnnonce = `upload/${req.params.userId}/annonce/thumbnail/${files.filename}_thumb.jpg`
+        }
+    }
+
+
+    dataAnnonce["titre"] = req.body.titre
+    dataAnnonce["description"] = req.body.description
+    dataAnnonce["lieu"] = req.body.description
+    dataAnnonce["localisationAnnonce"] = req.body.localisationAnnonce
+    
+    // if(arrayImages.length != 0){
+    //     dataAnnonce["images"] = arrayImages
+    // }
+    console.log(dataAnnonce)
+    Annonce.findByIdAndUpdate(req.params.annonceId, dataAnnonce, { new: true })
         .then(annonce => {
             res.json(annonce)
         })
@@ -246,6 +308,39 @@ export const updateAnnonce = (req, res) => {
                 message: "Error updating note with id " + req.params.annonceId
             })
         })
+
+    // AnnonceUpdate.update({ _id: req.params.annonceId}, req.body)
+    //     .then(annonce => {
+    //         res.json(annonce)
+    //     })
+    //     .catch(e => {
+    //         return res.json(e)
+    //     })
+
+    // dataAnnonce["titre"] = req.body.titre
+    // dataAnnonce["description"] = req.body.description
+    // dataAnnonce["lieu"] = req.body.description
+    // dataAnnonce["localisationAnnonce"] = req.body.localisationAnnonce
+    
+    // // if(arrayImages.length != 0){
+    // //     dataAnnonce["images"] = arrayImages
+    // // }
+    // console.log(dataAnnonce)
+    // Annonce.findByIdAndUpdate(req.params.annonceId, dataAnnonce, { new: true })
+    //     .then(annonce => {
+    //         res.json(annonce)
+    //     })
+    //     .catch(err => {
+    //         if (err.kind === "ObjectId") {
+    //             return res.status(404).send({
+    //                 message: "Annonce not found with id " + req.params.annonceId
+    //             })
+    //         }
+
+    //         return res.status(500).send({
+    //             message: "Error updating note with id " + req.params.annonceId
+    //         })
+    //     })
 }
 
 // softdelete annonce
@@ -397,20 +492,23 @@ export const findAnnonceByGuideId = async (req, res) => {
                 data["annonces"]["localisationAnnonce"] = annonce.localisationAnnonce
                 data["annonces"]["etatReaparaitre"] = annonce.etatReaparaitre
 
-                annonce.images.forEach(item => {
-                    dataImages["photoAnnonce"] = `${req.protocol}://${req.get('host')}/${item.photoAnnonce}`
-                    dataImages["thumbAnnonce"] = `${req.protocol}://${req.get('host')}/${item.thumbAnnonce}`
-                    newImages.push(dataImages)
-                });
+                // annonce.images.forEach(item => {
+                //     dataImages["photoAnnonce"] = `${req.protocol}://${req.get('host')}/${item.photoAnnonce}`
+                //     dataImages["thumbAnnonce"] = `${req.protocol}://${req.get('host')}/${item.thumbAnnonce}`
+                //     newImages.push(dataImages)
+                // });
 
-                data["annonces"]["images"] = newImages
+                data["annonces"]["photoAnnonce"] = `${req.protocol}://${req.get('host')}/${annonce.photoAnnonce}`
+                    data["annonces"]["thumbAnnonce"] = `${req.protocol}://${req.get('host')}/${annonce.thumbAnnonce}`
+
+                // data["annonces"]["images"] = newImages
                 data["annonces"]["commentaires"] = annonce.commentaire_annonce
 
                 newAnnonce.push(data)
                 noteAnnonce = 0
             })
 
-            if (page < 0 || page === 0) {
+            if (page < 0) {
                 results["error"] = true
                 results["messageError"] = "invalid page number, should start with 1"
                 results["message"] = []

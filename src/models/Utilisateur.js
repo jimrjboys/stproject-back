@@ -50,6 +50,7 @@ export const UtilisateurSchema = new Schema({
     },
     etatSuppr: {
         type: Boolean,
+        default: false,
     },
     pdp: {
         type: String,

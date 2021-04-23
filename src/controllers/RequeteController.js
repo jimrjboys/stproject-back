@@ -55,6 +55,7 @@ export const findAllRequeteByAnnonce = (req, res) => {
                     message: "Requete not found with id"
                 })
             }
+            return res.json(err)
         })
 }
 

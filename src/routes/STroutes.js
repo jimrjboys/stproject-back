@@ -39,7 +39,8 @@ import {
 
 import {
     ajoutNotification,
-    modificationNotification
+    modificationNotification,
+    findAllNotification,
 } from '../controllers/NotificationControllers'
 
 import {
@@ -80,7 +81,7 @@ const route = (app) => {
                 'image/jpeg': 'jpg',
                 'image/png': 'png'
             }
-            
+
             const dir = `./upload/${req.params.userId}/annonce`;
 
             const storage = multer.diskStorage({
@@ -94,18 +95,23 @@ const route = (app) => {
                 }
             })
 
+            // let uploadD = multer({
+            //     storage: storage
+            // }).array("images")
+
             let uploadD = multer({
                 storage: storage
-            }).array("images")
+            }).single("photoAnnonce")
 
             uploadD(req, res, (err) => {
-                if(err){
+                if (err) {
                     console.log(err)
-                }else{
+                } else {
                     // console.log(req.files)
                     // res.send(res.req.file.filename);
-                    createAnnonce(req, res, req.files)
-                }   
+                    // createAnnonce(req, res, req.files)
+                    createAnnonce(req, res, req.file)
+                }
             })
 
             // console.log(uploadD)
@@ -115,9 +121,41 @@ const route = (app) => {
     app.get('/annonce/annonceGuide/:userId', findAnnonceByGuideId)
 
     // Annonce use ID
-    app.route('/annonce/oneId/:annonceId')
-        .get(findOneAnnonce)
-        .put(updateAnnonce)
+    app.get('/annonce/oneId/:annonceId', findOneAnnonce)
+    app.put('/annonce/oneId/:annonceId/:userId?', async (req, res, next) => {
+            const MIME_TYPES = {
+                'image/jpg': 'jpg',
+                'image/jpeg': 'jpg',
+                'image/png': 'png'
+            }
+
+            const dir = `./upload/${req.params.userId}/annonce`;
+
+            const storage = multer.diskStorage({
+                destination: (req, file, callback) => {
+                    callback(null, dir)
+                },
+                filename: (req, file, callback) => {
+                    const name = file.originalname.split(' ').join('_')
+                    const extension = MIME_TYPES[file.mimetype]
+                    callback(null, name + Date.now() + '.' + extension)
+                }
+            })
+            
+            let uploadD = await multer({
+                storage: storage
+            }).single("photoAnnonce")
+            
+            uploadD(req, res, (err) => {
+                if (err) {
+                    console.log("MULTER ERROR", err)
+                } else {
+                    // console.log(req)
+                    // res.send(res.req.file.filename);
+                    updateAnnonce(req, res, req.file)
+                }
+            })
+        })
     // advanced functionality
     app.put('/annonce/softDeleteAnnonce/:annonceId', softDeleteAnnonce)
     app.put('/annonce/editStateAnnonce/:annonceId', editStateAnnonce)
@@ -151,8 +189,9 @@ const route = (app) => {
         .put(softDeleteOpinions)
 
     //Notification ajout et modification
-    app.route('/notification/')
+    app.route('/notification')
         .post(ajoutNotification)
+        .get(findAllNotification)
     app.route('/notification/:notificationId')
         .put(modificationNotification)
 
@@ -180,4 +219,4 @@ const route = (app) => {
     app.route('messages/:_id')
         .post(getMesssages)
 }
-export default route;n
+export default route;
