@@ -514,10 +514,14 @@ export const findAnnonceByGuideId = async (req, res) => {
                 results["messageError"] = "invalid page number, should start with 1"
                 results["message"] = []
                 results["currentPage"] = 0
+                results["totalItem"] = 0
+                results["totalPage"] = 0
                 res.json(results)
             } else if (page > totalPage) {
                 results["error"] = true
                 results["currentPage"] = 0
+                results["totalItem"] = 0
+                results["totalPage"] = 0
                 results["messageError"] = `invalid page number, last page is ${totalPage}`
                 results["message"] = []
                 res.json(results)
