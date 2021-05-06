@@ -542,4 +542,4 @@ export const findAnnonceByGuideId = async (req, res) => {
     } catch (error) {
         return res.json({ messageError: error })
     }
-}
+} 
