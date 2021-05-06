@@ -2,6 +2,8 @@ import mongoose from 'mongoose'
 import { OpionionUsersSchema } from '../models/OpinionUsers'
 
 const OpinionUsers = mongoose.model('OpinionUsers', OpionionUsersSchema);
+const ObjectId = mongoose.Types.ObjectId
+
 
 export const ajoutOpinionUsers = (req, res) => {
 
@@ -18,30 +20,53 @@ export const ajoutOpinionUsers = (req, res) => {
 
 // fetch opinion by guideId
 export const listOpinionUser = (req, res) => {
-    OpinionUsers.find({etatSuppr: false, guideId: req.params.guideId})
-        .then(opinionUser => {
-            // res.json(opinionUser)
-            let note = 0
+    OpinionUsers.aggregate([
+        {
+            $match: {"etatSuppr": false, "guideId": ObjectId(req.params.guideId)}
+        },
+        {
+            $sort: { _id: -1 }
+        },
+        {
+            $lookup:
+            {
+                "from": "utilisateurs",
+                "localField": "touristeId",
+                "foreignField": "_id",
+                "as": "touriste",
+            }
+        },
+        {
+            $unwind: "$touriste"
+        },
+        {
+            $project: {
+                "touriste.password": 0
+            }
+        }
+    ])
+    .then(opinionUser => {
+        let note = 0
+        // console.log(opinionUser)
+        opinionUser.forEach(opinion => {
+            let data = {}
 
-            opinionUser.forEach(opinion => {
-                let data = {}
-
-                note += opinion.note
-            })
-
-            res.json(
-                {
-                    noteM: note / opinionUser.length,
-                    opinions: opinionUser
-                }
-            )
+            note += opinion.note
         })
-        .catch(err => {
-            return res.status(404).send({
-                error: true,
-                messageError: err
-            })
+
+        res.json(
+            {
+                noteM: note / opinionUser.length,
+                opinions: opinionUser
+            }
+        )
+    })
+    .catch(err => {
+        return res.status(404).send({
+            error: true,
+            messageError: err
         })
+    })
 }
 
 export const modificationOpinionUsers = (req, res) => {

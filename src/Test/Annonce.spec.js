@@ -75,7 +75,7 @@ describe(`PUT /annonce/oneId/${annonceId}`, () => {
                 .put(`/annonce/oneId/${annonceId}`)
                 .send(newAnnonce)
                 .expect(200)
-            
+
             console.log("Réponse : ", response.body)
             done()
         })
@@ -219,4 +219,3 @@ describe(`PUT /annonce/editStateAnnonce/${annonceId}`, () => {
         console.log("Exception : ", err)
     }
 })
-
