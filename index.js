@@ -26,7 +26,7 @@ mongoose.connect(`mongodb+srv://shiroe:blackflag@cluster0.4dqw7.mongodb.net/myFi
 //body Parser afin de connecté  express avec notre object
 
 let corsOptions = {
-  origin: "*"
+  origin: "http://localhost:3000"
 } 
 
 app.use(bodyParser.urlencoded({ extended: true }));
