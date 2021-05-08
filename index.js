@@ -23,12 +23,15 @@ mongoose.connect(`mongodb+srv://shiroe:blackflag@cluster0.4dqw7.mongodb.net/myFi
     console.log('Notre base de donnée marche bien :) ;) ')
 );
 
-app.use(cors())
-
 //body Parser afin de connecté  express avec notre object
+
+let corsOptions = {
+  origin: "*"
+} 
+
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-
+app.use(cors(corsOptions))
 app.use('/upload', express.static(path.join(__dirname, 'upload')))
 
 app.use((req , res, next) => {
