@@ -31,7 +31,7 @@ let corsOptions = {
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-app.use(cors())
+app.use(cors(corsOptions))
 app.use('/upload', express.static(path.join(__dirname, 'upload')))
 
 app.use((req , res, next) => {
