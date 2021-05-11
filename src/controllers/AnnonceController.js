@@ -286,7 +286,7 @@ export const updateAnnonce = async (req, res, files) => {
 
     dataAnnonce["titre"] = req.body.titre
     dataAnnonce["description"] = req.body.description
-    dataAnnonce["lieu"] = req.body.description
+    dataAnnonce["lieu"] = req.body.lieu
     dataAnnonce["localisationAnnonce"] = req.body.localisationAnnonce
     
     // if(arrayImages.length != 0){

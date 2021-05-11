@@ -12,7 +12,7 @@ const Utilisateur = mongoose.model('Utilisateur', UtilisateurSchema)
 const Localisation = mongoose.model('Localisation', LocalisationSchema)
 
 let transport = nodemailer.createTransport({
-    host:"smtp.mailtrap.io",
+    host: "smtp.mailtrap.io",
     port: 2525,
     auth: {
         user: "c9541a961a07a6",
@@ -24,13 +24,13 @@ let mailOptions = (req, res, email, userId) => ({
     from: '"SpeedTourisme" <speedTourisme@spt.com>',
     to: email,
     subject: 'Verification d\'email',
-    text: `Cliquer sur le lien suivant pour activer votre compte!! : ${req.protocol}://${req.get('host')}/utilisateur/activeAccount/${userId}`, 
+    text: `Cliquer sur le lien suivant pour activer votre compte!! : ${req.protocol}://${req.get('host')}/utilisateur/activeAccount/${userId}`,
     html: `<a href="${req.protocol}://${req.get('host')}/utilisateur/activeAccount/${userId}?_method=PUT">Verification email</a>`
 })
 
 export const listUtilisateur = (req, res) => {
 
-    Utilisateur.find({etatSuppr: false}, (err, utilisateur) => {
+    Utilisateur.find({ etatSuppr: false }, (err, utilisateur) => {
 
         if (err) {
             res.send(err)
@@ -46,30 +46,69 @@ export const ajouterUtilisateur = (req, res) => {
 
     nouveauxUtilisateur.password = bcrypt.hashSync(req.body.password, saltRounds)
 
-    nouveauxUtilisateur.save((err, newUtilisateur) => {
-        const dir = `./upload/${newUtilisateur._id}`
-
-        if (err) {
-            res.send(err)
-        }
-
-        newUtilisateur.password = undefined
-        
-        if(!fs.existsSync(dir)){
-                fs.mkdirSync(dir, { recursive: true }, err => console.log(err))
-                fs.mkdirSync(dir+'/annonce/thumbnail', { recursive: true }, err => console.log(err))
-                fs.mkdirSync(dir+'/pdp/thumbnail', { recursive: true }, err => console.log(err))
-        }
-
-        transport.sendMail(mailOptions(req, res, newUtilisateur.email, newUtilisateur._id), (error, info) => {
-            if (error) {
-                return console.log(error);
+    Utilisateur.aggregate([
+        {
+            $match: {
+                $or: [
+                    { username: req.body.username },
+                    { email: req.body.email }
+                ]
             }
-            console.log('Message sent: %s', info.messageId);
-        })
+        }
+    ])
+        .then(response => {
+            if (response.length == 0) {
+                nouveauxUtilisateur.save((err, newUtilisateur) => {
+                    const dir = `./upload/${newUtilisateur._id}`
 
-        res.json(newUtilisateur)
-    });
+                    if (err) {
+                        return res.send(err)
+                    }
+
+                    newUtilisateur.password = undefined
+
+                    if (!fs.existsSync(dir)) {
+                        fs.mkdirSync(dir, { recursive: true }, err => console.log(err))
+                        fs.mkdirSync(dir + '/annonce/thumbnail', { recursive: true }, err => console.log(err))
+                        fs.mkdirSync(dir + '/pdp/thumbnail', { recursive: true }, err => console.log(err))
+                    }
+
+                    // transport.sendMail(mailOptions(req, res, newUtilisateur.email, newUtilisateur._id), (error, info) => {
+                    //     if (error) {
+                    //         return console.log(error);
+                    //     }
+                    //     console.log('Message sent: %s', info.messageId);
+                    // })
+                    let data = {
+                        error: false,
+                        newUtilisateur: newUtilisateur
+                    }
+                    res.json(data)
+                });
+            } else {
+                let error = {newUtilisateur: {}}
+                response.map(user => {
+                    // console.log(user.email, user.username)
+                    if (user.username == req.body.username && user.email != req.body.email) {
+                        error["error"] = true
+                        error["newUtilisateur"]["username"] = "username existe déjà"
+                        error["newUtilisateur"]["email"] = ""
+                    } else if (user.email == req.body.email && user.username != req.body.username) {
+                        error["error"] = true
+                        error["newUtilisateur"]["username"] = ""
+                        error["newUtilisateur"]["email"] = "email exist déjà"
+                    }else if(user.email == req.body.email && user.username == req.body.username){
+                        error["error"] = true
+                        error["newUtilisateur"]["username"] = "username existe déjà"
+                        error["newUtilisateur"]["email"] = "email exist déjà"
+                    }
+                })
+                return res.json(error)
+            }
+        })
+        .catch(err => {
+            return console.log(err)
+        })
 }
 export const utilisateurId = (req, res) => {
     Utilisateur.findById({ _id: req.params.utilisateurId }, (err, searchUtilisateurId) => {
@@ -117,7 +156,7 @@ export const Authentification = (req, res) => {
         if (!utilisateur || !utilisateur.comparePassword(req.body.password)) {
             return res.status(401).json({ message: 'Authentication failed. Invalid user or password.' });
         }
-        return res.json({ token: jwt.sign({ email: utilisateur.email, username: utilisateur.username, _id: utilisateur._id }, 'RESTFULAPIs') });
+        return res.json({ token: jwt.sign({ email: utilisateur.email, username: utilisateur.username, _id: utilisateur._id, mailVerify: utilisateur.mailVerify }, 'RESTFULAPIs') });
     });
 };
 export const VerificationAuthentification = (req, res, next) => {
@@ -141,20 +180,26 @@ export const VerificationToken = (req, res, next) => {
 };
 
 export const ActiveAccount = (req, res) => {
-    console.log(req.params.userId)
+    // console.log(req.params.userId)
     Utilisateur.findByIdAndUpdate(req.params.userId, {
         mailVerify: true
-    }, {new: true})
+    }, { new: true })
         .then(() => {
-            res.json({message: "Compte activer"})
+            const data = {
+                error: false,
+                message: "Compte activer"
+            }
+            res.json(data)
         })
         .catch(err => {
             if (err.kind === "ObjectId") {
                 return res.status(404).send({
+                    error: true,
                     message: "Annonce not found with id " + req.params.utilisateurId
                 })
             }
             return res.status(500).send({
+                error: true,
                 message: "Erreur lors de l'activation du compte " + req.params.utilisateurId
             })
         })
