@@ -115,6 +115,7 @@ export const utilisateurId = (req, res) => {
         if (err) {
             return res.send(err)
         }
+        searchUtilisateurId.password = undefined
         res.json(searchUtilisateurId)
 
     });
@@ -123,7 +124,7 @@ export const modifierUtilisateur = (req, res) => {
 
     Utilisateur.findOneAndUpdate({ _id: req.params.utilisateurId }, req.body, { new: true }, (err, modifUtilisateurId) => {
         if (err) {
-            res.send(err)
+            return res.send(err)
         }
         res.json(modifUtilisateurId)
 
@@ -151,12 +152,12 @@ export const SaveLastLocalisation = (req, res) => {
 }
 export const Authentification = (req, res) => {
 
-    Utilisateur.findOne({ email: req.body.email }, (err, utilisateur) => {
+    Utilisateur.findOne({$or: [{ email: req.body.email }, { username: req.body.email }]}, (err, utilisateur) => {
         if (err) throw err;
         if (!utilisateur || !utilisateur.comparePassword(req.body.password)) {
             return res.status(401).json({ message: 'Authentication failed. Invalid user or password.' });
         }
-        return res.json({ token: jwt.sign({ email: utilisateur.email, username: utilisateur.username, _id: utilisateur._id, mailVerify: utilisateur.mailVerify }, 'RESTFULAPIs') });
+        return res.json({ token: jwt.sign({nom: utilisateur.nom, prenom: utilisateur.prenom, tel: utilisateur.tel, email: utilisateur.email, username: utilisateur.username, _id: utilisateur._id, mailVerify: utilisateur.mailVerify }, 'RESTFULAPIs') });
     });
 };
 export const VerificationAuthentification = (req, res, next) => {

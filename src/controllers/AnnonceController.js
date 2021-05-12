@@ -38,7 +38,8 @@ export const createAnnonce = async (req, res, files) => {
             AnnonceCreate.thumbAnnonce = `upload/${req.params.userId}/annonce/thumbnail/${files.filename}_thumb.jpg`
         }
     } catch (error) {
-        console.log(error)
+        // console.log(error)
+        return res.json(error)
     }
 
     AnnonceCreate.save((err, data) => {
