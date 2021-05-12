@@ -157,7 +157,7 @@ export const Authentification = (req, res) => {
         if (!utilisateur || !utilisateur.comparePassword(req.body.password)) {
             return res.status(401).json({ message: 'Authentication failed. Invalid user or password.' });
         }
-        return res.json({ token: jwt.sign({nom: utilisateur.nom, prenom: utilisateur.prenom, tel: utilisateur.tel, email: utilisateur.email, username: utilisateur.username, _id: utilisateur._id, mailVerify: utilisateur.mailVerify }, 'RESTFULAPIs') });
+        return res.json({ token: jwt.sign({ email: utilisateur.email, username: utilisateur.username, _id: utilisateur._id, mailVerify: utilisateur.mailVerify, expiresIn: 31556926, success : true}, 'RESTFULAPIs') });
     });
 };
 export const VerificationAuthentification = (req, res, next) => {
