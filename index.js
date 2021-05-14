@@ -5,7 +5,8 @@ import route from './src/routes/STroutes';
 import path from 'path'
 import jsonwebtoken from 'jsonwebtoken';
 import cors from 'cors';
-import Utilisateur from './src/models/Utilisateur'
+import helmet from 'helmet'
+// import Utilisateur from './src/models/Utilisateur'
 
 const app = express();
 
@@ -31,6 +32,7 @@ mongoose.connect(`mongodb+srv://shiroe:blackflag@cluster0.4dqw7.mongodb.net/myFi
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+app.use(helmet())
 app.use(cors())
 app.use('/upload', express.static(path.join(__dirname, 'upload')))
 
