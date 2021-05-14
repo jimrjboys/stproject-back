@@ -47,7 +47,8 @@ import {
     ajoutOpinionUsers,
     modificationOpinionUsers,
     softDeleteOpinions,
-    listOpinionUser
+    listOpinionUser,
+    findOneOpinionUser
 } from './../controllers/OpinionUsersControllers'
 
 import {
@@ -201,6 +202,7 @@ const route = (app) => {
     app.get('/opinions/guide/:guideId', listOpinionUser) // fetch opinion guide
     app.route('/opinions/:opinionId')
         .put(modificationOpinionUsers)
+        .get(findOneOpinionUser)
     // Authentificatoin et verification du token de connexion  
     //verification de l'etat 
     app.route('/test/verifiEtat')
