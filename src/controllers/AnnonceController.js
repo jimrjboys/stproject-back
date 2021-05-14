@@ -223,6 +223,7 @@ export const findOneAnnonce = (req, res) => {
             oneAnnonce["localisationAnnonce"] = annonce.localisationAnnonce
             oneAnnonce["photoAnnonce"] = `${req.protocol}://${req.get('host')}/${annonce.photoAnnonce}`
             oneAnnonce["thumbAnnonce"] = `${req.protocol}://${req.get('host')}/${annonce.thumbAnnonce}`
+            oneAnnonce["utilisateurId"] = annonce.utilisateurId
             res.json(oneAnnonce)
         })
         .catch(err => {

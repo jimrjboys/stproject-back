@@ -69,6 +69,23 @@ export const listOpinionUser = (req, res) => {
     })
 }
 
+export const findOneOpinionUser = (req, res) => {
+    OpinionUsers.findById(req.params.opinionId)
+        .then(opinionUser => {
+            res.json(opinionUser)
+        })
+        .catch(err => {
+            if (err.kind === "ObjectId") {
+                return res.status(404).json({
+                    messageError: "Annonce not found with id",
+                    message: ""
+                })
+            }
+
+            return res.json(err)
+        })
+}
+
 export const modificationOpinionUsers = (req, res) => {
     OpinionUsers.findOneAndUpdate({ _id: req.params.opinionId }, req.body, { new: true }, (err, modifOpnionsId) => {
         if (err) {
