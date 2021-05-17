@@ -14,6 +14,7 @@ const app = express();
 useNewUrlParser: true,
 useCreateIndex: true,
 useUnifiedTopology: true,
+
 }).then(
 console.log('Notre base de donnée marche bien :) ;) ')
 );
