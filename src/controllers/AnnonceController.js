@@ -38,7 +38,8 @@ export const createAnnonce = async (req, res, files) => {
             AnnonceCreate.thumbAnnonce = `upload/${req.params.userId}/annonce/thumbnail/${files.filename}_thumb.jpg`
         }
     } catch (error) {
-        console.log(error)
+        // console.log(error)
+        return res.json(error)
     }
 
     AnnonceCreate.save((err, data) => {
@@ -222,6 +223,7 @@ export const findOneAnnonce = (req, res) => {
             oneAnnonce["localisationAnnonce"] = annonce.localisationAnnonce
             oneAnnonce["photoAnnonce"] = `${req.protocol}://${req.get('host')}/${annonce.photoAnnonce}`
             oneAnnonce["thumbAnnonce"] = `${req.protocol}://${req.get('host')}/${annonce.thumbAnnonce}`
+            oneAnnonce["utilisateurId"] = annonce.utilisateurId
             res.json(oneAnnonce)
         })
         .catch(err => {

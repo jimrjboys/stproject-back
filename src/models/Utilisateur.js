@@ -13,7 +13,7 @@ export const UtilisateurSchema = new Schema({
     },
     prenom: {
         type: String,
-
+        required: 'prénom obligatoire'
     },
     tel: {
         type: String,
