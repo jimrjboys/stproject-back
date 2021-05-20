@@ -10,6 +10,7 @@ export const  newMessages  = (req , res ) => {
         if (err) {
             res.send(err) 
         }
+        io.emit('message' , req.body)
         res.json(nouveauxMessages) 
     });
 }

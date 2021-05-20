@@ -1,6 +1,5 @@
 import express from 'express';
 var http  = require("http").Server(express);
-var io = require("socket.io")(http)
 import mongoose from 'mongoose';
 import bodyParser from 'body-parser';
 import route from './src/routes/STroutes';
@@ -50,7 +49,5 @@ route(app);
 app.get('/', (req, res) =>
     res.send(`notre serveur a été demarer sur le port : ${process.env.PORT || 8080}`)
 );
-io.on('connection', (socket) => {
-  console.log('user connected')
-})
+
 export default app ; 

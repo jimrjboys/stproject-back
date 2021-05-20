@@ -1,4 +1,4 @@
-import http from './index'
+import app from './index'
 import fs from "fs"
 
 var server  = http.listen(process.env.PORT || 8080, () =>{

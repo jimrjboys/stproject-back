@@ -216,9 +216,9 @@ const route = (app) => {
 
     // Systeme de messsages 
 
-    app.route('messages')
+    app.route('/messages')
         .post(newMessages)
-    app.route('messages/:_id')
+    app.route('/messages/:_id')
         .post(getMesssages)
 }
 export default route;

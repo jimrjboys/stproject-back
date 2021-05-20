@@ -1,6 +1,5 @@
 import express from 'express';
 var http  = require("http").Server(express);
-var io = require("socket.io")(http)
 import mongoose from 'mongoose';
 import bodyParser from 'body-parser';
 import route from './src/routes/STroutes';
