@@ -15,7 +15,7 @@ const app = express();
 //mongodb://127.0.0.1:27017/StProject
 // mongodb+srv://shiroe:blackflag@cluster0.4dqw7.mongodb.net/myFirstDatabase?retryWrites=true&w=majority
 mongoose.Promise = global.Promise;
-mongoose.connect(`mongodb+srv://shiroe:blackflag@cluster0.4dqw7.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`, {
+mongoose.connect(`mongodb://127.0.0.1:27017/StProject`, {
     useNewUrlParser: true,
     useCreateIndex: true,
     useUnifiedTopology: true,

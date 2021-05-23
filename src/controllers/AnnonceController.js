@@ -63,8 +63,17 @@ export const findAllAnnonce = async (req, res) => {
         results = {}
 
     try {
-        const lieu = req.query.search
-        let condition = (lieu) ? { "lieu": { $regex: lieu, $options: 'i' }, "etatSuppr": false, "etatReaparaitre": true } : { "etatSuppr": false, "etatReaparaitre": true }
+        // const lieu = req.query.search
+        // let condition = (lieu) ? { "lieu": { $regex: lieu, $options: 'i' }, "etatSuppr": false, "etatReaparaitre": true } : { "etatSuppr": false, "etatReaparaitre": true }
+
+        const search = req.query.search
+        let condition = (search) ? {
+            $or: [
+                {lieu: { $regex: search, $options: 'i' },  "etatSuppr": false, "etatReaparaitre": true},
+                {titre: { $regex: search, $options: 'i' },  "etatSuppr": false, "etatReaparaitre": true}
+            ]
+        } : { "etatSuppr": false, "etatReaparaitre": true }
+
         let total = await Annonce.aggregate([
             {
                 $match: condition
@@ -98,6 +107,9 @@ export const findAllAnnonce = async (req, res) => {
                 $match: condition
             },
             {
+                $sort: { createdAt: -1 }
+            },
+            {
                 $lookup:
                 {
                     "from": "utilisateurs",
@@ -120,9 +132,7 @@ export const findAllAnnonce = async (req, res) => {
                 $skip: skipIndex
             }, {
                 $limit: limit
-            }, {
-                $sort: { _id: -1 }
-            },
+            }
         ])
             .then(annonces => {
                 let note = 0
@@ -142,7 +152,7 @@ export const findAllAnnonce = async (req, res) => {
                         note += opinion.note
                     })
                    
-                    data["noteMoyenGuide"] = note / countOpinion
+                    data["noteMoyenGuide"] = note / countOpinion || 0
 
                     data["guide"]["id"] = annonce.user_info._id
                     data["guide"]["nom"] = annonce.user_info.nom
@@ -160,6 +170,7 @@ export const findAllAnnonce = async (req, res) => {
                     
                     data["annonces"]["photoAnnonce"] = `${req.protocol}://${req.get('host')}/${annonce.photoAnnonce}`
                     data["annonces"]["thumbAnnonce"] = `${req.protocol}://${req.get('host')}/${annonce.thumbAnnonce}`
+                    data["annonces"]["createdAt"] = annonce.createdAt
                     // annonce.images.forEach(item => {
                     //     dataImages["photoAnnonce"] = `${req.protocol}://${req.get('host')}/${item.photoAnnonce}`
                     //     dataImages["thumbAnnonce"] = `${req.protocol}://${req.get('host')}/${item.thumbAnnonce}`
@@ -190,8 +201,10 @@ export const findAllAnnonce = async (req, res) => {
                     results["totalPage"] = totalPage
 
                     results["message"] = newAnnonce.sort((a, b) => {
-                        return b.noteMoyenGuide - a.noteMoyenGuide
+                        // console.log(newAnnonce)
+                        if(a.noteMoyenGuide > b.noteMoyenGuide) return -1
                     })
+                    // results["message"] = newAnnonce
                     res.json(results)
                 }
 
