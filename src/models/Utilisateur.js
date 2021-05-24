@@ -55,6 +55,15 @@ export const UtilisateurSchema = new Schema({
     pdp: {
         type: String,
     },
+    thumbPdp: {
+        type: String,
+    },
+    pdc: {
+        type: String,
+    },
+    thumbPdc: {
+        type: String,
+    }
 });
 UtilisateurSchema.methods.comparePassword = function(password) {
     return bcrypt.compareSync(password, this.password);

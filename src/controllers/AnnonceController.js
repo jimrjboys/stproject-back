@@ -202,6 +202,7 @@ export const findAllAnnonce = async (req, res) => {
 
                     results["message"] = newAnnonce.sort((a, b) => {
                         // console.log(newAnnonce)
+                        // if(a.annonces.createdAt > b.annonces.createdAt) return -1
                         if(a.noteMoyenGuide > b.noteMoyenGuide) return -1
                     })
                     // results["message"] = newAnnonce
@@ -307,7 +308,7 @@ export const updateAnnonce = async (req, res, files) => {
     // if(arrayImages.length != 0){
     //     dataAnnonce["images"] = arrayImages
     // }
-    console.log(dataAnnonce)
+    // console.log(dataAnnonce)
     Annonce.findByIdAndUpdate(req.params.annonceId, dataAnnonce, { new: true })
         .then(annonce => {
             res.json(annonce)

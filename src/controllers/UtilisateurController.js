@@ -5,6 +5,7 @@ import bcrypt from 'bcrypt';
 import nodemailer from 'nodemailer';
 import { LocalisationSchema } from '../models/Localisation';
 import { UtilisateurSchema } from '../models/Utilisateur';
+import sharp from 'sharp'
 
 import fs from "fs"
 import {google} from 'googleapis'
@@ -179,11 +180,31 @@ export const utilisateurId = (req, res) => {
 
     });
 }
-export const modifierUtilisateur = (req, res) => {
+export const modifierUtilisateur = async (req, res) => {
     // let user = new Utilisateur(req.body)
     // console.log(req.body)
     let data = {
         user: req.body
+    }
+
+    if(req.files){
+        let makeThumbPdp = "", makeThumbPdc = ""
+        if(req.files.pdp[0]){
+            makeThumbPdp = await sharp(`./upload/${req.params.utilisateurId}/pdp/${req.files.pdp[0].filename}`).resize(800, 720).jpeg({ quality: 72 }).toFile(`./upload/${req.params.utilisateurId}/pdp/thumbnail/${req.files.pdp[0].filename}_thumb.jpg`)
+            if(makeThumbPdp){
+                data["user"]["pdp"] = `upload/${req.params.utilisateurId}/pdp/${req.files.pdp[0].filename}`
+                data["user"]["thumbPdp"] = `upload/${req.params.utilisateurId}/pdp/thumbnail/${req.files.pdp[0].filename}_thumb.jpg`
+            }
+        }
+
+        if(req.files.pdc[0]){
+            makeThumbPdc = await sharp(`./upload/${req.params.utilisateurId}/pdp/${req.files.pdc[0].filename}`).resize(800, 720).jpeg({ quality: 72 }).toFile(`./upload/${req.params.utilisateurId}/pdp/thumbnail/${req.files.pdc[0].filename}_thumb.jpg`)
+            if(makeThumbPdc){
+                data["user"]["pdc"] = `upload/${req.params.utilisateurId}/pdp/${req.files.pdc[0].filename}`
+                data["user"]["thumbPdc"] = `upload/${req.params.utilisateurId}/pdp/thumbnail/${req.files.pdc[0].filename}_thumb.jpg`
+            }
+        }
+
     }
     
     if(req.body.password){

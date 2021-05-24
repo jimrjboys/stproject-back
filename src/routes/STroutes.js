@@ -59,6 +59,31 @@ import {
 // import media from '../middleware/multer-config'
 import multer from 'multer'
 
+const multerFunction = async (req, res, directory, field) => {
+    const MIME_TYPES = {
+        'image/jpg': 'jpg',
+        'image/jpeg': 'jpg',
+        'image/png': 'png'
+    }
+
+    const dir = directory;
+
+    const storage = multer.diskStorage({
+        destination: (req, file, callback) => {
+            callback(null, dir)
+        },
+        filename: (req, file, callback) => {
+            const name = file.originalname.split(' ').join('_')
+            const extension = MIME_TYPES[file.mimetype]
+            callback(null, name + Date.now() + '.' + extension)
+        }
+    })
+
+    return uploadD = await multer({
+        storage: storage
+    }).single(field)
+}
+
 const route = (app) => {
     // Utilisateur
     app.route('/utilisateur')
@@ -68,7 +93,45 @@ const route = (app) => {
     //Utilisateur avec Recheche par ID 
     app.route('/utilisateur/:utilisateurId?')
         .get(utilisateurId)
-        .put(modifierUtilisateur)
+        .put(async (req, res) => {
+            const MIME_TYPES = {
+                'image/jpg': 'jpg',
+                'image/jpeg': 'jpg',
+                'image/png': 'png'
+            }
+    
+            const dir = `./upload/${req.params.utilisateurId}/pdp`;
+    
+            const storage = multer.diskStorage({
+                destination: (req, file, callback) => {
+                    callback(null, dir)
+                },
+                filename: (req, file, callback) => {
+                    const name = file.originalname.split(' ').join('_')
+                    const extension = MIME_TYPES[file.mimetype]
+                    callback(null, name + Date.now() + '.' + extension)
+                }
+            })
+
+            let uploadD = await multer({
+                storage: storage
+            }).fields([
+                {name:'pdp', maxCount: 1},
+                {name: 'pdc', maxCount: 1}
+            ])
+    
+            uploadD(req, res, (err) => {
+                if (err) {
+                    console.log("MULTER ERROR", err)
+                } else {
+                    // console.log(req.files.pdp[0])
+                    // console.log(req.files.pdc[0])
+                    // console.log(req)
+                    // res.send(res.req.file.filename);
+                    modifierUtilisateur(req, res)
+                }
+            })
+        })
     //activation du compte après verification email user 
     app.put('/utilisateur/activeAccount/:userId', ActiveAccount)
 
@@ -123,40 +186,41 @@ const route = (app) => {
 
     // Annonce use ID
     app.get('/annonce/oneId/:annonceId', findOneAnnonce)
-    app.put('/annonce/oneId/:annonceId/:userId?', async (req, res, next) => {
-            const MIME_TYPES = {
-                'image/jpg': 'jpg',
-                'image/jpeg': 'jpg',
-                'image/png': 'png'
+    app.put('/annonce/oneId/:annonceId/:userId?', async (req, res) => {
+        const MIME_TYPES = {
+            'image/jpg': 'jpg',
+            'image/jpeg': 'jpg',
+            'image/png': 'png'
+        }
+
+        const dir = `./upload/${req.params.userId}/annonce`;
+
+        const storage = multer.diskStorage({
+            destination: (req, file, callback) => {
+                callback(null, dir)
+            },
+            filename: (req, file, callback) => {
+                const name = file.originalname.split(' ').join('_')
+                const extension = MIME_TYPES[file.mimetype]
+                callback(null, name + Date.now() + '.' + extension)
             }
-
-            const dir = `./upload/${req.params.userId}/annonce`;
-
-            const storage = multer.diskStorage({
-                destination: (req, file, callback) => {
-                    callback(null, dir)
-                },
-                filename: (req, file, callback) => {
-                    const name = file.originalname.split(' ').join('_')
-                    const extension = MIME_TYPES[file.mimetype]
-                    callback(null, name + Date.now() + '.' + extension)
-                }
-            })
-            
-            let uploadD = await multer({
-                storage: storage
-            }).single("photoAnnonce")
-            
-            uploadD(req, res, (err) => {
-                if (err) {
-                    console.log("MULTER ERROR", err)
-                } else {
-                    // console.log(req)
-                    // res.send(res.req.file.filename);
-                    updateAnnonce(req, res, req.file)
-                }
-            })
         })
+
+        let uploadD = await multer({
+            storage: storage
+        }).single("photoAnnonce")
+
+        uploadD(req, res, (err) => {
+            if (err) {
+                console.log("MULTER ERROR", err)
+            } else {
+                // console.log(req)
+                // res.send(res.req.file.filename);
+                updateAnnonce(req, res, req.file)
+            }
+        })
+    })
+
     // advanced functionality
     app.put('/annonce/softDeleteAnnonce/:annonceId', softDeleteAnnonce)
     app.put('/annonce/editStateAnnonce/:annonceId', editStateAnnonce)
