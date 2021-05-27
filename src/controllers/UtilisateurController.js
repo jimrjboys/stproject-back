@@ -8,77 +8,77 @@ import { UtilisateurSchema } from '../models/Utilisateur';
 import sharp from 'sharp'
 
 import fs from "fs"
-import {google} from 'googleapis'
+// import {google} from 'googleap is'
 require("dotenv").config();
 
 const Utilisateur = mongoose.model('Utilisateur', UtilisateurSchema)
 const Localisation = mongoose.model('Localisation', LocalisationSchema)
 
-const OAuth2 = google.auth.OAuth2
+// const OAuth2 = google.auth.OAuth2
 
-const createTransporter = async () => {
-    const oauth2Client = new OAuth2(
-        process.env.CLIENT_ID,
-        process.env.CLIENT_SECRET,
-        "https://developers.google.com/oauthplayground"
-    );
+// const createTransporter = async () => {
+//     const oauth2Client = new OAuth2(
+//         process.env.CLIENT_ID,
+//         process.env.CLIENT_SECRET,
+//         "https://developers.google.com/oauthplayground"
+//     );
 
-    oauth2Client.setCredentials({
-        refresh_token: process.env.REFRESH_TOKEN
-    });
+//     oauth2Client.setCredentials({
+//         refresh_token: process.env.REFRESH_TOKEN
+//     });
 
-    const accessToken = await new Promise((resolve, reject) => {
-        console.log(process.env.REFRESH_TOKEN)
-        oauth2Client.getAccessToken((err, token) => {
-            if (err) {
-                reject("Failed to create access token :(");
-            }
-            resolve(token);
-        });
-    });
+//     const accessToken = await new Promise((resolve, reject) => {
+//         console.log(process.env.REFRESH_TOKEN)
+//         oauth2Client.getAccessToken((err, token) => {
+//             if (err) {
+//                 reject("Failed to create access token :(");
+//             }
+//             resolve(token);
+//         });
+//     });
 
-    const transporter = nodemailer.createTransport({
-        service: "gmail",
-        auth: {
-            type: "OAuth2",
-            user: process.env.EMAIL,
-            accessToken,
-            clientId: process.env.CLIENT_ID,
-            clientSecret: process.env.CLIENT_SECRET,
-            refreshToken: process.env.REFRESH_TOKEN
-        }
-    });
+//     const transporter = nodemailer.createTransport({
+//         service: "gmail",
+//         auth: {
+//             type: "OAuth2",
+//             user: process.env.EMAIL,
+//             accessToken,
+//             clientId: process.env.CLIENT_ID,
+//             clientSecret: process.env.CLIENT_SECRET,
+//             refreshToken: process.env.REFRESH_TOKEN
+//         }
+//     });
 
-    return transporter;
-};
+//     return transporter;
+// };
 
-const sendEmail = async (email, userId) => {
-    let emailTransporter = await createTransporter();
-    await emailTransporter.sendMail({
-        subject: "Email Verify",
-        from: process.env.EMAIL,
-        to: email,
-        text: `Click this link to validate ${email}`,
-        html: `<a href="http://localhost:3000/verifyMail/${userId}">Cliquer moi</a>`
-    });
-};
+// const sendEmail = async (email, userId) => {
+//     let emailTransporter = await createTransporter();
+//     await emailTransporter.sendMail({
+//         subject: "Email Verify",
+//         from: process.env.EMAIL,
+//         to: email,
+//         text: `Click this link to validate ${email}`,
+//         html: `<a href="http://localhost:3000/verifyMail/${userId}">Cliquer moi</a>`
+//     });
+// };
 
-// let transport = nodemailer.createTransport({
-//     host: "smtp.mailtrap.io",
-//     port: 2525,
-//     auth: {
-//         user: "c9541a961a07a6",
-//         pass: "23ed3ae26f3162"
-//     }
-// })
+let transport = nodemailer.createTransport({
+    host: "smtp.mailtrap.io",
+    port: 2525,
+    auth: {
+        user: "c9541a961a07a6",
+        pass: "23ed3ae26f3162"
+    }
+})
 
-// let mailOptions = (req, res, email, userId) => ({
-//     from: '"SpeedTourisme" <speedTourisme@spt.com>',
-//     to: email,
-//     subject: 'Verification d\'email',
-//     text: `Cliquer sur le lien suivant pour activer votre compte!! : ${req.protocol}://${req.get('host')}/utilisateur/activeAccount/${userId}`,
-//     html: `<a href="${req.protocol}://${req.get('host')}/utilisateur/activeAccount/${userId}?_method=PUT">Verification email</a>`
-// })
+let mailOptions = (req, res, email, userId) => ({
+    from: '"SpeedTourisme" <speedTourisme@spt.com>',
+    to: email,
+    subject: 'Verification d\'email',
+    text: `Cliquer sur le lien suivant pour activer votre compte!!`,
+    html: `Merci de verifier votre compte en cliquant sur le lien!!!!! <a href="http://localhost:3000/verifyMail/${userId}">Verification email</a>`
+})
 
 export const listUtilisateur = (req, res) => {
 
@@ -125,19 +125,19 @@ export const ajouterUtilisateur = (req, res) => {
                         fs.mkdirSync(dir + '/pdp/thumbnail', { recursive: true }, err => console.log(err))
                     }
 
-                    // transport.sendMail(mailOptions(req, res, newUtilisateur.email, newUtilisateur._id), (error, info) => {
-                    //     if (error) {
-                    //         return console.log(error);
-                    //     }
-                    //     console.log('Message sent: %s', info.messageId);
-                    // })
-                    sendEmail(newUtilisateur.email, newUtilisateur._id)
-                        .then(() => {
-                            console.log('Message sent: %s', info.messageId)
-                        })
-                        .catch(err => {
-                            console.log(err)
-                        })
+                    transport.sendMail(mailOptions(req, res, newUtilisateur.email, newUtilisateur._id), (error, info) => {
+                        if (error) {
+                            return console.log(error);
+                        }
+                        console.log('Message sent: %s', info.messageId);
+                    })
+                    // sendEmail(newUtilisateur.email, newUtilisateur._id)
+                    //     .then(() => {
+                    //         console.log('Message sent: %s', info.messageId)
+                    //     })
+                    //     .catch(err => {
+                    //         console.log(err)
+                    //     })
 
                     let data = {
                         error: false,
@@ -180,6 +180,56 @@ export const utilisateurId = (req, res) => {
 
     });
 }
+
+export const findUserByEmail = (req, res) => {
+    Utilisateur.findOne({'email': req.body.email }, {projection:{ _id: 0 }})
+        .then(response => {
+            const data = {
+                error: false,
+                data: response,
+                message: "email trouvé"
+            }
+            res.json(data)
+        })
+        .catch(err => {
+            const data = {
+                error: true,
+                data: "",
+                message: "email non trouvé"
+            }
+            return res.json(err)
+        })
+}
+
+let mailResetPassword = (email, userId) => ({
+    from: '"SpeedTourisme" <speedTourisme@spt.com>',
+    to: email,
+    subject: 'Reinitialisation mot de passe',
+    text: 'Vous pouvez réinitialiser votre mot de passe',
+    html: `Merci de cliquer sur le lien suivant pour réinitialiser votre mot de passe!!!! <a href="http://localhost:3000/resetPassword/${userId}">Réinitialiser MDP</a>`
+})
+
+export const sendMailResetPassword = (req, res) => {
+    transport.sendMail(mailResetPassword(req.body.email, req.params.userId), (error, info) => {
+        let data = {}
+        if(error){
+            data = {
+                error: true,
+                message: "Une erreur est survenue lors de l'envoie de l'email"
+            }
+
+            return res.json(data)
+        }
+
+        data = {
+            error: false,
+            message: "Email reinitialisation mdp envoyé"
+        }
+
+        res.json(data)
+    })
+} 
+
 export const modifierUtilisateur = async (req, res) => {
     // let user = new Utilisateur(req.body)
     // console.log(req.body)

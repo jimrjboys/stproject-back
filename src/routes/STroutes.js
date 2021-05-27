@@ -35,6 +35,8 @@ import {
     VerificationAuthentification,
     VerificationToken,
     ActiveAccount,
+    findUserByEmail,
+    sendMailResetPassword,
 } from '../controllers/UtilisateurController'
 
 import {
@@ -134,7 +136,8 @@ const route = (app) => {
         })
     //activation du compte après verification email user 
     app.put('/utilisateur/activeAccount/:userId', ActiveAccount)
-
+    app.post('/utilisateur/findMail', findUserByEmail)
+    app.post('/utilisateur/resetPassword/:userId', sendMailResetPassword)
     // Annonce
     app.route('/annonce/:userId')
         .post((req, res, next) => {
