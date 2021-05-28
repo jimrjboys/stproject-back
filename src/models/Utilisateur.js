@@ -63,6 +63,9 @@ export const UtilisateurSchema = new Schema({
     },
     thumbPdc: {
         type: String,
+    },
+    biographie: {
+        type: String
     }
 });
 UtilisateurSchema.methods.comparePassword = function(password) {

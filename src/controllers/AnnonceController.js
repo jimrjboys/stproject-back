@@ -152,7 +152,7 @@ export const findAllAnnonce = async (req, res) => {
                         note += opinion.note
                     })
                    
-                    data["noteMoyenGuide"] = note / countOpinion || 0
+                    data["noteMoyenGuide"] = (annonce.opinion_users.length > 3) ? note / countOpinion : 0
 
                     data["guide"]["id"] = annonce.user_info._id
                     data["guide"]["nom"] = annonce.user_info.nom
@@ -500,7 +500,7 @@ export const findAnnonceByGuideId = async (req, res) => {
                     noteAnnonce += comment.note
                 })
 
-                data["noteMoyenAnnonce"] = noteAnnonce / countComment || 0
+                data["noteMoyenAnnonce"] = (countComment > 3) ? noteAnnonce / countComment : 0
 
                 data["annonces"]["_id"] = annonce._id
                 data["annonces"]["titre"] = annonce.titre

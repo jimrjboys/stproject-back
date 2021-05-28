@@ -131,13 +131,6 @@ export const ajouterUtilisateur = (req, res) => {
                         }
                         console.log('Message sent: %s', info.messageId);
                     })
-                    // sendEmail(newUtilisateur.email, newUtilisateur._id)
-                    //     .then(() => {
-                    //         console.log('Message sent: %s', info.messageId)
-                    //     })
-                    //     .catch(err => {
-                    //         console.log(err)
-                    //     })
 
                     let data = {
                         error: false,
@@ -260,6 +253,10 @@ export const modifierUtilisateur = async (req, res) => {
     if(req.body.password){
         const saltRounds = 10
         data["user"]["password"] = bcrypt.hashSync(req.body.password, saltRounds)
+    }
+
+    if(req.body.biographie){
+        data["user"]["biographie"] = req.body.biographie
     }
     
     Utilisateur.findOneAndUpdate({ _id: req.params.utilisateurId }, data.user, { new: true }, (err, modifUtilisateurId) => {

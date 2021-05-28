@@ -56,7 +56,7 @@ export const listOpinionUser = (req, res) => {
 
         res.json(
             {
-                noteM: note / opinionUser.length,
+                noteM: (opinionUser.length > 3) ? note / opinionUser.length : 0,
                 opinions: opinionUser
             }
         )
