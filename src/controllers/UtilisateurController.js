@@ -11,6 +11,7 @@ import fs from "fs"
 // import {google} from 'googleap is'
 require("dotenv").config();
 
+const ObjectId = mongoose.Types.ObjectId
 const Utilisateur = mongoose.model('Utilisateur', UtilisateurSchema)
 const Localisation = mongoose.model('Localisation', LocalisationSchema)
 
@@ -139,7 +140,7 @@ export const ajouterUtilisateur = (req, res) => {
                     res.json(data)
                 });
             } else {
-                let error = {newUtilisateur: {}}
+                let error = { newUtilisateur: {} }
                 response.map(user => {
                     // console.log(user.email, user.username)
                     if (user.username == req.body.username && user.email != req.body.email) {
@@ -150,7 +151,7 @@ export const ajouterUtilisateur = (req, res) => {
                         error["error"] = true
                         error["newUtilisateur"]["username"] = ""
                         error["newUtilisateur"]["email"] = "email exist déjà"
-                    }else if(user.email == req.body.email && user.username == req.body.username){
+                    } else if (user.email == req.body.email && user.username == req.body.username) {
                         error["error"] = true
                         error["newUtilisateur"]["username"] = "username existe déjà"
                         error["newUtilisateur"]["email"] = "email exist déjà"
@@ -175,7 +176,7 @@ export const utilisateurId = (req, res) => {
 }
 
 export const findUserByEmail = (req, res) => {
-    Utilisateur.findOne({'email': req.body.email }, {projection:{ _id: 0 }})
+    Utilisateur.findOne({ 'email': req.body.email }, { projection: { _id: 0 } })
         .then(response => {
             const data = {
                 error: false,
@@ -205,7 +206,7 @@ let mailResetPassword = (email, userId) => ({
 export const sendMailResetPassword = (req, res) => {
     transport.sendMail(mailResetPassword(req.body.email, req.params.userId), (error, info) => {
         let data = {}
-        if(error){
+        if (error) {
             data = {
                 error: true,
                 message: "Une erreur est survenue lors de l'envoie de l'email"
@@ -221,51 +222,103 @@ export const sendMailResetPassword = (req, res) => {
 
         res.json(data)
     })
-} 
+}
 
 export const modifierUtilisateur = async (req, res) => {
-    // let user = new Utilisateur(req.body)
-    // console.log(req.body)
-    let data = {
-        user: req.body
-    }
 
-    if(req.files){
-        let makeThumbPdp = "", makeThumbPdc = ""
-        if(req.files.pdp[0]){
-            makeThumbPdp = await sharp(`./upload/${req.params.utilisateurId}/pdp/${req.files.pdp[0].filename}`).resize(800, 720).jpeg({ quality: 72 }).toFile(`./upload/${req.params.utilisateurId}/pdp/thumbnail/${req.files.pdp[0].filename}_thumb.jpg`)
-            if(makeThumbPdp){
-                data["user"]["pdp"] = `upload/${req.params.utilisateurId}/pdp/${req.files.pdp[0].filename}`
-                data["user"]["thumbPdp"] = `upload/${req.params.utilisateurId}/pdp/thumbnail/${req.files.pdp[0].filename}_thumb.jpg`
+    Utilisateur.aggregate([
+        {
+            $match: {
+                _id: { $ne: ObjectId(req.params.utilisateurId) },
+                $or: [
+                    { username: req.body.username },
+                    { email: req.body.email }
+                ],
             }
         }
+    ])
+        .then(async response => {
+            console.log("cancel")
+            if (response.length != 0) {
+                // console.log(response)
+                let data = {
+                    user: {}
+                }
 
-        if(req.files.pdc[0]){
-            makeThumbPdc = await sharp(`./upload/${req.params.utilisateurId}/pdp/${req.files.pdc[0].filename}`).resize(800, 720).jpeg({ quality: 72 }).toFile(`./upload/${req.params.utilisateurId}/pdp/thumbnail/${req.files.pdc[0].filename}_thumb.jpg`)
-            if(makeThumbPdc){
-                data["user"]["pdc"] = `upload/${req.params.utilisateurId}/pdp/${req.files.pdc[0].filename}`
-                data["user"]["thumbPdc"] = `upload/${req.params.utilisateurId}/pdp/thumbnail/${req.files.pdc[0].filename}_thumb.jpg`
+                response.map(user => {
+                    // console.log(user.email == req.body.email) 
+                    if (user.username == req.body.username && user.email != req.body.email) {
+                        console.log(user.username == req.body.username)
+                        data["error"] = true
+                        data["user"]["username"] = "username existe déjà"
+                        data["user"]["email"] = ""
+                    } else if (user.email == req.body.email && user.username != req.body.username) {
+                        data["error"] = true
+                        data["user"]["username"] = ""
+                        data["user"]["email"] = "email exist déjà"
+                    } else if (user.email == req.body.email && user.username == req.body.username) {
+                        data["error"] = true
+                        data["user"]["username"] = "username existe déjà"
+                        data["user"]["email"] = "email exist déjà"
+                    }
+                })
+
+                res.json(data)
+
+            } else {
+                console.log("update")
+                let data = {
+                    user: req.body
+                }
+                if (req.files) {
+                    let makeThumbPdp = "", makeThumbPdc = ""
+                    if (req.files.pdp[0]) {
+                        makeThumbPdp = await sharp(`./upload/${req.params.utilisateurId}/pdp/${req.files.pdp[0].filename}`).resize(800, 720).jpeg({ quality: 72 }).toFile(`./upload/${req.params.utilisateurId}/pdp/thumbnail/${req.files.pdp[0].filename}_thumb.jpg`)
+                        if (makeThumbPdp) {
+                            data["user"]["pdp"] = `upload/${req.params.utilisateurId}/pdp/${req.files.pdp[0].filename}`
+                            data["user"]["thumbPdp"] = `upload/${req.params.utilisateurId}/pdp/thumbnail/${req.files.pdp[0].filename}_thumb.jpg`
+                        }
+                    }
+
+                    if (req.files.pdc[0]) {
+                        makeThumbPdc = await sharp(`./upload/${req.params.utilisateurId}/pdp/${req.files.pdc[0].filename}`).resize(800, 720).jpeg({ quality: 72 }).toFile(`./upload/${req.params.utilisateurId}/pdp/thumbnail/${req.files.pdc[0].filename}_thumb.jpg`)
+                        if (makeThumbPdc) {
+                            data["user"]["pdc"] = `upload/${req.params.utilisateurId}/pdp/${req.files.pdc[0].filename}`
+                            data["user"]["thumbPdc"] = `upload/${req.params.utilisateurId}/pdp/thumbnail/${req.files.pdc[0].filename}_thumb.jpg`
+                        }
+                    }
+
+                }
+
+                if (req.body.password) {
+                    const saltRounds = 10
+                    data["user"]["password"] = bcrypt.hashSync(req.body.password, saltRounds)
+                }
+
+                if (req.body.biographie) {
+                    data["user"]["biographie"] = req.body.biographie
+                }
+
+                Utilisateur.findByIdAndUpdate({ _id: req.params.utilisateurId }, data.user, { new: true }, (err, modifUtilisateurId) => {
+                    if (err) {
+                        return res.send(err)
+                    }
+                    let result = {
+                        error: false,
+                        user: modifUtilisateurId
+                    }
+                    res.json(result)
+
+                });
             }
-        }
-
-    }
-    
-    if(req.body.password){
-        const saltRounds = 10
-        data["user"]["password"] = bcrypt.hashSync(req.body.password, saltRounds)
-    }
-
-    if(req.body.biographie){
-        data["user"]["biographie"] = req.body.biographie
-    }
-    
-    Utilisateur.findOneAndUpdate({ _id: req.params.utilisateurId }, data.user, { new: true }, (err, modifUtilisateurId) => {
-        if (err) {
-            return res.send(err)
-        }
-        res.json(modifUtilisateurId)
-
-    });
+        })
+        .catch(err => {
+            // let data = {
+            //     error: false,
+            //     user: req.body
+            // }
+            return res.json(err)
+        })
 }
 export const softDelete = (res, req) => {
 
@@ -289,13 +342,13 @@ export const SaveLastLocalisation = (req, res) => {
 }
 export const Authentification = (req, res) => {
 
-    Utilisateur.findOne({$or: [{ email: req.body.email }, { username: req.body.email }]}, (err, utilisateur) => {
+    Utilisateur.findOne({ $or: [{ email: req.body.email }, { username: req.body.email }] }, (err, utilisateur) => {
         if (err) throw err;
         if (!utilisateur || !utilisateur.comparePassword(req.body.password)) {
             console.log(req.body.email)
             return res.status(401).json({ message: 'Authentication failed. Invalid user or password.' });
         }
-        return res.json({ token: jwt.sign({ email: utilisateur.email, username: utilisateur.username, _id: utilisateur._id, mailVerify: utilisateur.mailVerify, expiresIn: 31556926, success : true}, 'RESTFULAPIs') });
+        return res.json({ token: jwt.sign({ email: utilisateur.email, username: utilisateur.username, _id: utilisateur._id, mailVerify: utilisateur.mailVerify, expiresIn: 31556926, success: true }, 'RESTFULAPIs') });
     });
 };
 export const VerificationAuthentification = (req, res, next) => {
