@@ -19,6 +19,9 @@ export const publiciteSchema = new Schema({
     titre :  {
         type : String ,  
         required :  'le titre de votre pub'
+    },
+    link: {
+        type: String
     }
 }, {
     timestamps: true

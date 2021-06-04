@@ -96,7 +96,7 @@ export const modificationOpinionUsers = (req, res) => {
     });
 }
 export const softDeleteOpinions = (req, res) => {
-    OpinionUsers.findOneAndUpdate({ _id: req.params.opinionId }, req.body.etatSuppr, { new: true }, (err, softDeleteOpnionsId) => {
+    OpinionUsers.findByIdAndUpdate({ _id: req.params.opinionId }, {etatSuppr: req.body.etatSuppr}, { new: true }, (err, softDeleteOpnionsId) => {
         if (err) {
             res.send(err)
         }
