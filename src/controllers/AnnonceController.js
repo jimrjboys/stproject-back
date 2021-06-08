@@ -70,14 +70,12 @@ export const findAllAnnonce = async (req, res) => {
         let condition = (search) ? {
             $or: [
                 {lieu: { $regex: search, $options: 'i' },  "etatSuppr": false, "etatReaparaitre": true},
-                {titre: { $regex: search, $options: 'i' },  "etatSuppr": false, "etatReaparaitre": true}
+                {titre: { $regex: search, $options: 'i' },  "etatSuppr": false, "etatReaparaitre": true},
+                {"user_info.username": { $regex: search, $options: 'i' }}
             ]
         } : { "etatSuppr": false, "etatReaparaitre": true }
 
         let total = await Annonce.aggregate([
-            {
-                $match: condition
-            },
             {
                 $lookup:
                 {
@@ -89,6 +87,9 @@ export const findAllAnnonce = async (req, res) => {
 
             }, {
                 $unwind: "$user_info"
+            },
+            {
+                $match: condition
             },
             {
                 $lookup: {
@@ -104,9 +105,6 @@ export const findAllAnnonce = async (req, res) => {
 
         Annonce.aggregate([
             {
-                $match: condition
-            },
-            {
                 $sort: { createdAt: -1 }
             },
             {
@@ -120,6 +118,9 @@ export const findAllAnnonce = async (req, res) => {
 
             }, {
                 $unwind: "$user_info"
+            },
+            {
+                $match: condition
             },
             {
                 $lookup: {

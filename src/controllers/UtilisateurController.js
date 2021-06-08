@@ -96,7 +96,6 @@ export const ajouterUtilisateur = (req, res) => {
     let nouveauxUtilisateur = new Utilisateur(req.body);
     const saltRounds = 10
 
-
     nouveauxUtilisateur.password = bcrypt.hashSync(req.body.password, saltRounds)
 
     Utilisateur.aggregate([
