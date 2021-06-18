@@ -266,7 +266,7 @@ const route = (app) => {
     //Opinions Ajout et  modification avec softdelte
     app.route('/opinions')
         .post(ajoutOpinionUsers)
-    app.get('/opinions/guide/:guideId', listOpinionUser) // fetch opinion guide
+    app.get('/opinions/guide/:guideId?', listOpinionUser) // fetch opinion guide
     app.route('/opinions/:opinionId')
         .put(modificationOpinionUsers)
         .get(findOneOpinionUser)
