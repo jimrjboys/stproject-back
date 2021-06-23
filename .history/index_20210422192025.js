@@ -5,8 +5,7 @@ import route from './src/routes/STroutes';
 import path from 'path'
 import jsonwebtoken from 'jsonwebtoken';
 import cors from 'cors';
-import helmet from 'helmet'
-// import Utilisateur from './src/models/Utilisateur'
+import Utilisateur from './src/models/Utilisateur'
 
 const app = express();
 
@@ -15,7 +14,7 @@ const app = express();
 //mongodb://127.0.0.1:27017/StProject
 // mongodb+srv://shiroe:blackflag@cluster0.4dqw7.mongodb.net/myFirstDatabase?retryWrites=true&w=majority
 mongoose.Promise = global.Promise;
-mongoose.connect(`mongodb://127.0.0.1:27017/StProject`, {
+mongoose.connect(`mongodb:/`, {
     useNewUrlParser: true,
     useCreateIndex: true,
     useUnifiedTopology: true,
@@ -26,13 +25,8 @@ mongoose.connect(`mongodb://127.0.0.1:27017/StProject`, {
 
 //body Parser afin de connecté  express avec notre object
 
-// let corsOptions = {
-//   origin: "http://localhost:3000/"
-// } 
-
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-app.use(helmet())
 app.use(cors())
 app.use('/upload', express.static(path.join(__dirname, 'upload')))
 

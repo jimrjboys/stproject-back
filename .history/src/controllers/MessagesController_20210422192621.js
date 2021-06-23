@@ -10,7 +10,6 @@ export const  newMessages  = (req , res ) => {
         if (err) {
             res.send(err) 
         }
-        io.emit('message' , req.body)
         res.json(nouveauxMessages) 
     });
 }
@@ -20,6 +19,7 @@ export const getMesssages = (req , res ) => {
         if (err) {
             res.send(err)
         }
+        
         res.json(getMesssages)
 
     }).limit(10);

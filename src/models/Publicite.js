@@ -2,11 +2,13 @@ import mongoose from 'mongoose';
 
 const Schema = mongoose.Schema;
 
-export const publiciteSchema = new Schema({
+export const PubliciteSchema = new Schema({
     photo: {
         type: String,
-        required: 'photo obligatoire'
     },
+    video : {
+        type :  String 
+    }, 
     auteurId: {
         type: Schema.ObjectId,
         ref: 'utilisateurs',
@@ -22,7 +24,20 @@ export const publiciteSchema = new Schema({
     },
     link: {
         type: String
+    } , 
+    duree : {
+        type :  number ,  
+        required :  'duree'
+    },
+    etat : {
+        type : Boolean,
+        required :'etat de publication '
+    },
+    position : {
+        type  :  String , 
+        required : 'où  voulez vous mettre la pub'
     }
+
 }, {
     timestamps: true
 })

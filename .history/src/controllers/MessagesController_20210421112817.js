@@ -6,11 +6,12 @@ const Messages  = mongoose.model('Messages',MessagesShema)
 
 export const  newMessages  = (req , res ) => {
     let nouveauxMessages = new Messages(req.body);
+    nouveauxMessages.emetteurId = new Messages (req.params.emetteurId) ;
+    nouveauxMessages.recepteurID = new Messages (req.params.recepteurID) ;
     nouveauxMessages.save((err, nouveauxMessages) => {
         if (err) {
             res.send(err) 
         }
-        io.emit('message' , req.body)
         res.json(nouveauxMessages) 
     });
 }
@@ -20,6 +21,7 @@ export const getMesssages = (req , res ) => {
         if (err) {
             res.send(err)
         }
+        
         res.json(getMesssages)
 
     }).limit(10);

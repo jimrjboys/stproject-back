@@ -58,6 +58,12 @@ import {
     getMesssages
 } from '../controllers/MessagesController'
 
+import  {
+    ajouterPublicite ,
+    publierPublicite
+
+} from '../controllers/PubliciterController'
+
 // import media from '../middleware/multer-config'
 import multer from 'multer'
 
@@ -280,12 +286,15 @@ const route = (app) => {
     //Authentification
     app.route('/auth/signIn')
         .post(Authentification)
-
     // Systeme de messsages 
-
-    app.route('/messages/:emetteurId/:recepteurId')
+    app.route('/messages')
         .post(newMessages)
-    app.route('messages/:_id')
+    app.route('/messages/:_id')
         .post(getMesssages)
+    //  Publicité *
+    app.route('/pub')
+         .post(ajouterPublicite)
+    app.route('/pub/:_id')
+        .put(publierPublicite)
 }
 export default route;
