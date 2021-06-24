@@ -25,8 +25,7 @@ export const PubliciteSchema = new Schema({
     link: {
         type: String
     } , 
-    duree : {
-        type :  number ,  
+    duree : { 
         required :  'duree'
     },
     etat : {
