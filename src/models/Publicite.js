@@ -26,6 +26,7 @@ export const PubliciteSchema = new Schema({
         type: String
     } , 
     duree : { 
+        type: Number,
         required :  'duree'
     },
     etat : {
