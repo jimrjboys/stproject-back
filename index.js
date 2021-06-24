@@ -15,6 +15,7 @@ const app = express();
 //mongodb://127.0.0.1:27017/StProject
 // mongodb+srv://shiroe:blackflag@cluster0.4dqw7.mongodb.net/myFirstDatabase?retryWrites=true&w=majority
 // mongodb://root:root@195.15.229.222:27017/StProject?authSource=admin&readPreference=primary&appname=MongoDB%20Compass&ssl=false
+// mongodb://root:root@195.15.229.222:27017/StProject?authSource=admin&readPreference=primary&appname=MongoDB%20Compass&ssl=false
 mongoose.Promise = global.Promise;
 mongoose.connect(`mongodb://root:root@195.15.229.222:27017/StProject?authSource=admin&readPreference=primary&appname=MongoDB%20Compass&ssl=false`, {
     useNewUrlParser: true,
@@ -56,4 +57,12 @@ app.get('/', (req, res) =>
     res.send(`notre serveur a été demarer sur le port : ${process.env.PORT || 8080}`)
 );
 
-export default app ; 
+app.listen(process.env.PORT || 8080, () =>{
+  const dir = './upload'
+  if(!fs.existsSync(dir)){
+      fs.mkdirSync(dir, { recursive: true }, err => console.log(err))
+  }
+  // console.log(`Notre serveur est en marche dans le port ${process.env.PORT || 3000}`)
+  console.log(`Notre serveur est en marche dans le port ${process.env.PORT || 8080}`)
+});
+// export default app ; 
