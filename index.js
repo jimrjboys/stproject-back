@@ -17,7 +17,7 @@ const app = express();
 // mongodb://root:root@195.15.229.222:27017/StProject?authSource=admin&readPreference=primary&appname=MongoDB%20Compass&ssl=false
 // mongodb://root:root@195.15.229.222:27017/StProject?authSource=admin&readPreference=primary&appname=MongoDB%20Compass&ssl=false
 mongoose.Promise = global.Promise;
-mongoose.connect(`mongodb://root:root@195.15.229.222:27017/StProject?authSource=admin&readPreference=primary&appname=MongoDB%20Compass&ssl=false`, {
+mongoose.connect(`mongodb://127.0.0.1:27017/StProject`, {
     useNewUrlParser: true,
     useCreateIndex: true,
     useUnifiedTopology: true,
