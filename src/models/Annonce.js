@@ -4,7 +4,7 @@ import mongoose from 'mongoose';
 const Schema = mongoose.Schema
 
 export const AnnonceSchema = new Schema({
-    titre: { 
+    titre: {
         type: String,
         required: 'titre obligatoire',
     },
@@ -16,9 +16,13 @@ export const AnnonceSchema = new Schema({
         type: String,
         required: 'Lieu obligateur'
     },
-    localisationAnnonce: {
+    latitude: {
         type: String,
-        required: 'donnée logitude et latitude du lieu est obligatoire',
+        required: 'donnée latitude du lieu est obligatoire',
+    },      
+    longitude: {
+        type: String,
+        required: 'donnée logitude du lieu est obligatoire',
     },
     etatSuppr: {
         type: Boolean,

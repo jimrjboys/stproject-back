@@ -64,6 +64,10 @@ import  {
 
 } from '../controllers/PubliciterController'
 
+import {
+    nearestLocation
+} from '../controllers/Location'
+
 // import media from '../middleware/multer-config'
 import multer from 'multer'
 
@@ -93,6 +97,8 @@ const multerFunction = async (req, res, directory, field) => {
 }
 
 const route = (app) => {
+    app.get('/location', nearestLocation)
+
     // Utilisateur
     app.route('/utilisateur')
         .get(listUtilisateur)
