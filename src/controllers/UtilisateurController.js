@@ -65,16 +65,16 @@ const Localisation = mongoose.model('Localisation', LocalisationSchema)
 // };
 
 let transport = nodemailer.createTransport({
-    host: "smtp.mailtrap.io",
-    port: 2525,
+    host: "mail.infomaniak.com",//"smtp.mailtrap.io",
+    port: 587,//2525,
     auth: {
-        user: "c9541a961a07a6",
-        pass: "23ed3ae26f3162"
+        user: "noreply@speedtourism.fr",
+        pass: "No2021replyST"
     }
 })
 
 let mailOptions = (req, res, email, userId) => ({
-    from: '"SpeedTourisme" <speedTourisme@spt.com>',
+    from: '"SpeedTourism-NoReply" <noreply@speedtourism.fr>',
     to: email,
     subject: 'Verification d\'email',
     text: `Cliquer sur le lien suivant pour activer votre compte!!`,
