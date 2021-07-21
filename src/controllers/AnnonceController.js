@@ -42,7 +42,6 @@ export const createAnnonce = async (req, res, files) => {
         // console.log(error)
         return res.json(error)
     }
-    console.log(AnnonceCreate)
     AnnonceCreate.save((err, data) => {
         if (err) {
             return res.status(500).send({
@@ -53,8 +52,109 @@ export const createAnnonce = async (req, res, files) => {
     })
 };
 
+//fonction pour pagigner un array
 const paginateArray = (array, page_size, current_page) => {
     return array.slice((current_page - 1) * page_size, current_page * page_size)
+}
+
+
+const query = (condition) => {
+    return Annonce.aggregate([
+        {
+            $sort: { createdAt: -1 }
+        },
+        {
+            $lookup:
+            {
+                "from": "utilisateurs",
+                "localField": "utilisateurId",
+                "foreignField": "_id",
+                "as": "user_info"
+            },
+
+        }, {
+            $unwind: "$user_info"
+        },
+        {
+            $match: condition
+        },
+        {
+            $lookup: {
+                from: "opinionusers",
+                localField: "utilisateurId",
+                foreignField: "guideId",
+                as: "opinion_users"
+            }
+        }
+    ])
+}
+
+const annonceGuidePro = (search) => {
+    let conditionPro = (search) ? {
+        $or: [
+            { lieu: { $regex: search, $options: 'i' }, "etatSuppr": false, "etatReaparaitre": true, "user_info.type": "guide pro", },
+            { titre: { $regex: search, $options: 'i' }, "etatSuppr": false, "etatReaparaitre": true, "user_info.type": "guide pro", },
+            { "user_info.username": { $regex: search, $options: 'i' }, "user_info.etatSuppr": false, "etatSuppr": false, "etatReaparaitre": true, "user_info.type": "guide pro" },
+        ]
+    } : {
+        "user_info.type": "guide pro", "etatSuppr": false, "etatReaparaitre": true, "user_info.etatSuppr": false
+    }
+
+    let promess = new Promise((resolve, reject) => {
+        query(conditionPro).then(annoncesPro => {
+            resolve(annoncesPro)
+        }).catch(e => {
+            reject(e)
+        })
+    }) 
+
+    return promess
+}
+
+const annonceGuide = (search) => {
+    let conditionGuide = (search) ? {
+        $or: [
+            { lieu: { $regex: search, $options: 'i' }, "etatSuppr": false, "etatReaparaitre": true, "user_info.type": {$nin: ["guide pro", "touriste"]}, },
+            { titre: { $regex: search, $options: 'i' }, "etatSuppr": false, "etatReaparaitre": true, "user_info.type": {$nin: ["guide pro", "touriste"]}, },
+            { "user_info.username": { $regex: search, $options: 'i' }, "user_info.etatSuppr": false, "etatSuppr": false, "etatReaparaitre": true, "user_info.type": {$nin: ["guide pro", "touriste"]} },
+        ]
+    } : {
+        "user_info.type": {$nin: ["guide pro", "touriste"]}, "etatSuppr": false, "etatReaparaitre": true, "user_info.etatSuppr": false
+    }
+
+    let promess = new Promise((resolve, reject) => {
+        query(conditionGuide).then(annoncesGuide => {
+            resolve(annoncesGuide)
+        }).catch(e => {
+            reject(e)
+        })
+    }) 
+
+    return promess
+}
+
+export const searchAnnonce = async (req, res) => {
+    const search = req.query.search
+    try {
+        let pro = await annonceGuidePro(search)
+        try {
+            let guide = await annonceGuide(search)
+            let result = pro.concat(guide)
+            res.json(result)
+        } catch (error) {
+            return res.json({
+                error: true,
+                message: "guide "+error.message,
+                data: []
+            })
+        }
+    } catch (error) {
+        return res.json({
+            error: true,
+            message: error.message,
+            data: []
+        })
+    }
 }
 
 /**
@@ -350,7 +450,8 @@ export const findOneAnnonce = (req, res) => {
             oneAnnonce["titre"] = annonce.titre
             oneAnnonce["description"] = annonce.description
             oneAnnonce["lieu"] = annonce.lieu
-            oneAnnonce["localisationAnnonce"] = annonce.localisationAnnonce
+            oneAnnonce["latitude"] = annonce.latitude
+            oneAnnonce["longitude"] = annonce.longitude
             oneAnnonce["photoAnnonce"] = `${req.protocol}://${req.get('host')}/${annonce.photoAnnonce}`
             oneAnnonce["thumbAnnonce"] = `${req.protocol}://${req.get('host')}/${annonce.thumbAnnonce}`
             oneAnnonce["utilisateurId"] = annonce.utilisateurId

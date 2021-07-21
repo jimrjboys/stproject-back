@@ -8,6 +8,7 @@ import {
 
 import {
     createAnnonce,
+    searchAnnonce,
     findAllAnnonce,
     findOneAnnonce,
     updateAnnonce,
@@ -197,6 +198,9 @@ const route = (app) => {
             // createAnnonce(req, res, uploadD)
             // next()
         })
+
+    app.get('/annonce/findS', searchAnnonce);
+
     app.get('/annonce/annonceGuide/:userId', findAnnonceByGuideId)
 
     // Annonce use ID
