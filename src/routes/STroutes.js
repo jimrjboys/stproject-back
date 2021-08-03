@@ -30,6 +30,7 @@ import {
     ajouterUtilisateur,
     utilisateurId,
     modifierUtilisateur,
+    uploadProfil,
     SaveLastLocalisation,
     softDelete,
     Authentification,
@@ -59,8 +60,8 @@ import {
     getMesssages
 } from '../controllers/MessagesController'
 
-import  {
-    ajouterPublicite ,
+import {
+    ajouterPublicite,
     publierPublicite
 
 } from '../controllers/PubliciterController'
@@ -108,45 +109,49 @@ const route = (app) => {
     //Utilisateur avec Recheche par ID 
     app.route('/utilisateur/:utilisateurId?')
         .get(utilisateurId)
-        .put(async (req, res) => {
-            const MIME_TYPES = {
-                'image/jpg': 'jpg',
-                'image/jpeg': 'jpg',
-                'image/png': 'png'
-            }
-    
-            const dir = `./upload/${req.params.utilisateurId}/pdp`;
-    
-            const storage = multer.diskStorage({
-                destination: (req, file, callback) => {
-                    callback(null, dir)
-                },
-                filename: (req, file, callback) => {
-                    const name = file.originalname.split(' ').join('_')
-                    const extension = MIME_TYPES[file.mimetype]
-                    callback(null, name + Date.now() + '.' + extension)
-                }
-            })
+        .put(modifierUtilisateur)
 
-            let uploadD = await multer({
-                storage: storage
-            }).fields([
-                {name:'pdp', maxCount: 1},
-                {name: 'pdc', maxCount: 1}
-            ])
-    
-            uploadD(req, res, (err) => {
-                if (err) {
-                    console.log("MULTER ERROR", err)
-                } else {
-                    // console.log(req.files.pdp[0])
-                    // console.log(req.files.pdc[0])
-                    // console.log(req)
-                    // res.send(res.req.file.filename);
-                    modifierUtilisateur(req, res)
-                }
-            })
+    app.put('/utilisateur/profil/:utilisateurId?', async (req, res) => {
+        const MIME_TYPES = {
+            'image/jpg': 'jpg',
+            'image/jpeg': 'jpg',
+            'image/png': 'png'
+        }
+
+        const dir = `./upload/${req.params.utilisateurId}/pdp`;
+
+        const storage = multer.diskStorage({
+            destination: (req, file, callback) => {
+                callback(null, dir)
+            },
+            filename: (req, file, callback) => {
+                const name = file.originalname.split(' ').join('_')
+                const extension = MIME_TYPES[file.mimetype]
+                callback(null, name + Date.now() + '.' + extension)
+            }
         })
+
+        let uploadD = await multer({
+            storage: storage
+        }).fields([
+            { name: 'pdp', maxCount: 1 },
+            { name: 'pdc', maxCount: 1 }
+        ])
+
+        uploadD(req, res, (err) => {
+            if (err) {
+                console.log("MULTER ERROR", err)
+            } else {
+                // console.log(req.files.pdp[0])
+                // console.log(req.files.pdc[0])
+                // console.log(req)
+                // res.send(res.req.file.filename);
+                // console.log(req.files)
+                uploadProfil(req, res)
+            }
+        })
+    })
+
     //activation du compte après verification email user 
     app.put('/utilisateur/activeAccount/:userId', ActiveAccount)
     app.post('/utilisateur/findMail', findUserByEmail)
@@ -303,7 +308,7 @@ const route = (app) => {
         .post(getMesssages)
     //  Publicité *
     app.route('/pub')
-         .post(ajouterPublicite)
+        .post(ajouterPublicite)
     app.route('/pub/:_id')
         .put(publierPublicite)
 }

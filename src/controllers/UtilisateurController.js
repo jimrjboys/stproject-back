@@ -6,79 +6,30 @@ import nodemailer from 'nodemailer';
 import { LocalisationSchema } from '../models/Localisation';
 import { UtilisateurSchema } from '../models/Utilisateur';
 import sharp from 'sharp'
+import jimp from 'jimp'
 
 import fs from "fs"
-// import {google} from 'googleap is'
 require("dotenv").config();
 
 const ObjectId = mongoose.Types.ObjectId
 const Utilisateur = mongoose.model('Utilisateur', UtilisateurSchema)
 const Localisation = mongoose.model('Localisation', LocalisationSchema)
 
-// const OAuth2 = google.auth.OAuth2
-
-// const createTransporter = async () => {
-//     const oauth2Client = new OAuth2(
-//         process.env.CLIENT_ID,
-//         process.env.CLIENT_SECRET,
-//         "https://developers.google.com/oauthplayground"
-//     );
-
-//     oauth2Client.setCredentials({
-//         refresh_token: process.env.REFRESH_TOKEN
-//     });
-
-//     const accessToken = await new Promise((resolve, reject) => {
-//         console.log(process.env.REFRESH_TOKEN)
-//         oauth2Client.getAccessToken((err, token) => {
-//             if (err) {
-//                 reject("Failed to create access token :(");
-//             }
-//             resolve(token);
-//         });
-//     });
-
-//     const transporter = nodemailer.createTransport({
-//         service: "gmail",
-//         auth: {
-//             type: "OAuth2",
-//             user: process.env.EMAIL,
-//             accessToken,
-//             clientId: process.env.CLIENT_ID,
-//             clientSecret: process.env.CLIENT_SECRET,
-//             refreshToken: process.env.REFRESH_TOKEN
-//         }
-//     });
-
-//     return transporter;
-// };
-
-// const sendEmail = async (email, userId) => {
-//     let emailTransporter = await createTransporter();
-//     await emailTransporter.sendMail({
-//         subject: "Email Verify",
-//         from: process.env.EMAIL,
-//         to: email,
-//         text: `Click this link to validate ${email}`,
-//         html: `<a href="http://localhost:3000/verifyMail/${userId}">Cliquer moi</a>`
-//     });
-// };
-
 let transport = nodemailer.createTransport({
-    host: "mail.infomaniak.com",//"smtp.mailtrap.io",
-    port: 587,//2525,
+    host: "mail.infomaniak.com",
+    port: 587,
     auth: {
         user: "noreply@speedtourism.fr",
         pass: "No2021replyST"
     }
 })
 
-let mailOptions = (req, res, email, userId) => ({
+let mailOptions = (req, res, email, message, html = '') => ({
     from: '"SpeedTourism-NoReply" <noreply@speedtourism.fr>',
     to: email,
     subject: 'Verification d\'email',
-    text: `Cliquer sur le lien suivant pour activer votre compte!!`,
-    html: `Merci de verifier votre compte en cliquant sur le lien!!!!! <a href="http://localhost:3000/verifyMail/${userId}">Verification email</a>`
+    text: message,
+    html: html
 })
 
 export const listUtilisateur = (req, res) => {
@@ -125,7 +76,9 @@ export const ajouterUtilisateur = (req, res) => {
                         fs.mkdirSync(dir + '/pdp/thumbnail', { recursive: true }, err => console.log(err))
                     }
 
-                    transport.sendMail(mailOptions(req, res, newUtilisateur.email, newUtilisateur._id), (error, info) => {
+                    const message = `Cliquer sur le lien suivant pour activer votre compte!!`
+                    const html = `Merci de verifier votre compte en cliquant sur le lien!!!!! <a href="http://localhost:3000/verifyMail/${newUtilisateur._id}">Verification email</a>`
+                    transport.sendMail(mailOptions(req, res, newUtilisateur.email, message, html), (error, info) => {
                         if (error) {
                             return console.log(error);
                         }
@@ -223,6 +176,65 @@ export const sendMailResetPassword = (req, res) => {
     })
 }
 
+const conditionUploadProfil = async (req, res, idUser, pdp, pdc) => {
+    // console.log(pdp, pdc)
+    let data = {
+        user: null
+    }
+    let makeThumbPdp = "", makeThumbPdc = "";
+    console.log(pdp == true)
+    if (pdp) {
+        jimp.read(`./upload/${idUser}/pdp/${pdp.filename}`, (err, pdp) => {
+            if (err) throw err
+            pdp
+                .resize(256, 256)
+                .quality(60)
+                .greyscale()
+                .write(`./upload/${idUser}/pdp/thumbnail/${pdp.filename}_thumb.jpg`)
+        })
+    }
+    // if (pdp && pdc == null) {
+    //     try {
+    //         // makeThumbPdp = await sharp(`./upload/${idUser}/pdp/${pdp.filename}`).resize(800, 720).jpeg({ quality: 72 }).toFile(`./upload/${idUser}/pdp/thumbnail/${pdp.filename}_thumb.jpg`)
+
+    //     } catch (error) {
+    //         console.log(error)
+    //     }
+
+    // } else if (pdp == null && pdc) {
+    //     try {
+    //         makeThumbPdc = await sharp(`./upload/${idUser}/pdp/${pdc.filename}`).resize(800, 720).jpeg({ quality: 72 }).toFile(`./upload/${idUser}/pdp/thumbnail/${pdc.filename}_thumb.jpg`)
+    //     } catch (error) {
+    //         console.log(error)
+    //     }
+    // } else if (pdp && pdc) {
+    //     try {
+    //         makeThumbPdp = await sharp(`./upload/${idUser}/pdp/${pdp.filename}`).resize(800, 720).jpeg({ quality: 72 }).toFile(`./upload/${idUser}/pdp/thumbnail/${pdp.filename}_thumb.jpg`)
+    //     } catch (error) {
+    //         console.log(error)
+    //     }
+
+    //     try {
+    //         makeThumbPdc = await sharp(`./upload/${idUser}/pdp/${pdc.filename}`).resize(800, 720).jpeg({ quality: 72 }).toFile(`./upload/${idUser}/pdp/thumbnail/${pdc.filename}_thumb.jpg`)
+    //     } catch (error) {
+    //         console.log(error)
+    //     }
+    // }
+
+    // if (makeThumbPdp) {
+    //     data["user"]["pdp"] = `upload/${idUser}/pdp/${pdp.filename}`
+    //     data["user"]["thumbPdp"] = `upload/${idUser}/pdp/thumbnail/${pdp.filename}_thumb.jpg`
+    // }
+
+    if (makeThumbPdc) {
+        console.log("thumbpdc")
+        data["user"]["pdc"] = `upload/${idUser}/pdp/${pdc.filename}`
+        data["user"]["thumbPdc"] = `upload/${idUser}/pdp/thumbnail/${pdc.filename}_thumb.jpg`
+    }
+
+    return data
+}
+
 export const modifierUtilisateur = async (req, res) => {
 
     Utilisateur.aggregate([
@@ -237,9 +249,7 @@ export const modifierUtilisateur = async (req, res) => {
         }
     ])
         .then(async response => {
-            console.log("cancel")
             if (response.length != 0) {
-                // console.log(response)
                 let data = {
                     user: {}
                 }
@@ -265,30 +275,9 @@ export const modifierUtilisateur = async (req, res) => {
                 res.json(data)
 
             } else {
-                console.log("update")
                 let data = {
                     user: req.body
                 }
-                if (req.files) {
-                    let makeThumbPdp = "", makeThumbPdc = ""
-                    if (req.files.pdp[0]) {
-                        makeThumbPdp = await sharp(`./upload/${req.params.utilisateurId}/pdp/${req.files.pdp[0].filename}`).resize(800, 720).jpeg({ quality: 72 }).toFile(`./upload/${req.params.utilisateurId}/pdp/thumbnail/${req.files.pdp[0].filename}_thumb.jpg`)
-                        if (makeThumbPdp) {
-                            data["user"]["pdp"] = `upload/${req.params.utilisateurId}/pdp/${req.files.pdp[0].filename}`
-                            data["user"]["thumbPdp"] = `upload/${req.params.utilisateurId}/pdp/thumbnail/${req.files.pdp[0].filename}_thumb.jpg`
-                        }
-                    }
-
-                    if (req.files.pdc[0]) {
-                        makeThumbPdc = await sharp(`./upload/${req.params.utilisateurId}/pdp/${req.files.pdc[0].filename}`).resize(800, 720).jpeg({ quality: 72 }).toFile(`./upload/${req.params.utilisateurId}/pdp/thumbnail/${req.files.pdc[0].filename}_thumb.jpg`)
-                        if (makeThumbPdc) {
-                            data["user"]["pdc"] = `upload/${req.params.utilisateurId}/pdp/${req.files.pdc[0].filename}`
-                            data["user"]["thumbPdc"] = `upload/${req.params.utilisateurId}/pdp/thumbnail/${req.files.pdc[0].filename}_thumb.jpg`
-                        }
-                    }
-
-                }
-
                 if (req.body.password) {
                     const saltRounds = 10
                     data["user"]["password"] = bcrypt.hashSync(req.body.password, saltRounds)
@@ -319,6 +308,50 @@ export const modifierUtilisateur = async (req, res) => {
             return res.json(err)
         })
 }
+
+export const uploadProfil = async (req, res) => {
+    let data = {}
+
+    if (req.files.pdp != null) {
+        try {
+            let makeThumbPdp = await sharp(`./upload/${req.params.utilisateurId}/pdp/${req.files.pdp[0].filename}`).resize(800, 720).jpeg({ quality: 72 }).toFile(`./upload/${req.params.utilisateurId}/pdp/thumbnail/${req.files.pdp[0].filename}_thumb.jpg`)
+            if (makeThumbPdp) {
+                data["pdp"] = `upload/${req.params.utilisateurId}/pdp/${req.files.pdp[0].filename}`
+                data["thumbPdp"] = `upload/${req.params.utilisateurId}/pdp/thumbnail/${req.files.pdp[0].filename}_thumb.jpg`
+            }
+        } catch (error) {
+            data["error"] = true
+            data["message"] = error.message
+            return res.json(data)
+        }
+    }
+
+    if (req.files.pdc != null) {
+        try {
+            let makeThumbPdc = await sharp(`./upload/${req.params.utilisateurId}/pdp/${req.files.pdc[0].filename}`).resize(800, 720).jpeg({ quality: 72 }).toFile(`./upload/${req.params.utilisateurId}/pdp/thumbnail/${req.files.pdc[0].filename}_thumb.jpg`)
+            if (makeThumbPdc) {
+                data["pdc"] = `upload/${req.params.utilisateurId}/pdp/${req.files.pdc[0].filename}`
+                data["thumbPdc"] = `upload/${req.params.utilisateurId}/pdp/thumbnail/${req.files.pdc[0].filename}_thumb.jpg`
+            }   
+        } catch (error) {
+            data["error"] = true
+            data["message"] = error.message
+            return res.json(data)
+        }
+    }
+
+    Utilisateur.findByIdAndUpdate({ _id: req.params.utilisateurId }, data, { new: true }, (err, modifUtilisateurId) => {
+        if (err) {
+            return res.json({error: err})
+        }
+        let result = {
+            error: false,
+            user: modifUtilisateurId
+        }
+        res.json(result)
+    });
+}
+
 export const softDelete = (res, req) => {
 
     Utilisateur.findOneAndUpdate({ _id: req.params.utilisateurId }, req.body.etatSuppr, { new: true }, (err, modifSoftDelete) => {
