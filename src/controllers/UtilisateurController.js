@@ -6,7 +6,6 @@ import nodemailer from 'nodemailer';
 import { LocalisationSchema } from '../models/Localisation';
 import { UtilisateurSchema } from '../models/Utilisateur';
 import sharp from 'sharp'
-import jimp from 'jimp'
 
 import fs from "fs"
 require("dotenv").config();
@@ -121,8 +120,17 @@ export const utilisateurId = (req, res) => {
         if (err) {
             return res.send(err)
         }
+
+        let data = {}
+
+        data = searchUtilisateurId
+        data['pdp'] = `${req.protocol}://${req.get('host')}/${searchUtilisateurId.pdp}`
+        data['thumbPdp'] = `${req.protocol}://${req.get('host')}/${searchUtilisateurId.thumbPdp}`
+        data['pdc'] = `${req.protocol}://${req.get('host')}/${searchUtilisateurId.pdc}`
+        data['thumbPdc'] = `${req.protocol}://${req.get('host')}/${searchUtilisateurId.thumbPdc}`
+
         searchUtilisateurId.password = undefined
-        res.json(searchUtilisateurId)
+        res.json(data)
 
     });
 }
@@ -174,65 +182,6 @@ export const sendMailResetPassword = (req, res) => {
 
         res.json(data)
     })
-}
-
-const conditionUploadProfil = async (req, res, idUser, pdp, pdc) => {
-    // console.log(pdp, pdc)
-    let data = {
-        user: null
-    }
-    let makeThumbPdp = "", makeThumbPdc = "";
-    console.log(pdp == true)
-    if (pdp) {
-        jimp.read(`./upload/${idUser}/pdp/${pdp.filename}`, (err, pdp) => {
-            if (err) throw err
-            pdp
-                .resize(256, 256)
-                .quality(60)
-                .greyscale()
-                .write(`./upload/${idUser}/pdp/thumbnail/${pdp.filename}_thumb.jpg`)
-        })
-    }
-    // if (pdp && pdc == null) {
-    //     try {
-    //         // makeThumbPdp = await sharp(`./upload/${idUser}/pdp/${pdp.filename}`).resize(800, 720).jpeg({ quality: 72 }).toFile(`./upload/${idUser}/pdp/thumbnail/${pdp.filename}_thumb.jpg`)
-
-    //     } catch (error) {
-    //         console.log(error)
-    //     }
-
-    // } else if (pdp == null && pdc) {
-    //     try {
-    //         makeThumbPdc = await sharp(`./upload/${idUser}/pdp/${pdc.filename}`).resize(800, 720).jpeg({ quality: 72 }).toFile(`./upload/${idUser}/pdp/thumbnail/${pdc.filename}_thumb.jpg`)
-    //     } catch (error) {
-    //         console.log(error)
-    //     }
-    // } else if (pdp && pdc) {
-    //     try {
-    //         makeThumbPdp = await sharp(`./upload/${idUser}/pdp/${pdp.filename}`).resize(800, 720).jpeg({ quality: 72 }).toFile(`./upload/${idUser}/pdp/thumbnail/${pdp.filename}_thumb.jpg`)
-    //     } catch (error) {
-    //         console.log(error)
-    //     }
-
-    //     try {
-    //         makeThumbPdc = await sharp(`./upload/${idUser}/pdp/${pdc.filename}`).resize(800, 720).jpeg({ quality: 72 }).toFile(`./upload/${idUser}/pdp/thumbnail/${pdc.filename}_thumb.jpg`)
-    //     } catch (error) {
-    //         console.log(error)
-    //     }
-    // }
-
-    // if (makeThumbPdp) {
-    //     data["user"]["pdp"] = `upload/${idUser}/pdp/${pdp.filename}`
-    //     data["user"]["thumbPdp"] = `upload/${idUser}/pdp/thumbnail/${pdp.filename}_thumb.jpg`
-    // }
-
-    if (makeThumbPdc) {
-        console.log("thumbpdc")
-        data["user"]["pdc"] = `upload/${idUser}/pdp/${pdc.filename}`
-        data["user"]["thumbPdc"] = `upload/${idUser}/pdp/thumbnail/${pdc.filename}_thumb.jpg`
-    }
-
-    return data
 }
 
 export const modifierUtilisateur = async (req, res) => {
