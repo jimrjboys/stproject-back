@@ -15,11 +15,11 @@ const Utilisateur = mongoose.model('Utilisateur', UtilisateurSchema)
 const Localisation = mongoose.model('Localisation', LocalisationSchema)
 
 let transport = nodemailer.createTransport({
-    host: "mail.infomaniak.com",
-    port: 587,
+    host: process.env.host_mail,
+    port: process.env.port_mail,
     auth: {
-        user: "noreply@speedtourism.fr",
-        pass: "No2021replyST"
+        user: process.env.user_mail,
+        pass: process.env.password_mail
     }
 })
 

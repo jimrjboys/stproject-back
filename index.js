@@ -2,11 +2,15 @@ import express from 'express';
 import mongoose from 'mongoose';
 import bodyParser from 'body-parser';
 import route from './src/routes/STroutes';
+import stripeRoute from './src/routes/stripe';
 import path from 'path'
 import jsonwebtoken from 'jsonwebtoken';
 import cors from 'cors';
 import helmet from 'helmet'
+import dotenv from 'dotenv'
 // import Utilisateur from './src/models/Utilisateur'
+
+dotenv.config();
 
 const app = express();
 
@@ -52,6 +56,9 @@ app.use((req , res, next) => {
 })
 //declaration de notre router ici apres creation 
 route(app);
+
+// route pour stripe
+stripeRoute(app);
 //notre lien initiale
 app.get('/', (req, res) =>
     res.send(`notre serveur a été demarer sur le port : ${process.env.PORT || 8080}`)

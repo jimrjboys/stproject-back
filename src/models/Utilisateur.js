@@ -68,14 +68,14 @@ export const UtilisateurSchema = new Schema({
         type: String
     },
     dob: {
-        day: { type: Number },
-        month: { type: Number },
-        year: { type: Number }
+        jour: { type: Number },
+        mois: { type: Number },
+        annee: { type: Number }
     },
-    adress: {
-        city: { type: String },
-        line: { type: String },
-        postal_code: { type: String }
+    address: {
+        ville: { type: String },
+        adresse: { type: String },
+        code_postal: { type: String }
     },
     idStripe: {
         type: String

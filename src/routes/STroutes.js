@@ -1,10 +1,11 @@
+'use strict';
+
 import {
     createOpinionAnnonce,
     findAllOpinionAnnonce,
     updateOpinionAnnonce,
     softDeleteOpinionAnnonce
 } from '../controllers/OpinionAnnonceController'
-'use strict';
 
 import {
     createAnnonce,
@@ -72,31 +73,6 @@ import {
 
 // import media from '../middleware/multer-config'
 import multer from 'multer'
-
-const multerFunction = async (req, res, directory, field) => {
-    const MIME_TYPES = {
-        'image/jpg': 'jpg',
-        'image/jpeg': 'jpg',
-        'image/png': 'png'
-    }
-
-    const dir = directory;
-
-    const storage = multer.diskStorage({
-        destination: (req, file, callback) => {
-            callback(null, dir)
-        },
-        filename: (req, file, callback) => {
-            const name = file.originalname.split(' ').join('_')
-            const extension = MIME_TYPES[file.mimetype]
-            callback(null, name + Date.now() + '.' + extension)
-        }
-    })
-
-    return uploadD = await multer({
-        storage: storage
-    }).single(field)
-}
 
 const route = (app) => {
     app.get('/location', nearestLocation)

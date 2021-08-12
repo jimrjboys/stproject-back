@@ -50,6 +50,7 @@
     "save": "^2.4.0",
     "sharp": "^0.27.2",
     "socket.io": "^3.1.2",
+    "stripe": "^8.168.0",
     "supertest": "^6.1.3",
     "swagger-jsdoc": "^7.0.0-rc.6",
     "swagger-ui-express": "^4.1.6"
