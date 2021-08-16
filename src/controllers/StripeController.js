@@ -9,13 +9,15 @@ const stripe = new Stripe(process.env.key_test_stripe)
  * @returns {JSON}
  */
 export const createAccount = async (req, res) => {
+    const dataBody = req.body;
+    const {pays, ...accountData} = dataBody
     try {
         const token = await stripe.tokens.create({
-            account: req.body
+            account: accountData
         })
 
         let data = {
-            "country": "FR",
+            "country": req.body.pays,
             "type": "custom",
             "capabilities": {
                 "card_payments": {
@@ -82,10 +84,11 @@ export const deleteAccount = async (req, res) => {
  */
 export const updateAccountStripe = async (req, res) => {
     const idAccount = req.params.id
-
+    const dataBody = req.body;
+    const {pays, ...accountData} = dataBody
     try {
         const token = await stripe.tokens.create({
-            account: req.body
+            account: accountData
         })
 
         const data = {}
