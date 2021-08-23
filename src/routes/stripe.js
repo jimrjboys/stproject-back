@@ -34,4 +34,4 @@ const StripeRoute = (app) => {
 
 }
 
-export default StripeRoute
+export default StripeRoute;

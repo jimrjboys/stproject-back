@@ -3,11 +3,13 @@ import mongoose from 'mongoose';
 import bodyParser from 'body-parser';
 import route from './src/routes/STroutes';
 import stripeRoute from './src/routes/stripe';
-import path from 'path'
+import messageRoute from './src/routes/message';
+import conversationRoute from './src/routes/conversation';
+import path from 'path';
 import jsonwebtoken from 'jsonwebtoken';
 import cors from 'cors';
-import helmet from 'helmet'
-import dotenv from 'dotenv'
+import helmet from 'helmet';
+import dotenv from 'dotenv';
 // import Utilisateur from './src/models/Utilisateur'
 
 dotenv.config();
@@ -59,6 +61,9 @@ route(app);
 
 // route pour stripe
 stripeRoute(app);
+messageRoute(app);
+conversationRoute(app);
+
 //notre lien initiale
 app.get('/', (req, res) =>
     res.send(`notre serveur a été demarer sur le port : ${process.env.PORT || 8080}`)
