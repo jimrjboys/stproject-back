@@ -10,11 +10,15 @@ import jsonwebtoken from 'jsonwebtoken';
 import cors from 'cors';
 import helmet from 'helmet';
 import dotenv from 'dotenv';
+import { createServer } from 'http';
+import { Server } from 'socket.io';
+import socket from './socket/Socket';
 // import Utilisateur from './src/models/Utilisateur'
 
 dotenv.config();
 
 const app = express();
+
 
 //connexion  avec notre base de donnée
 //mongodb+srv://jiji:jiji1234@zmz.djfzj.mongodb.net/ZmZ?retryWrites=true&w=majority
@@ -42,6 +46,16 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(helmet())
 app.use(cors())
+
+const httpServer = createServer(app);
+const io = new Server(httpServer, {
+  cors: {
+    origin: "http://localhost:3000",
+  }
+})
+
+socket(io);
+
 app.use('/upload', express.static(path.join(__dirname, 'upload')))
 
 app.use((req , res, next) => {
@@ -69,4 +83,4 @@ app.get('/', (req, res) =>
     res.send(`notre serveur a été demarer sur le port : ${process.env.PORT || 8080}`)
 );
 
-export default app ; 
+export default httpServer ; 
