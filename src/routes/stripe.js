@@ -4,6 +4,8 @@ import {
     retrieveAccount,
     updateAccountStripe,
     createExternalAccount,
+    listBankAccounts,
+    detailsBankAccount,
     linkAccount,
     paymentIntent
 } from '../controllers/StripeController'
@@ -22,10 +24,14 @@ const StripeRoute = (app) => {
     // creation compte pour le payout (bank || card)
     app.post('/createExternalAccount/:id', createExternalAccount)
 
+    app.get('/listBankAccounts/:id', listBankAccounts)
+
+    app.get('/bankAccount/:id/:idBank', detailsBankAccount)
+
     app.post('/linkAccount/:id', linkAccount)
 
     app.post('/payment/:id', paymentIntent)
 
 }
 
-export default StripeRoute
+export default StripeRoute;

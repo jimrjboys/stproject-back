@@ -9,13 +9,15 @@ const stripe = new Stripe(process.env.key_test_stripe)
  * @returns {JSON}
  */
 export const createAccount = async (req, res) => {
+    const dataBody = req.body;
+    const { pays, ...accountData } = dataBody
     try {
         const token = await stripe.tokens.create({
-            account: req.body
+            account: accountData
         })
 
         let data = {
-            "country": "FR",
+            "country": req.body.pays,
             "type": "custom",
             "capabilities": {
                 "card_payments": {
@@ -39,12 +41,12 @@ export const createAccount = async (req, res) => {
             message: account.id
         })
     } catch (error) {
-        return res.json({error:true, message: error.message})
+        return res.json({ error: true, message: error.message })
     }
 }
 
 export const retrieveAccount = async (req, res) => {
-    const idAccount =req.params.id
+    const idAccount = req.params.id
     try {
         const infoAccount = await stripe.accounts.retrieve(idAccount)
         res.json({
@@ -71,7 +73,7 @@ export const deleteAccount = async (req, res) => {
         })
     }
 
-} 
+}
 
 /**
  * 
@@ -82,21 +84,22 @@ export const deleteAccount = async (req, res) => {
  */
 export const updateAccountStripe = async (req, res) => {
     const idAccount = req.params.id
-
+    const dataBody = req.body;
+    const { pays, ...accountData } = dataBody
     try {
         const token = await stripe.tokens.create({
-            account: req.body
+            account: accountData
         })
 
         const data = {}
-        
+
         data['account_token'] = token.id
 
         const updateAccount = await stripe.accounts.update(idAccount, data)
 
-        res.json({updated: updateAccount})
+        res.json({ updated: updateAccount })
     } catch (error) {
-        return res.json({error: error.message})
+        return res.json({ error: error.message })
     }
 }
 
@@ -109,16 +112,68 @@ export const updateAccountStripe = async (req, res) => {
  */
 export const createExternalAccount = async (req, res) => {
     const idAccount = req.params.id
-
     try {
-        const extAccount = await stripe.accounts.createExternalAccount(idAccount, {
-            external_account: req.body
+        const token = await stripe.tokens.create({
+            bank_account: req.body
         })
 
-        return res.json({data: extAccount})
+        const extAccount = await stripe.accounts.createExternalAccount(idAccount, {
+            external_account: token.id
+        })
+
+        return res.json({
+            error: false,
+            data: extAccount
+        })
     } catch (error) {
-        return res.json({error: error.message})
+        return res.json({
+            error: true,
+            message: error.message
+        })
     }
+}
+
+export const listBankAccounts = async (req, res) => {
+    const idAccount = req.params.id
+
+    try {
+        const accountBankAccounts = await stripe.accounts.listExternalAccounts(
+            idAccount,
+            {
+                object: 'bank_account',
+            }
+        )
+
+        res.json({
+            error: false,
+            message: accountBankAccounts
+        })
+    } catch (error) {
+        return res.json({
+            error: true,
+            message: error.message
+        })
+    }
+}
+
+export const detailsBankAccount = async (req, res) => {
+    const idAccount = req.params.id
+    const idBank = req.params.idBank
+
+    try {
+        const bank = await stripe.accounts.retrieveExternalAccount(idAccount, idBank)
+    
+        res.json({
+            error: false,
+            message: bank
+        })
+    } catch (error) {
+        return res.json({
+            error: true,
+            message: error.message
+        })
+    }
+
 }
 
 /**
@@ -126,17 +181,17 @@ export const createExternalAccount = async (req, res) => {
  * pour les vérifications de document nécéssaire à l'activation du compte
  * @param {*} req 
  * @param {*} res
- * @param {integer} id clé identification du compte stripe  
+ * @param {integer} id clé identification du compte stripe
+ * @param {idPlatform} idPlatform id de l'utilisateur dans la base de données  
  * @returns {JSON} url vers le flux
  */
 export const linkAccount = async (req, res) => {
     const idAccount = req.params.id
-
     try {
         const accountLinks = await stripe.accountLinks.create({
             account: idAccount,
             refresh_url: process.env.refresh_url,
-            return_url: process.env.return_url,
+            return_url: `http://localhost:3000`,
             type: 'account_onboarding'
         })
 
@@ -146,7 +201,7 @@ export const linkAccount = async (req, res) => {
         }
         res.json(data)
     } catch (error) {
-        return res.json({message: error.message})
+        return res.json({ message: error.message })
     }
 }
 
@@ -173,7 +228,7 @@ export const paymentIntent = async (req, res) => {
                 destination: id,
             },
         });
-        
+
         const data = {
             error: false,
             message: intent.client_secret

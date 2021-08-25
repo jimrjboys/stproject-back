@@ -67,6 +67,9 @@ export const UtilisateurSchema = new Schema({
     biographie: {
         type: String
     },
+    pays:{
+        type: String
+    },
     dob: {
         jour: { type: Number },
         mois: { type: Number },
