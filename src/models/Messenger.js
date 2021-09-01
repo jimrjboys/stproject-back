@@ -12,6 +12,9 @@ export const MessageSchema = new Schema(
         },
         text: {
             type: String
+        },
+        ckeck: {
+            type: Boolean,
         }
     },
     { timestamps: true }

@@ -44,6 +44,9 @@ export const AnnonceSchema = new Schema({
         type: Schema.ObjectId,
         ref: 'utilisateurs',
         required: 'auteur obligatoire'
+    },
+    prixHeure: {
+        type: Number,
     }
 }, {
     timestamps: true

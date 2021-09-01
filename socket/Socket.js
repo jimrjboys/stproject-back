@@ -16,6 +16,8 @@ const getUser = (userId) => {
     return users.find(user => user.userId === userId);
 }
 
+let initCount = 0;
+
 const Socket = (io) => {
     io.on('connection', socket => {
         console.log("client connecté")
@@ -32,12 +34,18 @@ const Socket = (io) => {
             removeUser(socket.id)
         })
 
-        socket.on('sendMessage', ({ senderId, receiverId, text}) => {
+        socket.on('sendMessage', ({ senderId, receiverId, text, count}) => {
             const user = getUser(receiverId);
 
+            initCount += parseInt(count);
+            console.log(initCount);
             io.to(user.socketId).emit("getMessage", {
                 senderId,
                 text,
+            })
+
+            io.to(user.socketId).emit('sendCountNotif', {
+                initCount
             })
         })
 

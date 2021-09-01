@@ -228,6 +228,7 @@ export const findAllAnnonce = async (req, res) => {
                     data["annonces"]["lieu"] = annonce.lieu
                     data["annonces"]["localisationAnnonce"] = annonce.localisationAnnonce
                     data["annonces"]["etatReaparaitre"] = annonce.etatReaparaitre
+                    data["annonces"]["prixHeure"] = annonce.prixHeure
 
                     data["annonces"]["photoAnnonce"] = `${req.protocol}://${req.get('host')}/${annonce.photoAnnonce}`
                     data["annonces"]["thumbAnnonce"] = `${req.protocol}://${req.get('host')}/${annonce.thumbAnnonce}`
@@ -382,6 +383,7 @@ export const findAllAnnonce = async (req, res) => {
                         data["annonces"]["lieu"] = annonce.lieu
                         data["annonces"]["localisationAnnonce"] = annonce.localisationAnnonce
                         data["annonces"]["etatReaparaitre"] = annonce.etatReaparaitre
+                        data["annonces"]["prixHeure"] = annonce.prixHeure*0.01
 
                         data["annonces"]["photoAnnonce"] = `${req.protocol}://${req.get('host')}/${annonce.photoAnnonce}`
                         data["annonces"]["thumbAnnonce"] = `${req.protocol}://${req.get('host')}/${annonce.thumbAnnonce}`
@@ -455,6 +457,7 @@ export const findOneAnnonce = (req, res) => {
             oneAnnonce["photoAnnonce"] = `${req.protocol}://${req.get('host')}/${annonce.photoAnnonce}`
             oneAnnonce["thumbAnnonce"] = `${req.protocol}://${req.get('host')}/${annonce.thumbAnnonce}`
             oneAnnonce["utilisateurId"] = annonce.utilisateurId
+            oneAnnonce["prixHeure"] = annonce.prixHeure*0.01
             res.json(oneAnnonce)
         })
         .catch(err => {
@@ -484,6 +487,8 @@ export const updateAnnonce = async (req, res, files) => {
     dataAnnonce["description"] = req.body.description
     dataAnnonce["lieu"] = req.body.lieu
     dataAnnonce["localisationAnnonce"] = req.body.localisationAnnonce
+    dataAnnonce["prixHeure"] = req.body.prixHeure
+    console.log(req.body)
     Annonce.findByIdAndUpdate(req.params.annonceId, dataAnnonce, { new: true })
         .then(annonce => {
             res.json(annonce)
