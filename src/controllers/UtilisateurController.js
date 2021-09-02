@@ -236,6 +236,15 @@ export const modifierUtilisateur = async (req, res) => {
                     data["user"]["biographie"] = req.body.biographie
                 }
 
+                if (req.body.guideId && req.body.dateRelation) {
+                    const miseRelation = {
+                        guideId: req.body.guideId,
+                        dateRelation: req.body.dateRelation
+                    }
+
+                    data['user'] = { $push: { enRelation: miseRelation } }
+                }
+
                 Utilisateur.findByIdAndUpdate({ _id: req.params.utilisateurId }, data.user, { new: true }, (err, modifUtilisateurId) => {
                     if (err) {
                         return res.send(err)
@@ -254,7 +263,7 @@ export const modifierUtilisateur = async (req, res) => {
             //     error: false,
             //     user: req.body
             // }
-            return res.json(err)
+            return res.json(err.message)
         })
 }
 
@@ -281,7 +290,7 @@ export const uploadProfil = async (req, res) => {
             if (makeThumbPdc) {
                 data["pdc"] = `upload/${req.params.utilisateurId}/pdp/${req.files.pdc[0].filename}`
                 data["thumbPdc"] = `upload/${req.params.utilisateurId}/pdp/thumbnail/${req.files.pdc[0].filename}_thumb.jpg`
-            }   
+            }
         } catch (error) {
             data["error"] = true
             data["message"] = error.message
@@ -291,7 +300,7 @@ export const uploadProfil = async (req, res) => {
 
     Utilisateur.findByIdAndUpdate({ _id: req.params.utilisateurId }, data, { new: true }, (err, modifUtilisateurId) => {
         if (err) {
-            return res.json({error: err})
+            return res.json({ error: err })
         }
         let result = {
             error: false,
@@ -376,4 +385,17 @@ export const ActiveAccount = (req, res) => {
                 message: "Erreur lors de l'activation du compte " + req.params.utilisateurId
             })
         })
+}
+
+export const findGuideRelation = async (req, res) => {
+    try {
+        const relation = await Utilisateur.findOne({
+            _id: ObjectId(req.params.idUser),
+            "enRelation.guideId": req.params.guideId
+        })
+
+        res.status(200).json(relation);
+    } catch (error) {
+        return res.status(500).json(error.message);
+    }
 }

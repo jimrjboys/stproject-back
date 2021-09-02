@@ -40,6 +40,7 @@ import {
     ActiveAccount,
     findUserByEmail,
     sendMailResetPassword,
+    findGuideRelation,
 } from '../controllers/UtilisateurController'
 
 import {
@@ -127,6 +128,8 @@ const route = (app) => {
             }
         })
     })
+
+    app.get('/utilisateur/relationGuide/:idUser/:guideId', findGuideRelation);
 
     //activation du compte après verification email user 
     app.put('/utilisateur/activeAccount/:userId', ActiveAccount)
