@@ -5,7 +5,8 @@ import bcrypt from 'bcrypt';
 import nodemailer from 'nodemailer';
 import { LocalisationSchema } from '../models/Localisation';
 import { UtilisateurSchema } from '../models/Utilisateur';
-import sharp from 'sharp'
+import sharp from 'sharp';
+import moment from 'moment';
 
 import fs from "fs"
 require("dotenv").config();
@@ -116,9 +117,10 @@ export const ajouterUtilisateur = (req, res) => {
         })
 }
 export const utilisateurId = (req, res) => {
+    console.log(req.params.utilisateurId)
     Utilisateur.findById({ _id: req.params.utilisateurId }, (err, searchUtilisateurId) => {
         if (err) {
-            return res.send(err)
+            return res.json(err.message)
         }
 
         let data = {}
@@ -131,7 +133,6 @@ export const utilisateurId = (req, res) => {
 
         searchUtilisateurId.password = undefined
         res.json(data)
-
     });
 }
 
@@ -395,6 +396,30 @@ export const findGuideRelation = async (req, res) => {
         })
 
         res.status(200).json(relation);
+    } catch (error) {
+        return res.status(500).json(error.message);
+    }
+}
+
+// supprime le guide du tableau si dateRelation depasse 24h
+export const deleteRelation = async (req, res) => {
+    const idUser = req.params.utilisateurId;
+
+    try {
+        let utilisateur = await Utilisateur.findOne({_id: idUser});
+
+        utilisateur.enRelation.forEach(async (item) => {
+            // console.log(item)
+            let hours = moment().diff(moment(item.dateRelation), 'hours');
+            if(hours >= 24){
+                console.log('depasse 24h', item.dateRelation);
+                utilisateur = await Utilisateur.findOneAndUpdate({_id: req.params.utilisateurId}, {
+                    $pull: { 'enRelation': { guideId: item.guideId} }
+                }, {new: true, useFindAndModify: true})
+            }
+        });
+
+        res.json(utilisateur);
     } catch (error) {
         return res.status(500).json(error.message);
     }

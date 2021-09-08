@@ -41,6 +41,7 @@ import {
     findUserByEmail,
     sendMailResetPassword,
     findGuideRelation,
+    deleteRelation,
 } from '../controllers/UtilisateurController'
 
 import {
@@ -130,6 +131,7 @@ const route = (app) => {
     })
 
     app.get('/utilisateur/relationGuide/:idUser/:guideId', findGuideRelation);
+    app.get('/utilisateur/deleteR/:utilisateurId', deleteRelation);
 
     //activation du compte après verification email user 
     app.put('/utilisateur/activeAccount/:userId', ActiveAccount)

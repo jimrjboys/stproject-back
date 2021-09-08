@@ -9,7 +9,7 @@ export const createRequete = (req, res) => {
 
     requete.save((err, requete) => {
         if (err) {
-            res.status(500).send({
+            return res.status(500).send({
                 message: err.message || "Some error occurred while creating the Request"
             });
         }
