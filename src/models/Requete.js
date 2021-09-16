@@ -19,20 +19,20 @@ export const requeteSchema = new Schema({
         required: 'id annonce obligatoire'
     },
     etatRequete: {
-        type: Number, //0: en attente, 1: ok, 2: pas ok
+        type: Number, //0: en attente, 1: ok, 2: pas ok, 3: terminer
     },
     accord: {
         touriste: {
-            type: Boolean,
-            default: false
+            type: Date
         },
         guide: {
-            type: Boolean,
-            default: false
+            type: Date
         }
     },
-    datePrevue: {
-        type: Date,
+    conversationId: {
+        type: Schema.ObjectId,
+        ref: 'requetes',
+        required: 'id requete obligatoire'
     }
 },
     {

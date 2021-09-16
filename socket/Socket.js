@@ -34,19 +34,37 @@ const Socket = (io) => {
             removeUser(socket.id)
         })
 
-        socket.on('sendMessage', ({ senderId, receiverId, text, count}) => {
+        socket.on('sendMessage', ({ senderId, receiverId, text, count, interactif, etatInteractif, conversationId}) => {
             const user = getUser(receiverId);
-
+            // console.log(senderId, receiverId, text, count);
             initCount += parseInt(count);
-            console.log(initCount);
-            io.to(user.socketId).emit("getMessage", {
-                senderId,
-                text,
-            })
 
-            io.to(user.socketId).emit('sendCountNotif', {
-                initCount
-            })
+            if (user?.socketId) {
+                io.to(user.socketId).emit("getMessage", {
+                    senderId,
+                    text,
+                    interactif,
+                    etatInteractif,
+                    conversationId,
+                })
+
+                io.to(user.socketId).emit('sendCountNotif', {
+                    initCount
+                })
+            }
+        });
+
+        socket.on('editOneMessage', ({createdAt, receiverId, senderId, etatInteractif, convId}) => {
+            const receiver = getUser(receiverId);
+            const sender = getUser(senderId);
+
+            if(receiver?.socketId && sender?.socketId){
+                io.to(receiver.socketId).to(sender.socketId).emit('getEditOneMessage', {
+                    createdAt,
+                    etatInteractif,
+                    convId
+                })
+            }
         })
 
     })

@@ -13,7 +13,7 @@ const ConversationRoute = (app) => {
 
     app.get('/conversation/:userId', getConvByUser);
 
-    app.get('/conversation/:firstUserId/:secondUserId', getConvByUsersId);
+    app.get('/conversation/:firstUserId/:secondUserId/:annonceId', getConvByUsersId);
 };
 
 export default ConversationRoute;
