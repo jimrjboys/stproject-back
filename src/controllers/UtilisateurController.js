@@ -395,7 +395,15 @@ export const findGuideRelation = async (req, res) => {
             "enRelation.guideId": req.params.guideId
         })
 
-        res.status(200).json(relation);
+        let data = null
+
+        if (relation != null) {
+            data = relation.enRelation.find(item => item.guideId == req.params.guideId);
+        }
+
+        console.log("relation", data)
+
+        res.status(200).json(data);
     } catch (error) {
         return res.status(500).json(error.message);
     }
@@ -406,16 +414,16 @@ export const deleteRelation = async (req, res) => {
     const idUser = req.params.utilisateurId;
 
     try {
-        let utilisateur = await Utilisateur.findOne({_id: idUser});
+        let utilisateur = await Utilisateur.findOne({ _id: idUser });
 
         utilisateur.enRelation.forEach(async (item) => {
             // console.log(item)
             let hours = moment().diff(moment(item.dateRelation), 'hours');
-            if(hours >= 24){
+            if (hours >= 24) {
                 console.log('depasse 24h', item.dateRelation);
-                utilisateur = await Utilisateur.findOneAndUpdate({_id: req.params.utilisateurId}, {
-                    $pull: { 'enRelation': { guideId: item.guideId} }
-                }, {new: true, useFindAndModify: true})
+                utilisateur = await Utilisateur.findOneAndUpdate({ _id: req.params.utilisateurId }, {
+                    $pull: { 'enRelation': { guideId: item.guideId } }
+                }, { new: true, useFindAndModify: true })
             }
         });
 

@@ -9,7 +9,7 @@ export const findByConvId = async (req, res) => {
         const request = await Requete.findOne({
             conversationId: ObjectId(req.params.convId)
         });
-
+        // console.log("findByConvId", request, req.params.convId)
         res.status(200).json(request);
     } catch (error) {
         return res.status(500).json(error.message);

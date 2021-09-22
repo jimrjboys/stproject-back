@@ -1,16 +1,17 @@
 import mongoose from 'mongoose';
 import { requeteSchema } from '../../models/Requete';
 
+const ObjectId = mongoose.Types.ObjectId;
 const Requete = mongoose.model('Requete', requeteSchema)
 
 
 export const findByTouristAnnouncement = async (req, res) => {
     try {
         const request = await Requete.findOne({
-            "annonceId": req.params.annonceId,
-            "touristeId": req.params.touristId,
-            "guideId": req.params.guideId,
-            "etatRequete": 0
+            "annonceId": ObjectId(req.params.annonceId),
+            "touristeId": ObjectId(req.params.touristId),
+            "guideId": ObjectId(req.params.guideId),
+            // "etatRequete": 0
         });   
 
         res.status(200).json(request);
