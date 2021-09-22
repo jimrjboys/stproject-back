@@ -6,6 +6,11 @@ export const ConversationSchema = new Schema(
     {
         members: {
             type: Array,
+        },
+        annonceId: {
+            type: Schema.ObjectId,
+            ref: 'annonces',
+            required: 'id annonce obligatoire'
         }
     },
     { timestamps: true }

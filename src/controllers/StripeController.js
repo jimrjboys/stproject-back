@@ -162,7 +162,7 @@ export const detailsBankAccount = async (req, res) => {
 
     try {
         const bank = await stripe.accounts.retrieveExternalAccount(idAccount, idBank)
-    
+
         res.json({
             error: false,
             message: bank
@@ -215,19 +215,39 @@ export const linkAccount = async (req, res) => {
 export const paymentIntent = async (req, res) => {
     const idAccount = req.params.id
 
-    try {
-        const amount = req.body.amount
-        const fees = req.body.application_fee
+    // try {
+    //     const amount = req.body.amount
+    //     const fees = req.body.application_fee
 
+    //     const intent = await stripe.paymentIntents.create({
+    //         payment_method_types: ['card'],
+    //         amount: amount,
+    //         currency: 'eur',
+    //         application_fee_amount: fees,
+    //         transfer_data: {
+    //             destination: idAccount,
+    //         },
+    //     });
+
+    //     const data = {
+    //         error: false,
+    //         message: intent.client_secret
+    //     }
+    //     res.json(data)
+    // } catch (error) {
+    //     const data = {
+    //         error: true,
+    //         message: error.message
+    //     }
+    //     return res.json(data)
+    // }
+
+    try {
         const intent = await stripe.paymentIntents.create({
-            payment_method_types: ['card'],
-            amount: amount,
-            currency: 'eur',
-            application_fee_amount: fees,
-            transfer_data: {
-                destination: id,
-            },
-        });
+            amount: req.body.amount,
+            currency: "eur",
+            payment_method_types: ['card']
+        })
 
         const data = {
             error: false,

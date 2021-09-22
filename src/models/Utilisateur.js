@@ -82,6 +82,9 @@ export const UtilisateurSchema = new Schema({
     },
     idStripe: {
         type: String
+    },
+    enRelation: {
+        type: Array
     }
 });
 UtilisateurSchema.methods.comparePassword = function (password) {

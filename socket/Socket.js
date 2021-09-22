@@ -34,19 +34,46 @@ const Socket = (io) => {
             removeUser(socket.id)
         })
 
-        socket.on('sendMessage', ({ senderId, receiverId, text, count}) => {
+        socket.on('sendMessage', ({ messageId, senderId, receiverId, text, count, interactif, etatInteractif, conversationId}) => {
             const user = getUser(receiverId);
-
+            const sender = getUser(senderId);
+            // console.log(senderId, receiverId, text, count);
             initCount += parseInt(count);
-            console.log(initCount);
-            io.to(user.socketId).emit("getMessage", {
-                senderId,
-                text,
-            })
 
-            io.to(user.socketId).emit('sendCountNotif', {
-                initCount
-            })
+            if (user?.socketId) {
+                io.to(user.socketId).emit("getMessage", {
+                    messageId,
+                    senderId,
+                    text,
+                    interactif,
+                    etatInteractif,
+                    conversationId,
+                })
+
+                io.to(user.socketId).emit('sendCountNotif', {
+                    initCount
+                })
+
+                // io.to(sender.socketId).to(user.socketId).emit('getEditOneMessage', {
+                //     messageId,
+                //     etatInteractif,
+                //     conversationId
+                // })
+            }
+        });
+
+        socket.on('editOneMessage', ({messageId, receiverId, senderId, etatInteractif, conversationId}) => {
+            const receiver = getUser(receiverId);
+            const sender = getUser(senderId);
+            // console.log("receiver", receiver);
+            // console.log("sender", sender);
+            if(receiver?.socketId && sender?.socketId){
+                io.to(sender.socketId).to(receiver.socketId).emit('getEditOneMessage', {
+                    messageId,
+                    etatInteractif,
+                    conversationId
+                })
+            }
         })
 
     })

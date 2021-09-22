@@ -30,7 +30,7 @@ const StripeRoute = (app) => {
 
     app.post('/linkAccount/:id', linkAccount)
 
-    app.post('/payment/:id', paymentIntent)
+    app.post('/payment/:id?', paymentIntent)
 
 }
 

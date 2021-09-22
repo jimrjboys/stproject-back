@@ -5,7 +5,8 @@ import bcrypt from 'bcrypt';
 import nodemailer from 'nodemailer';
 import { LocalisationSchema } from '../models/Localisation';
 import { UtilisateurSchema } from '../models/Utilisateur';
-import sharp from 'sharp'
+import sharp from 'sharp';
+import moment from 'moment';
 
 import fs from "fs"
 require("dotenv").config();
@@ -116,9 +117,10 @@ export const ajouterUtilisateur = (req, res) => {
         })
 }
 export const utilisateurId = (req, res) => {
+    console.log(req.params.utilisateurId)
     Utilisateur.findById({ _id: req.params.utilisateurId }, (err, searchUtilisateurId) => {
         if (err) {
-            return res.send(err)
+            return res.json(err.message)
         }
 
         let data = {}
@@ -131,7 +133,6 @@ export const utilisateurId = (req, res) => {
 
         searchUtilisateurId.password = undefined
         res.json(data)
-
     });
 }
 
@@ -236,6 +237,15 @@ export const modifierUtilisateur = async (req, res) => {
                     data["user"]["biographie"] = req.body.biographie
                 }
 
+                if (req.body.guideId && req.body.dateRelation) {
+                    const miseRelation = {
+                        guideId: req.body.guideId,
+                        dateRelation: req.body.dateRelation
+                    }
+
+                    data['user'] = { $push: { enRelation: miseRelation } }
+                }
+
                 Utilisateur.findByIdAndUpdate({ _id: req.params.utilisateurId }, data.user, { new: true }, (err, modifUtilisateurId) => {
                     if (err) {
                         return res.send(err)
@@ -254,7 +264,7 @@ export const modifierUtilisateur = async (req, res) => {
             //     error: false,
             //     user: req.body
             // }
-            return res.json(err)
+            return res.json(err.message)
         })
 }
 
@@ -281,7 +291,7 @@ export const uploadProfil = async (req, res) => {
             if (makeThumbPdc) {
                 data["pdc"] = `upload/${req.params.utilisateurId}/pdp/${req.files.pdc[0].filename}`
                 data["thumbPdc"] = `upload/${req.params.utilisateurId}/pdp/thumbnail/${req.files.pdc[0].filename}_thumb.jpg`
-            }   
+            }
         } catch (error) {
             data["error"] = true
             data["message"] = error.message
@@ -291,7 +301,7 @@ export const uploadProfil = async (req, res) => {
 
     Utilisateur.findByIdAndUpdate({ _id: req.params.utilisateurId }, data, { new: true }, (err, modifUtilisateurId) => {
         if (err) {
-            return res.json({error: err})
+            return res.json({ error: err })
         }
         let result = {
             error: false,
@@ -376,4 +386,49 @@ export const ActiveAccount = (req, res) => {
                 message: "Erreur lors de l'activation du compte " + req.params.utilisateurId
             })
         })
+}
+
+export const findGuideRelation = async (req, res) => {
+    try {
+        const relation = await Utilisateur.findOne({
+            _id: ObjectId(req.params.idUser),
+            "enRelation.guideId": req.params.guideId
+        })
+
+        let data = null
+
+        if (relation != null) {
+            data = relation.enRelation.find(item => item.guideId == req.params.guideId);
+        }
+
+        console.log("relation", data)
+
+        res.status(200).json(data);
+    } catch (error) {
+        return res.status(500).json(error.message);
+    }
+}
+
+// supprime le guide du tableau si dateRelation depasse 24h
+export const deleteRelation = async (req, res) => {
+    const idUser = req.params.utilisateurId;
+
+    try {
+        let utilisateur = await Utilisateur.findOne({ _id: idUser });
+
+        utilisateur.enRelation.forEach(async (item) => {
+            // console.log(item)
+            let hours = moment().diff(moment(item.dateRelation), 'hours');
+            if (hours >= 24) {
+                console.log('depasse 24h', item.dateRelation);
+                utilisateur = await Utilisateur.findOneAndUpdate({ _id: req.params.utilisateurId }, {
+                    $pull: { 'enRelation': { guideId: item.guideId } }
+                }, { new: true, useFindAndModify: true })
+            }
+        });
+
+        res.json(utilisateur);
+    } catch (error) {
+        return res.status(500).json(error.message);
+    }
 }

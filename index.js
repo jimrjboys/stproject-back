@@ -2,6 +2,7 @@ import express from 'express';
 import mongoose from 'mongoose';
 import bodyParser from 'body-parser';
 import route from './src/routes/STroutes';
+import routesData from './src/routes/routes';
 import stripeRoute from './src/routes/stripe';
 import messageRoute from './src/routes/message';
 import conversationRoute from './src/routes/conversation';
@@ -72,7 +73,7 @@ app.use((req , res, next) => {
 })
 //declaration de notre router ici apres creation 
 route(app);
-
+routesData(app);
 // route pour stripe
 stripeRoute(app);
 messageRoute(app);
