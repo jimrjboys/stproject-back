@@ -29,10 +29,37 @@ export const requeteSchema = new Schema({
             type: Date
         }
     },
+    InfoPrix: {
+        prixRequete: {
+            type: Number
+        },
+        accordPrix: {
+            type: Boolean,
+            default: true
+        }
+    },
     conversationId: {
         type: Schema.ObjectId,
         ref: 'requetes',
         required: 'id requete obligatoire'
+    },
+    absence: {
+        touriste: {
+            type: Boolean,
+            default: false
+        },
+        guide: {
+            type: Boolean,
+            default: false
+        }
+    },
+    circuit: {
+        debutCircuit: {
+            type: Date
+        },
+        finCircuit: {
+            type: Date
+        }
     }
 },
     {
