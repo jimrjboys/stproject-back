@@ -2,7 +2,7 @@ import mongoose from 'mongoose'
 import { AnnonceSchema } from '../models/Annonce'
 import { UtilisateurSchema } from '../models/Utilisateur';
 import sharp from 'sharp'
-import "regenerator-runtime/runtime";
+// import "regenerator-runtime/runtime";
 import { isPointWithinRadius } from 'geolib';
 
 const ObjectId = mongoose.Types.ObjectId
@@ -48,6 +48,7 @@ export const createAnnonce = async (req, res, files) => {
                 message: err.message || "Some error occurred while creating the Annonce"
             });
         }
+        console.log('tonga eto')
         res.json(data)
     })
 };
